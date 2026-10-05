@@ -1,0 +1,98 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand Scale */
+  --color-blue-900: #061F5E;
+  --color-blue-700: #0B38A8; /* Core Civic Blue */
+  --color-blue-400: #4D7BFE; /* Dark Mode Accent Blue */
+
+  --color-red-700: #9E0707;
+  --color-red-600: #D50A0A;  /* Core Leganes Red */
+  --color-red-400: #FF5252;  /* Dark Mode Accent Red */
+
+  --color-yellow-500: #F2C91C; /* Core Sun Yellow */
+
+  /* Neutral Scale */
+  --color-gray-950: #121417; /* Dark Canvas */
+  --color-gray-900: #1A1D20; /* Core Charcoal */
+  --color-gray-850: #22262B; /* Dark Card Surface */
+  --color-gray-700: #333942; /* Dark Borders */
+  --color-gray-500: #5A6578; /* Cool Slate */
+  --color-gray-400: #94A3B8; /* Dark Secondary Text */
+  --color-gray-200: #E2E8F0; /* Soft Gray */
+  --color-gray-100: #F8F9FA; /* Off-White */
+  --color-white:    #FFFFFF; /* Pure White */
+
+  /* Surfaces */
+  --bg-canvas:       var(--color-gray-100);
+  --bg-surface:      var(--color-white);
+  --bg-subtle:       var(--color-gray-200);
+
+  /* Typography & Icons */
+  --text-primary:    var(--color-gray-900);
+  --text-secondary:  var(--color-gray-500);
+  --text-on-brand:   var(--color-white);
+
+  /* Brand Action Colors */
+  --brand-primary:   var(--color-blue-700);
+  --brand-secondary: var(--color-red-600);
+  --brand-accent:    var(--color-yellow-500);
+
+  /* Borders */
+  --border-default:  var(--color-gray-200);
+  --border-focus:    var(--color-blue-700);
+
+  /* -------------------------------------------------------------------------
+     Font Families
+     ------------------------------------------------------------------------- */
+  --font-family-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-family-body:    'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* -------------------------------------------------------------------------
+     Font Weights
+     ------------------------------------------------------------------------- */
+  --font-weight-regular: 400;
+  --font-weight-medium:  500;
+  --font-weight-bold:    700;
+
+  /* -------------------------------------------------------------------------
+     Font Sizes (rem scale based on 16px root)
+     ------------------------------------------------------------------------- */
+  --font-size-xs:   0.75rem;   /* 12px - Badges, route tags, captions */
+  --font-size-sm:   0.875rem;  /* 14px - Secondary UI, table data, timestamps */
+  --font-size-base: 1.00rem;   /* 16px - Standard body text, form controls */
+  --font-size-lg:   1.125rem;  /* 18px - Lead body text, card titles */
+  --font-size-xl:   1.25rem;   /* 20px - H4, section headers */
+  --font-size-2xl:  1.50rem;   /* 24px - H3, modal titles */
+  --font-size-3xl:  1.875rem;  /* 30px - H2, content page titles */
+  --font-size-4xl:  2.25rem;   /* 36px - H1, hero subtitles */
+  --font-size-5xl:  3.00rem;   /* 48px - Display, marketing heroes */
+
+  /* -------------------------------------------------------------------------
+     Line Heights
+     ------------------------------------------------------------------------- */
+  --line-height-none:    1.00;
+  --line-height-tight:   1.15;  /* Headings & Display */
+  --line-height-snug:    1.30;  /* Subtitles & UI Buttons */
+  --line-height-normal:  1.50;  /* Standard UI & Short Copy */
+  --line-height-relaxed: 1.65;  /* Paragraphs & Reading view */
+
+  /* Headings & Display (Space Grotesk) */
+  --typography-display:    var(--font-weight-bold) var(--font-size-5xl)/var(--line-height-tight) var(--font-family-display);
+  --typography-h1:         var(--font-weight-bold) var(--font-size-4xl)/var(--line-height-tight) var(--font-family-display);
+  --typography-h2:         var(--font-weight-bold) var(--font-size-3xl)/var(--line-height-snug) var(--font-family-display);
+  --typography-h3:         var(--font-weight-medium) var(--font-size-2xl)/var(--line-height-snug) var(--font-family-display);
+  --typography-h4:         var(--font-weight-medium) var(--font-size-xl)/var(--line-height-snug) var(--font-family-display);
+
+  /* Body Copy (DM Sans) */
+  --typography-body-lead:  var(--font-weight-regular) var(--font-size-lg)/var(--line-height-relaxed) var(--font-family-body);
+  --typography-body-main:  var(--font-weight-regular) var(--font-size-base)/var(--line-height-relaxed) var(--font-family-body);
+  --typography-body-small: var(--font-weight-regular) var(--font-size-sm)/var(--line-height-normal) var(--font-family-body);
+
+  /* Interactive & Commuting UI (DM Sans) */
+  --typography-button:     var(--font-weight-medium) var(--font-size-base)/var(--line-height-snug) var(--font-family-body);
+  --typography-input:      var(--font-weight-regular) var(--font-size-base)/var(--line-height-normal) var(--font-family-body);
+  --typography-caption:    var(--font-weight-regular) var(--font-size-xs)/var(--line-height-normal) var(--font-family-body);
+  --typography-badge:      var(--font-weight-bold) var(--font-size-xs)/var(--line-height-none) var(--font-family-body);
+  --typography-data-grid:  var(--font-weight-medium) var(--font-size-sm)/var(--line-height-snug) var(--font-family-body);
+}
