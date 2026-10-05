@@ -1,0 +1,23 @@
+{
+  "name": "commute-leganes-app",
+  "version": "0.1.0-alpha.1",
+  "description": "Helping you find your way around Leganes, Iloilo.",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kedalisay/Commute-Leganes-App.git"
+  },
+  "author": "Keane Emanuel Dalisay",
+  "license": "BSD-3-Clause",
+  "bugs": {
+    "url": "https://github.com/kedalisay/Commute-Leganes-App/issues"
+  },
+  "homepage": "https://github.com/kedalisay/Commute-Leganes-App#readme",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}
