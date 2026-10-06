@@ -2,6 +2,7 @@ import { useState } from 'https://esm.sh/preact/hooks'
 
 import html from './html.js'
 
+import SearchTransitWidget from './components/SearchTransitWidget.js'
 import Drawer from './components/Drawer.js'
 
 const App = () => {
@@ -21,6 +22,9 @@ const App = () => {
 
   return html`
     <main class="relative">
+      <form>
+        <${SearchTransitWidget} />
+      </form>
       ${sampleButton}
       <h1 class="text-5xl">Commute Leganes</h1>
       <${Drawer} showHandle=${showDrawerHandle} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
