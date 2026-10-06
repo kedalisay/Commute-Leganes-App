@@ -1,9 +1,6 @@
-import { h, render } from 'https://esm.sh/preact'
-import htm  from 'https://esm.sh/htm'
+import { render } from 'https://esm.sh/preact'
 
 import App from './app.js'
-
-const html = htm.bind(h)
-export default html
+import html from './html.js'
 
 render(html`<${App} />`, document.getElementById('app'))

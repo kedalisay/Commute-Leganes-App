@@ -1,9 +1,12 @@
-import html from './main.js'
+import html from './html.js'
+
+import Drawer from './components/Drawer.js'
 
 const App = () => {
   return html`
-    <main>
+    <main class="relative">
       <h1 class="text-5xl">Commute Leganes</h1>
+      <${Drawer}/>
     </main>
     `
 }
