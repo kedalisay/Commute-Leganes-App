@@ -2,7 +2,7 @@ import { useRef } from 'https://esm.sh/preact/hooks'
 
 import html from '../html.js'
 
-const Drawer = ({ children, showHandle, isOpen, closeDrawer}) => {
+const Drawer = ({ children, isBackgroundVisible, isHandleVisible, isOpen, closeDrawer}) => {
   // a drawer component that slides up from the bottom of the screen
   // it has a handle that can be used to drag the drawer up and down
   // the close buttons are inserted via children, so that the drawer can be closed from within the drawer content
@@ -39,10 +39,10 @@ const Drawer = ({ children, showHandle, isOpen, closeDrawer}) => {
   }
 
   return html`
-    <div onClick=${closeDrawer} class="${isOpen ? 'top-0 bg-black opacity-80 z-1' : 'opacity-0 z-0 top-100'} fixed left-0 w-full h-full transition-all" bg-(--color-gray-700)></div>
+    <div onClick=${closeDrawer} class="${isOpen && isBackgroundVisible ? 'top-0 bg-black opacity-80 z-1' : 'opacity-0 z-0 top-100'} fixed left-0 w-full h-full transition-all" bg-(--color-gray-700)></div>
     <div role="dialog" class="${isOpen ? 'translate-y-0 z-2' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 w-full max-w-[768px] max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default) p-8">
       <div
-        class="${showHandle ? 'block' : 'hidden'} absolute top-3 left-1/2 transform -translate-x-1/2 max-w-[100px] w-full h-[5px] bg-(--color-gray-700) rounded-full"
+        class="${isHandleVisible ? 'block' : 'hidden'} absolute top-3 left-1/2 transform -translate-x-1/2 max-w-[100px] w-full h-[5px] bg-(--color-gray-700) rounded-full"
         onPointerDown=${onPointerDown}
         onPointerMove=${onPointerMove}
         onPointerUp=${onPointerUp}

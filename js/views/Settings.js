@@ -2,18 +2,26 @@ import { useState } from 'https://esm.sh/preact/hooks'
 
 import html from '../html.js'
 
-const Settings = ({ isVisible, hideSettings, isDrawerOpen, openDrawer }) => {
+const Settings = ({ isVisible, hideSettings, hideDrawerBackground, hideDrawerHandle, isDrawerOpen, openDrawer }) => {
   const [language, setLanguage] = useState('English')
   const [theme, setTheme] = useState('light')
 
   const handleLanguageChange = (e) => {
     setLanguage(e.currentTarget.value)
-    if (!isDrawerOpen) openDrawer()
+    if (!isDrawerOpen) {
+      hideDrawerBackground()
+      hideDrawerHandle()
+      openDrawer()
+    }
   }
 
   const handleThemeChange = (e) => {
     setTheme(e.currentTarget.value)
-    if (!isDrawerOpen) openDrawer()
+    if (!isDrawerOpen) {
+      hideDrawerBackground()
+      hideDrawerHandle()
+      openDrawer()
+    }
   }
 
   return html`

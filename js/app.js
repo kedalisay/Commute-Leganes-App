@@ -107,19 +107,18 @@ const App = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const openDrawer = () => setIsDrawerOpen(true)
   const closeDrawer = () => setIsDrawerOpen(false)
-  let showDrawerHandle = false;
+
+  const [isDrawerBackgroundVisible, setIsDrawerBackgroundVisible] = useState(true)
+  const showDrawerBackground = () => setIsDrawerBackgroundVisible(true)
+  const hideDrawerBackground = () => setIsDrawerBackgroundVisible(false)
+
+  const [isDrawerHandleVisible, setIsDrawerHandleVisible] = useState(false)
+  const showDrawerHandle = () => setIsDrawerHandleVisible(true)
+  const hideDrawerHandle = () => setIsDrawerHandleVisible(false)
 
   const [isSettingsVisible, setIsSettingsVisible] = useState(false)
   const showSettings = () => setIsSettingsVisible(true)
   const hideSettings = () => setIsSettingsVisible(false)
-
-  const sampleContent = html`<div class="">
-    <h2 class="text-2xl mb-4">Drawer Content</h2>
-    <p>This is some sample content inside the drawer.</p>
-    <button class="bg-red-500 text-white rounded-md p-2 w-full" onClick=${closeDrawer}>
-      Close Drawer
-    </button>
-  </div>`
 
   return html`
     <main class="relative">
@@ -127,8 +126,8 @@ const App = () => {
         <${SearchTransitWidget} />
       </form>
       <${AppButtons} onSettingsClick=${showSettings} />
-      <${Settings} isVisible=${isSettingsVisible} hideSettings=${hideSettings} isDrawerOpen=${isDrawerOpen} openDrawer=${openDrawer} />
-      <${Drawer} showHandle=${showDrawerHandle} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
+      <${Settings} isVisible=${isSettingsVisible} hideSettings=${hideSettings} hideDrawerBackground=${hideDrawerBackground} hideDrawerHandle=${hideDrawerHandle} isDrawerOpen=${isDrawerOpen} openDrawer=${openDrawer} />
+      <${Drawer} showBackground=${showDrawerBackground} isBackgroundVisible=${isDrawerBackgroundVisible} isHandleVisible=${isDrawerHandleVisible} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
         ${SettingsButtons({ onSave: () => { console.log('Settings saved'); closeDrawer(); }, onCancel: closeDrawer })}
       </${Drawer}>
     </main>
