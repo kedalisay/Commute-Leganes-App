@@ -104,10 +104,20 @@ const AppButtons = ({ onSettingsClick }) => {
 }
 
 const App = () => {
+  // Drawer state management
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const openDrawer = () => setIsDrawerOpen(true)
   const closeDrawer = () => setIsDrawerOpen(false)
 
+  const [isDrawerBackgroundVisible, setIsDrawerBackgroundVisible] = useState(true)
+  const showDrawerBackground = () => setIsDrawerBackgroundVisible(true)
+  const hideDrawerBackground = () => setIsDrawerBackgroundVisible(false)
+
+  const [isDrawerHandleVisible, setIsDrawerHandleVisible] = useState(false)
+  const showDrawerHandle = () => setIsDrawerHandleVisible(true)
+  const hideDrawerHandle = () => setIsDrawerHandleVisible(false)
+
+  // Settings state management
   const [savedSettings, setSavedSettings] = useState(() => ({
     language: localStorage.getItem('language') || 'English',
     theme: localStorage.getItem('theme') || 'light',
@@ -133,14 +143,6 @@ const App = () => {
     setDraftSettings(savedSettings)
     closeDrawer()
   }
-
-  const [isDrawerBackgroundVisible, setIsDrawerBackgroundVisible] = useState(true)
-  const showDrawerBackground = () => setIsDrawerBackgroundVisible(true)
-  const hideDrawerBackground = () => setIsDrawerBackgroundVisible(false)
-
-  const [isDrawerHandleVisible, setIsDrawerHandleVisible] = useState(false)
-  const showDrawerHandle = () => setIsDrawerHandleVisible(true)
-  const hideDrawerHandle = () => setIsDrawerHandleVisible(false)
 
   const [isSettingsVisible, setIsSettingsVisible] = useState(false)
   const showSettings = () => {
