@@ -1,13 +1,19 @@
-import { useState } from 'https://esm.sh/preact/hooks'
-
 import html from '../html.js'
 
-const Settings = ({ isVisible, hideSettings, hideDrawerBackground, hideDrawerHandle, isDrawerOpen, openDrawer }) => {
-  const [language, setLanguage] = useState('English')
-  const [theme, setTheme] = useState('light')
-
+const Settings = ({
+  isVisible,
+  hideSettings,
+  hideDrawerBackground,
+  hideDrawerHandle,
+  isDrawerOpen,
+  openDrawer,
+  language,
+  theme,
+  onLanguageChange,
+  onThemeChange,
+}) => {
   const handleLanguageChange = (e) => {
-    setLanguage(e.currentTarget.value)
+    onLanguageChange(e.currentTarget.value)
     if (!isDrawerOpen) {
       hideDrawerBackground()
       hideDrawerHandle()
@@ -16,7 +22,7 @@ const Settings = ({ isVisible, hideSettings, hideDrawerBackground, hideDrawerHan
   }
 
   const handleThemeChange = (e) => {
-    setTheme(e.currentTarget.value)
+    onThemeChange(e.currentTarget.value)
     if (!isDrawerOpen) {
       hideDrawerBackground()
       hideDrawerHandle()
@@ -87,5 +93,4 @@ const SettingsButtons = ({ onSave, onCancel }) => {
 }
 
 export { SettingsButtons }
-
 export default Settings

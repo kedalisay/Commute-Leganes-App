@@ -108,6 +108,32 @@ const App = () => {
   const openDrawer = () => setIsDrawerOpen(true)
   const closeDrawer = () => setIsDrawerOpen(false)
 
+  const [savedSettings, setSavedSettings] = useState(() => ({
+    language: localStorage.getItem('language') || 'English',
+    theme: localStorage.getItem('theme') || 'light',
+  }))
+  const [draftSettings, setDraftSettings] = useState(savedSettings)
+
+  const updateLanguage = (language) => {
+    setDraftSettings((settings) => ({ ...settings, language }))
+  }
+
+  const updateTheme = (theme) => {
+    setDraftSettings((settings) => ({ ...settings, theme }))
+  }
+
+  const saveSettings = () => {
+    setSavedSettings(draftSettings)
+    localStorage.setItem('language', draftSettings.language)
+    localStorage.setItem('theme', draftSettings.theme)
+    closeDrawer()
+  }
+
+  const cancelSettings = () => {
+    setDraftSettings(savedSettings)
+    closeDrawer()
+  }
+
   const [isDrawerBackgroundVisible, setIsDrawerBackgroundVisible] = useState(true)
   const showDrawerBackground = () => setIsDrawerBackgroundVisible(true)
   const hideDrawerBackground = () => setIsDrawerBackgroundVisible(false)
@@ -117,7 +143,10 @@ const App = () => {
   const hideDrawerHandle = () => setIsDrawerHandleVisible(false)
 
   const [isSettingsVisible, setIsSettingsVisible] = useState(false)
-  const showSettings = () => setIsSettingsVisible(true)
+  const showSettings = () => {
+    setDraftSettings(savedSettings)
+    setIsSettingsVisible(true)
+  }
   const hideSettings = () => setIsSettingsVisible(false)
 
   return html`
@@ -126,9 +155,20 @@ const App = () => {
         <${SearchTransitWidget} />
       </form>
       <${AppButtons} onSettingsClick=${showSettings} />
-      <${Settings} isVisible=${isSettingsVisible} hideSettings=${hideSettings} hideDrawerBackground=${hideDrawerBackground} hideDrawerHandle=${hideDrawerHandle} isDrawerOpen=${isDrawerOpen} openDrawer=${openDrawer} />
+      <${Settings}
+        isVisible=${isSettingsVisible}
+        hideSettings=${hideSettings}
+        hideDrawerBackground=${hideDrawerBackground}
+        hideDrawerHandle=${hideDrawerHandle}
+        isDrawerOpen=${isDrawerOpen}
+        openDrawer=${openDrawer}
+        language=${draftSettings.language}
+        theme=${draftSettings.theme}
+        onLanguageChange=${updateLanguage}
+        onThemeChange=${updateTheme}
+      />
       <${Drawer} showBackground=${showDrawerBackground} isBackgroundVisible=${isDrawerBackgroundVisible} isHandleVisible=${isDrawerHandleVisible} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
-        ${SettingsButtons({ onSave: () => { console.log('Settings saved'); closeDrawer(); }, onCancel: closeDrawer })}
+        <${SettingsButtons} onSave=${saveSettings} onCancel=${cancelSettings} />
       </${Drawer}>
     </main>
     `
