@@ -4,6 +4,7 @@ import html from './html.js'
 
 import SearchTransitWidget from './components/SearchTransitWidget.js'
 import Drawer from './components/Drawer.js'
+import AppButtons from './components/AppButtons.js'
 
 const App = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -25,6 +26,7 @@ const App = () => {
       <form>
         <${SearchTransitWidget} />
       </form>
+      <${AppButtons} />
       ${sampleButton}
       <h1 class="text-5xl">Commute Leganes</h1>
       <${Drawer} showHandle=${showDrawerHandle} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
