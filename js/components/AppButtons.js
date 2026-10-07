@@ -1,9 +1,9 @@
 import html from '../html.js'
 
-const AppButtons = () => {
+const AppButtons = ({ onSettingsClick }) => {
   return html`
     <div class="flex flex-col gap-3 w-[35px] absolute top-30 right-0">
-      <button class="bg-(--bg-surface) border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full">
+      <button onClick=${onSettingsClick} class="bg-(--bg-surface) border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full">
         <svg width="22" xmlns="http://www.w3.org/2000/svg" height="22" id="screenshot-53f07293-9876-8096-8008-ad032f479751" viewBox="-1564.2 -1177.5 30 32" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
           <g id="shape-53f07293-9876-8096-8008-ad032f479751" style="fill:#000000" width="22" height="22" rx="0" ry="0">
             <g id="shape-53f07293-9876-8096-8008-ad032f479752" style="display:none">
