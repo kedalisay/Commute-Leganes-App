@@ -1,6 +1,21 @@
+import { useState } from 'https://esm.sh/preact/hooks'
+
 import html from '../html.js'
 
-const Settings = ({ isVisible, hideSettings }) => {
+const Settings = ({ isVisible, hideSettings, isDrawerOpen, openDrawer }) => {
+  const [language, setLanguage] = useState('English')
+  const [theme, setTheme] = useState('light')
+
+  const handleLanguageChange = (e) => {
+    setLanguage(e.currentTarget.value)
+    if (!isDrawerOpen) openDrawer()
+  }
+
+  const handleThemeChange = (e) => {
+    setTheme(e.currentTarget.value)
+    if (!isDrawerOpen) openDrawer()
+  }
+
   return html`
     <div class="absolute top-0 ${isVisible ? 'left-0' : 'left-full'} bg-(--bg-canvas) flex flex-col gap-3 w-full h-screen p-4 transition-all duration-300 ease-in-out">
       <h2 class="text-2xl font-bold font-display">Settings</h2>
@@ -25,26 +40,26 @@ const Settings = ({ isVisible, hideSettings }) => {
       <form class="mt-4">
         <fieldset class="flex flex-row flex-wrap gap-2 mb-4">
           <legend class="text-lg font-semibold mb-2">Language</legend>
-          <input class="w-0 h-0 visibility-hidden" type="radio" name="language" value="English" id="language-en" checked /> 
+          <input class="w-0 h-0 visibility-hidden" type="radio" name="language" value="English" id="language-en" onChange=${handleLanguageChange} checked=${language === 'English'} />
           <label for="language-en" class="inline-block bg-white border-[3px] border-(--border-default) rounded-xl px-4 py-2 text-center font-bold">
             English
           </label>
-          <input class="w-0 h-0 visibility-hidden" type="radio" name="language" value="Hiligaynon" id="language-hil" />
+          <input class="w-0 h-0 visibility-hidden" type="radio" name="language" value="Hiligaynon" id="language-hil" onChange=${handleLanguageChange} checked=${language === 'Hiligaynon'} />
           <label for="language-hil" class="inline-block bg-white border-[3px] border-(--border-default) rounded-xl px-4 py-2 text-center font-bold">
             Hiligaynon
           </label>
-          <input class="w-0 h-0 visibility-hidden" type="radio" name="language" value="Tagalog" id="language-tgl" />
+          <input class="w-0 h-0 visibility-hidden" type="radio" name="language" value="Tagalog" id="language-tgl" onChange=${handleLanguageChange} checked=${language === 'Tagalog'} />
           <label for="language-tgl" class="inline-block bg-white border-[3px] border-(--border-default) rounded-xl px-4 py-2 text-center font-bold">
             Tagalog
           </label>
         </fieldset>
         <fieldset class="flex flex-row flex-wrap gap-2 mb-4">
           <legend class="text-lg font-semibold mb-2">Theme</legend>
-          <input class="w-0 h-0 visibility-hidden" type="radio" name="theme" value="light" id="theme-light" checked /> 
+          <input class="w-0 h-0 visibility-hidden" type="radio" name="theme" value="light" id="theme-light" onChange=${handleThemeChange} checked=${theme === 'light'} />
           <label for="theme-light" class="inline-block bg-white border-[3px] border-(--border-default) rounded-xl px-4 py-2 text-center font-bold">
             Light
           </label>
-          <input class="w-0 h-0 visibility-hidden" type="radio" name="theme" value="dark" id="theme-dark" />
+          <input class="w-0 h-0 visibility-hidden" type="radio" name="theme" value="dark" id="theme-dark" onChange=${handleThemeChange} checked=${theme === 'dark'} />
           <label for="theme-dark" class="inline-block bg-white border-[3px] border-(--border-default) rounded-xl px-4 py-2 text-center font-bold">
             Dark
           </label>
@@ -53,5 +68,16 @@ const Settings = ({ isVisible, hideSettings }) => {
     </div>
   `
 }
+
+const SettingsButtons = ({ onSave, onCancel }) => {
+  return html`
+    <div class="flex flex-row justify-center align-middle gap-5">
+      <button class="bg-(--brand-primary) text-(--text-on-brand) font-bold rounded-xl p-2 w-full max-w-[200px]" onClick=${onSave}>Save</button>
+      <button class="bg-white border-[3px] border-(--border-default) text-(--text-primary) font-bold rounded-xl p-2 w-full max-w-[200px]" onClick=${onCancel}>Cancel</button>
+    </div>
+  `
+}
+
+export { SettingsButtons }
 
 export default Settings

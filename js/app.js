@@ -3,6 +3,7 @@ import { useState } from 'https://esm.sh/preact/hooks'
 import html from './html.js'
 
 import Settings from './views/Settings.js'
+import { SettingsButtons } from './views/Settings.js'
 
 import SearchTransitWidget from './components/SearchTransitWidget.js'
 import Drawer from './components/Drawer.js'
@@ -32,9 +33,9 @@ const App = () => {
         <${SearchTransitWidget} />
       </form>
       <${AppButtons} onSettingsClick=${showSettings} />
-      <${Settings} isVisible=${isSettingsVisible} hideSettings=${hideSettings} />
+      <${Settings} isVisible=${isSettingsVisible} hideSettings=${hideSettings} isDrawerOpen=${isDrawerOpen} openDrawer=${openDrawer} />
       <${Drawer} showHandle=${showDrawerHandle} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
-        ${sampleContent}
+        ${SettingsButtons({ onSave: () => { console.log('Settings saved'); closeDrawer(); }, onCancel: closeDrawer })}
       </${Drawer}>
     </main>
     `
