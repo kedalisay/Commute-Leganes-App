@@ -2,7 +2,7 @@ import html from '../html.js'
 
 const PublicRouteCard = ({route, onClick}) => {
   return html`
-    <input class="w-0 h-0 visibility-hidden" type="radio" name="route" id=${route.name} value=${route.name} />
+    <input class="sr-only" type="radio" name="route" id=${route.name} value=${route.name} />
     <label for=${route.name} class="flex flex-col gap-2 p-4 bg-white border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
       <div class="flex flex-row flex-nowrap gap-2 w-full">
         <div class="basis-1/2 sm:basis-5/6 flex flex-col gap-1 items-start">
