@@ -6,6 +6,8 @@ import Settings from './views/Settings.js'
 import { SettingsButtons } from './views/Settings.js'
 
 import Drawer from './components/Drawer.js'
+import RouteCard from './components/RouteCard.js'
+import PublicRouteCard from './components/PublicRouteCard.js'
 
 const SearchTransitWidget = () => {
   // contains two input fields: "from" and "to"
@@ -103,9 +105,17 @@ const AppButtons = ({ onSettingsClick }) => {
   `
 }
 
+const RouteCardList = ({ routes }) => {
+  return html`
+    <form id="routes-form">
+      ${routes.map((route) => html`<${route.public ? PublicRouteCard : RouteCard} route=${route} onClick=${() => console.log(`${route.name} clicked`)} />`)}
+    </form>
+  `
+}
+
 const App = () => {
   // Drawer state management
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(true)
   const openDrawer = () => setIsDrawerOpen(true)
   const closeDrawer = () => setIsDrawerOpen(false)
 
@@ -174,6 +184,11 @@ const App = () => {
       />
       <${Drawer} showBackground=${showDrawerBackground} isBackgroundVisible=${isDrawerBackgroundVisible} isHandleVisible=${isDrawerHandleVisible} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
         <${SettingsButtons} onSave=${saveSettings} onCancel=${cancelSettings} />
+        <${RouteCardList} routes=${[
+          {name: 'Guinobatan', total_fare: 23, total_duration: 13, total_transfers: 1, total_distance: 1.1},
+          {name: 'Napnud', total_fare: 25, total_duration: 15, total_transfers: 2, total_distance: 1.3},
+          {public: true, name: 'GUITODA - Guinobatan', total_fare: 30, total_duration: 20, total_transfers: 3, total_distance: 2.0},
+        ]} />
       </${Drawer}>
     </main>
     `
