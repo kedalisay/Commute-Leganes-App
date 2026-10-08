@@ -40,7 +40,7 @@ const Drawer = ({ children, isBackgroundVisible, isHandleVisible, isOpen, closeD
 
   return html`
     <div onClick=${closeDrawer} class="${isOpen && isBackgroundVisible ? 'top-0 bg-black opacity-80 z-1' : 'opacity-0 z-0 top-100'} fixed left-0 w-full h-full transition-all" bg-(--color-gray-700)></div>
-    <div role="dialog" class="${isOpen ? 'translate-y-0 z-2' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 w-full max-w-[768px] max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default) p-8">
+    <div role="dialog" class="${isOpen ? 'translate-y-0 z-2' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 overflow-y-auto w-full max-w-[768px] max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default) p-8">
       <div
         class="${isHandleVisible ? 'block' : 'hidden'} absolute top-3 left-1/2 transform -translate-x-1/2 max-w-[100px] w-full h-[5px] bg-(--color-gray-700) rounded-full"
         onPointerDown=${onPointerDown}
