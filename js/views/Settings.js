@@ -83,14 +83,4 @@ const Settings = ({
   `
 }
 
-const SettingsButtons = ({ onSave, onCancel }) => {
-  return html`
-    <div class="flex flex-row justify-center align-middle gap-5">
-      <button class="bg-(--brand-primary) text-(--text-on-brand) font-bold rounded-xl p-2 w-full max-w-[200px]" onClick=${onSave}>Save</button>
-      <button class="bg-white border-[3px] border-(--border-default) text-(--text-primary) font-bold rounded-xl p-2 w-full max-w-[200px]" onClick=${onCancel}>Cancel</button>
-    </div>
-  `
-}
-
-export { SettingsButtons }
 export default Settings

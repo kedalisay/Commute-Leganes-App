@@ -3,9 +3,9 @@ import { useState } from 'https://esm.sh/preact/hooks'
 import html from './html.js'
 
 import Settings from './views/Settings.js'
-import { SettingsButtons } from './views/Settings.js'
 
 import Drawer from './components/Drawer.js'
+import ActionButtons from './components/ActionButtons.js'
 import UseCurrentLocationButton from './components/UseCurrentLocationButton.js'
 import ChooseOnMapButton from './components/ChooseOnMapButton.js'
 import LocationCard from './components/LocationCard.js'
@@ -177,6 +177,11 @@ const App = () => {
     closeDrawer()
   }
 
+  const settingsActions = [
+    { label: 'Save', onClick: saveSettings, variant: 'primary' },
+    { label: 'Cancel', onClick: cancelSettings, variant: 'secondary' },
+  ]
+
   return html`
     <main class="relative">
       <form>
@@ -196,7 +201,7 @@ const App = () => {
         onThemeChange=${updateTheme}
       />
       <${Drawer} showBackground=${showDrawerBackground} isBackgroundVisible=${isDrawerBackgroundVisible} isHandleVisible=${isDrawerHandleVisible} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
-        ${ isSettingsVisible ? `<${SettingsButtons} onSave=${saveSettings} onCancel=${cancelSettings} />` : ''} 
+        ${isSettingsVisible ? html`<${ActionButtons} buttons=${settingsActions} direction="row" />` : null}
         <${LocationCardList} locations=${[
           { name: 'Leganes Central Elementary School', full_address: 'Iloilo - Capiz Road, Brgy. Poblacion' },
           { name: 'Leganes Commercial Complex', full_address: 'Hilado St., Brgy. Poblacion' },
