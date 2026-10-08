@@ -149,7 +149,10 @@ const App = () => {
     setDraftSettings(savedSettings)
     setIsSettingsVisible(true)
   }
-  const hideSettings = () => setIsSettingsVisible(false)
+  const hideSettings = () => {
+    setIsSettingsVisible(false)
+    closeDrawer()
+  }
 
   return html`
     <main class="relative">
