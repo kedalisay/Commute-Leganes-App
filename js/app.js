@@ -6,6 +6,9 @@ import Settings from './views/Settings.js'
 import { SettingsButtons } from './views/Settings.js'
 
 import Drawer from './components/Drawer.js'
+import UseCurrentLocationButton from './components/UseCurrentLocationButton.js'
+import ChooseOnMapButton from './components/ChooseOnMapButton.js'
+import LocationCard from './components/LocationCard.js'
 import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
@@ -105,6 +108,16 @@ const AppButtons = ({ onSettingsClick }) => {
   `
 }
 
+const LocationCardList = ({ locations }) => {
+  return html`
+    <form id="locations-form" class="flex flex-col gap-1 w-full">
+      <${UseCurrentLocationButton} coords=${{latitude: 10.7875, longitude: 122.60455}}/>
+      <${ChooseOnMapButton} />
+      ${locations.map((location) => html`<${LocationCard} location=${location} onClick=${() => console.log(`${location.name} clicked`)} />`)}
+    </form>
+  `
+}
+
 const RouteCardList = ({ routes }) => {
   return html`
     <form id="routes-form" class="flex flex-col gap-3 w-full">
@@ -184,14 +197,23 @@ const App = () => {
       />
       <${Drawer} showBackground=${showDrawerBackground} isBackgroundVisible=${isDrawerBackgroundVisible} isHandleVisible=${isDrawerHandleVisible} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
         ${ isSettingsVisible ? `<${SettingsButtons} onSave=${saveSettings} onCancel=${cancelSettings} />` : ''} 
-        <${RouteCardList} routes=${[
-          {name: 'Guinobatan', total_fare: 23, total_duration: 13, total_transfers: 1, total_distance: 1.1},
-          {name: 'Napnud', total_fare: 25, total_duration: 15, total_transfers: 2, total_distance: 1.3},
-          {public: true, name: 'GUITODA - Guinobatan', total_fare: 30, total_duration: 20, total_transfers: 3, total_distance: 2.0},
-        ]} />
+        <${LocationCardList} locations=${[
+          { name: 'Leganes Central Elementary School', full_address: 'Iloilo - Capiz Road, Brgy. Poblacion' },
+          { name: 'Leganes Commercial Complex', full_address: 'Hilado St., Brgy. Poblacion' },
+          { name: 'Archdiocesan Shrine of St. Vincent Ferrer', full_address: 'Hilado St., Brgy. Poblacion' },
+          { name: 'La Maison Du Leganes', full_address: 'Calle Progreso, Brgy. Guinobatan' },
+          { name: 'Jolibee Leganes', full_address: 'Iloilo - Capiz Road, Brgy. Poblacion' },
+          { name: 'Leganes Integrated Katunggan Ecopark', full_address: 'Coastal Road, Brgy. Gua-an' }
+        ]}>
       </${Drawer}>
     </main>
     `
 }
+
+// <${RouteCardList} routes=${[
+//           {name: 'Guinobatan', total_fare: 23, total_duration: 13, total_transfers: 1, total_distance: 1.1},
+//           {name: 'Napnud', total_fare: 25, total_duration: 15, total_transfers: 2, total_distance: 1.3},
+//           {public: true, name: 'GUITODA - Guinobatan', total_fare: 30, total_duration: 20, total_transfers: 3, total_distance: 2.0},
+//         ]} />
 
 export default App
