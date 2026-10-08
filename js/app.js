@@ -107,7 +107,7 @@ const AppButtons = ({ onSettingsClick }) => {
 
 const RouteCardList = ({ routes }) => {
   return html`
-    <form id="routes-form">
+    <form id="routes-form" class="flex flex-col gap-3 w-full">
       ${routes.map((route) => html`<${route.public ? PublicRouteCard : RouteCard} route=${route} onClick=${() => console.log(`${route.name} clicked`)} />`)}
     </form>
   `
@@ -123,7 +123,7 @@ const App = () => {
   const showDrawerBackground = () => setIsDrawerBackgroundVisible(true)
   const hideDrawerBackground = () => setIsDrawerBackgroundVisible(false)
 
-  const [isDrawerHandleVisible, setIsDrawerHandleVisible] = useState(false)
+  const [isDrawerHandleVisible, setIsDrawerHandleVisible] = useState(true)
   const showDrawerHandle = () => setIsDrawerHandleVisible(true)
   const hideDrawerHandle = () => setIsDrawerHandleVisible(false)
 
@@ -183,7 +183,7 @@ const App = () => {
         onThemeChange=${updateTheme}
       />
       <${Drawer} showBackground=${showDrawerBackground} isBackgroundVisible=${isDrawerBackgroundVisible} isHandleVisible=${isDrawerHandleVisible} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
-        <${SettingsButtons} onSave=${saveSettings} onCancel=${cancelSettings} />
+        ${ isSettingsVisible ? `<${SettingsButtons} onSave=${saveSettings} onCancel=${cancelSettings} />` : ''} 
         <${RouteCardList} routes=${[
           {name: 'Guinobatan', total_fare: 23, total_duration: 13, total_transfers: 1, total_distance: 1.1},
           {name: 'Napnud', total_fare: 25, total_duration: 15, total_transfers: 2, total_distance: 1.3},
