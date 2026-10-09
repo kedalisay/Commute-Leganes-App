@@ -4,7 +4,9 @@
   "description": "Helping you find your way around Leganes, Iloilo.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tailwind": "npx @tailwindcss/cli -i css/input.css -o css/output.css --watch",
+    "build": "node build.mjs"
   },
   "repository": {
     "type": "git",
@@ -17,7 +19,11 @@
   },
   "homepage": "https://github.com/kedalisay/Commute-Leganes-App#readme",
   "devDependencies": {
+    "esbuild": "^0.28.2",
     "@tailwindcss/cli": "^4.3.3",
     "tailwindcss": "^4.3.3"
+  },
+  "dependencies": {
+    "maplibre-gl": "^6.13.0"
   }
 }
