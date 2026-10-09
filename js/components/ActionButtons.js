@@ -10,9 +10,10 @@ const ActionButtons = ({ buttons, direction = 'row' }) => {
 
   return html`
     <div class="flex ${layoutClass} justify-center align-middle gap-5">
-      ${buttons.map(({ label, onClick, variant = 'primary', type = 'button' }) => html`
+      ${buttons.map(({ label, onClick, ariaLabel = '', variant = 'primary', type = 'button' }) => html`
         <button
           type=${type}
+          ${ariaLabel ? `aria-label="${ariaLabel}"` : ''}
           class="${buttonStyles[variant] || buttonStyles.primary} font-bold rounded-xl p-2 w-full max-w-[200px]"
           onClick=${onClick}
         >
