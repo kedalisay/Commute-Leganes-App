@@ -210,6 +210,7 @@ const App = () => {
           { name: 'Jolibee Leganes', full_address: 'Iloilo - Capiz Road, Brgy. Poblacion' },
           { name: 'Leganes Integrated Katunggan Ecopark', full_address: 'Coastal Road, Brgy. Gua-an' }
         ]}>
+        </${LocationCardList}>
       </${Drawer}>
     </main>
     `
