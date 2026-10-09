@@ -19,7 +19,7 @@ const PlotRouteWidget = ({ isSettingsVisible }) => {
   // this element is wrapped in a form element
 
   return html`
-    <section inert=${isSettingsVisible} id="plot-route-widget" class="px-4 pt-4">
+    <section inert=${isSettingsVisible} id="plot-route-widget" class="px-4 pt-4 bg-transparent">
       <h2 class="sr-only">Plot a route</h2>
       <form id="plot-route-form"> 
         <fieldset class="bg-transparent relative">
@@ -73,7 +73,7 @@ const PlotRouteWidget = ({ isSettingsVisible }) => {
 
 const AppButtons = ({ isSettingsVisible, onSettingsClick }) => {
   return html`
-    <section inert=${isSettingsVisible} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px]">
+    <section inert=${isSettingsVisible} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
       <h2 class="sr-only">App Buttons</h2>
       <button onClick=${onSettingsClick} class="bg-(--bg-surface) border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full">
         <svg width="22" xmlns="http://www.w3.org/2000/svg" height="22" id="screenshot-53f07293-9876-8096-8008-ad032f479751" viewBox="-1564.2 -1177.5 30 32" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
@@ -145,7 +145,7 @@ const RouteCardList = ({ routes }) => {
 
 const App = () => {
   // Drawer state management
-  const [isDrawerOpen, setIsDrawerOpen] = useState(true)
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const openDrawer = () => setIsDrawerOpen(true)
   const closeDrawer = () => setIsDrawerOpen(false)
 
@@ -206,7 +206,7 @@ const App = () => {
   }, [isSettingsVisible])
 
   return html`
-    <main class="relative">
+    <main class="relative z-1">
       <h1 class="sr-only">Commute Leganes</h1>
       <${PlotRouteWidget} isSettingsVisible=${isSettingsVisible} />
       <${AppButtons} isSettingsVisible=${isSettingsVisible} onSettingsClick=${showSettings} />
@@ -224,19 +224,20 @@ const App = () => {
       />
       <${Drawer} showBackground=${showDrawerBackground} isBackgroundVisible=${isDrawerBackgroundVisible} isHandleVisible=${isDrawerHandleVisible} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
         ${isSettingsVisible ? html`<${ActionButtons} buttons=${settingsActions} direction="row" />` : null}
-        <${LocationCardList} locations=${[
-          { name: 'Leganes Central Elementary School', full_address: 'Iloilo - Capiz Road, Brgy. Poblacion' },
-          { name: 'Leganes Commercial Complex', full_address: 'Hilado St., Brgy. Poblacion' },
-          { name: 'Archdiocesan Shrine of St. Vincent Ferrer', full_address: 'Hilado St., Brgy. Poblacion' },
-          { name: 'La Maison Du Leganes', full_address: 'Calle Progreso, Brgy. Guinobatan' },
-          { name: 'Jolibee Leganes', full_address: 'Iloilo - Capiz Road, Brgy. Poblacion' },
-          { name: 'Leganes Integrated Katunggan Ecopark', full_address: 'Coastal Road, Brgy. Gua-an' }
-        ]}>
-        </${LocationCardList}>
       </${Drawer}>
     </main>
     `
 }
+
+// <${LocationCardList} locations=${[
+//   { name: 'Leganes Central Elementary School', full_address: 'Iloilo - Capiz Road, Brgy. Poblacion' },
+//   { name: 'Leganes Commercial Complex', full_address: 'Hilado St., Brgy. Poblacion' },
+//   { name: 'Archdiocesan Shrine of St. Vincent Ferrer', full_address: 'Hilado St., Brgy. Poblacion' },
+//   { name: 'La Maison Du Leganes', full_address: 'Calle Progreso, Brgy. Guinobatan' },
+//   { name: 'Jolibee Leganes', full_address: 'Iloilo - Capiz Road, Brgy. Poblacion' },
+//   { name: 'Leganes Integrated Katunggan Ecopark', full_address: 'Coastal Road, Brgy. Gua-an' }
+// ]}>
+// </${LocationCardList}>
 
 // <${RouteCardList} routes=${[
 //           {name: 'Guinobatan', total_fare: 23, total_duration: 13, total_transfers: 1, total_distance: 1.1},
