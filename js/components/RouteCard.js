@@ -1,9 +1,11 @@
 import html from '../html.js'
 
 const RouteCard = ({route, onClick}) => {
+  const inputId = `route-${route.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+
   return html`
-    <input class="sr-only" type="radio" name="route" id=${route.name} value=${route.name} />
-    <label for=${route.name} class="flex flex-col gap-2 p-4 bg-white border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
+    <input class="sr-only" type="radio" name="route" id=${inputId} value=${route.name} />
+    <label for=${inputId} class="flex flex-col gap-2 p-4 bg-white border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
       <div class="flex flex-row flex-nowrap gap-2 w-full">
         <h3 class="text-xl font-bold font-display text-left basis-1/2 sm:basis-5/6 inline-block">${route.name}</h3>
         <div class="basis-1/2 sm:basis-1/6 flex flex-col gap-1 items-end justify-center">

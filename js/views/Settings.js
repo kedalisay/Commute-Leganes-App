@@ -31,7 +31,7 @@ const Settings = ({
   }
 
   return html`
-    <div class="absolute top-0 ${isVisible ? 'left-0' : 'left-full'} bg-(--bg-canvas) flex flex-col gap-3 w-full h-screen p-4 transition-all duration-300 ease-in-out">
+    <section id="settings" class="absolute top-0 ${isVisible ? 'left-0' : 'left-full'} bg-(--bg-canvas) flex flex-col gap-3 w-full h-screen p-4 transition-all duration-300 ease-in-out">
       <h2 class="text-2xl font-bold font-display">Settings</h2>
       <button class="absolute top-4 right-4 rounded-md p-2 w-[40px] h-[40px]" onClick=${hideSettings}>
         <svg width="40" xmlns="http://www.w3.org/2000/svg" height="40" id="screenshot-18d99545-70d7-8033-8008-b7a66cfdf76d" viewBox="-1940 -568 40 40" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
@@ -79,7 +79,7 @@ const Settings = ({
           </label>
         </fieldset>
       </form>
-    </div>
+    </section>
   `
 }
 
