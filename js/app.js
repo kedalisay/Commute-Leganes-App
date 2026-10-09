@@ -12,14 +12,14 @@ import LocationCard from './components/LocationCard.js'
 import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
-const PlotRouteWidget = () => {
+const PlotRouteWidget = ({ isSettingsVisible }) => {
   // contains two input fields: "from" and "to"
   // contains a button to swap the values of the two input fields
   // submit button is stored in a separate component
   // this element is wrapped in a form element
 
   return html`
-    <section id="plot-route-widget">
+    <section inert=${isSettingsVisible} id="plot-route-widget" class="px-4 pt-4">
       <h2 class="sr-only">Plot a route</h2>
       <form id="plot-route-form"> 
         <fieldset class="bg-transparent relative">
@@ -71,9 +71,9 @@ const PlotRouteWidget = () => {
     `
 }
 
-const AppButtons = ({ onSettingsClick }) => {
+const AppButtons = ({ isSettingsVisible, onSettingsClick }) => {
   return html`
-    <section id="app-buttons" class="flex flex-col gap-3 w-[35px] absolute top-30 right-0">
+    <section inert=${isSettingsVisible} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px]">
       <h2 class="sr-only">App Buttons</h2>
       <button onClick=${onSettingsClick} class="bg-(--bg-surface) border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full">
         <svg width="22" xmlns="http://www.w3.org/2000/svg" height="22" id="screenshot-53f07293-9876-8096-8008-ad032f479751" viewBox="-1564.2 -1177.5 30 32" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
@@ -208,8 +208,8 @@ const App = () => {
   return html`
     <main class="relative">
       <h1 class="sr-only">Commute Leganes</h1>
-      <${PlotRouteWidget} />
-      <${AppButtons} onSettingsClick=${showSettings} />
+      <${PlotRouteWidget} isSettingsVisible=${isSettingsVisible} />
+      <${AppButtons} isSettingsVisible=${isSettingsVisible} onSettingsClick=${showSettings} />
       <${Settings}
         isVisible=${isSettingsVisible}
         hideSettings=${hideSettings}

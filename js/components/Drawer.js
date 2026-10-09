@@ -124,6 +124,7 @@ const Drawer = ({
         role="dialog"
         aria-modal="true"
         aria-hidden=${!isOpen}
+        inert=${!isOpen}
         aria-label=${label}
         tabIndex="-1"
         onKeyDown=${onKeyDown}
