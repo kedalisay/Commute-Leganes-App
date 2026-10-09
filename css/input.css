@@ -195,7 +195,7 @@ body {
   overflow-x: hidden;
 }
 
-fieldset > input[type="radio"]:checked + label {
+#settings fieldset > input[type="radio"]:checked + label {
   background-color: var(--color-gray-700);
   color: var(--text-on-brand);
   border-color: transparent;
