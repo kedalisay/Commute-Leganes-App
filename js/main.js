@@ -10,7 +10,7 @@ setWorkerUrl(new URL(`./maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.u
 
 new Map({
     container: 'map', // container id
-    style: 'https://tiles.openfreemap.org/styles/positron', // style URL
+    style: '../assets/osm_bright_custom_commute_leganes.json', // style URL
     center: [122.60455, 10.7875], // starting position [lng, lat]
     zoom: 13 // starting zoom
   });
