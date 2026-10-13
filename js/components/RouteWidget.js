@@ -67,6 +67,8 @@ const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, isD
   }
 
   const handleSwapLocations = () => {
+    if (!fromLocation && !toLocation) return;
+
     const tempLocation = fromLocation;
     setFromLocation(toLocation);
     setToLocation(tempLocation);
