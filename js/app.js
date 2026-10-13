@@ -13,9 +13,9 @@ import LocationCard from './components/LocationCard.js'
 import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
-const AppButtons = ({ isSettingsVisible, onSettingsClick }) => {
+const AppButtons = ({ drawerMode, onSettingsClick }) => {
   return html`
-    <section inert=${isSettingsVisible} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
+    <section aria-hidden=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'routes' ? true : false} inert=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'routes' ? true : false} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
       <h2 class="sr-only">App Buttons</h2>
       <button onClick=${onSettingsClick} class="bg-(--bg-surface) border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full">
         <svg width="22" xmlns="http://www.w3.org/2000/svg" height="22" id="screenshot-53f07293-9876-8096-8008-ad032f479751" viewBox="-1564.2 -1177.5 30 32" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
@@ -102,22 +102,19 @@ const App = () => {
   const [isToLocationFocused, setIsToLocationFocused] = useState(false)
 
   const [locations, setLocations] = useState([])
-  const [isLocationsVisible, setIsLocationsVisible] = useState(false)
-  const showLocations = () => setIsLocationsVisible(true)
-  const hideLocations = () => setIsLocationsVisible(false)
 
   // Drawer state management
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const openDrawer = () => setIsDrawerOpen(true)
-  const closeDrawer = () => setIsDrawerOpen(false)
-
-  const [isDrawerBackgroundVisible, setIsDrawerBackgroundVisible] = useState(true)
-  const showDrawerBackground = () => setIsDrawerBackgroundVisible(true)
-  const hideDrawerBackground = () => setIsDrawerBackgroundVisible(false)
-
-  const [isDrawerHandleVisible, setIsDrawerHandleVisible] = useState(true)
-  const showDrawerHandle = () => setIsDrawerHandleVisible(true)
-  const hideDrawerHandle = () => setIsDrawerHandleVisible(false)
+  const closeDrawer = () => {
+    setDrawerToDefault()
+    setIsDrawerOpen(false)
+  }
+  const [drawerMode, setDrawerMode] = useState('default') 
+  const setDrawerToSettings = () => setDrawerMode('settings')
+  const setDrawerToLocations = () => setDrawerMode('locations')
+  const setDrawerToRoutes = () => setDrawerMode('routes')
+  const setDrawerToDefault = () => setDrawerMode('default')
 
   // Settings state management
   const [savedSettings, setSavedSettings] = useState(() => ({
@@ -146,13 +143,12 @@ const App = () => {
     closeDrawer()
   }
 
-  const [isSettingsVisible, setIsSettingsVisible] = useState(false)
   const showSettings = () => {
     setDraftSettings(savedSettings)
-    setIsSettingsVisible(true)
+    setDrawerToSettings()
   }
   const hideSettings = () => {
-    setIsSettingsVisible(false)
+    setDrawerToDefault()
     closeDrawer()
   }
 
@@ -162,22 +158,30 @@ const App = () => {
   ]
 
   useEffect(() => {
-    document.title = isSettingsVisible
-      ? 'Settings | Commute Leganes'
-      : 'Commute Leganes'
-  }, [isSettingsVisible])
+    switch (drawerMode) {
+      case 'settings':
+        document.title = 'Settings - Commute Leganes'
+        break
+      case 'locations':
+        document.title = 'Choose a Location - Commute Leganes'
+        break
+      case 'routes':
+        document.title = 'Choose a Route - Commute Leganes'
+        break
+      default:
+        document.title = 'Commute Leganes'
+    }
+  }, [drawerMode])
 
   return html`
     <main class="relative z-1">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
-        isSettingsVisible=${isSettingsVisible} 
+        drawerMode=${drawerMode}
+        setDrawerToLocations=${setDrawerToLocations}
         isDrawerOpen=${isDrawerOpen} 
         openDrawer=${openDrawer} 
-        showDrawerHandle=${showDrawerHandle} 
-        isLocationsVisible=${isLocationsVisible} 
-        showLocations=${showLocations} 
-        setLocations=${setLocations} 
+        setLocations=${setLocations}
         fromLocation=${fromLocation} 
         setFromLocation=${setFromLocation}
         setIsFromLocationFocused=${setIsFromLocationFocused}
@@ -185,12 +189,13 @@ const App = () => {
         setToLocation=${setToLocation}
         setIsToLocationFocused=${setIsToLocationFocused}
       />
-      <${AppButtons} isSettingsVisible=${isSettingsVisible} onSettingsClick=${showSettings} />
+      <${AppButtons} 
+        drawerMode=${drawerMode} 
+        onSettingsClick=${showSettings}
+      />
       <${Settings}
-        isVisible=${isSettingsVisible}
+        drawerMode=${drawerMode}
         hideSettings=${hideSettings}
-        hideDrawerBackground=${hideDrawerBackground}
-        hideDrawerHandle=${hideDrawerHandle}
         isDrawerOpen=${isDrawerOpen}
         openDrawer=${openDrawer}
         language=${draftSettings.language}
@@ -198,9 +203,13 @@ const App = () => {
         onLanguageChange=${updateLanguage}
         onThemeChange=${updateTheme}
       />
-      <${Drawer} showBackground=${showDrawerBackground} isBackgroundVisible=${isDrawerBackgroundVisible} isHandleVisible=${isDrawerHandleVisible} isOpen=${isDrawerOpen} closeDrawer=${closeDrawer}>
-        ${isSettingsVisible ? html`<${ActionButtons} buttons=${settingsActions} direction="row" />` : null}
-        ${isLocationsVisible 
+      <${Drawer} 
+        isOpen=${isDrawerOpen} 
+        drawerMode=${drawerMode}
+        closeDrawer=${closeDrawer}
+      >
+        ${drawerMode === 'settings' ? html`<${ActionButtons} buttons=${settingsActions} direction="row" />` : null}
+        ${drawerMode === 'locations' 
           ? html`<${LocationCardList} 
             locations=${locations} 
             closeDrawer=${closeDrawer} 

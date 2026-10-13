@@ -1,6 +1,6 @@
 import html from '../html.js'
 
-const RouteWidget = ({ isSettingsVisible, isDrawerOpen, openDrawer, showDrawerHandle, isLocationsVisible, showLocations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ drawerMode, setDrawerToLocations, isDrawerOpen, openDrawer, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
 
   const handleFromInput = (event) => {
     const fromValue = event.target.value;
@@ -22,10 +22,7 @@ const RouteWidget = ({ isSettingsVisible, isDrawerOpen, openDrawer, showDrawerHa
 
     if (!isDrawerOpen) {
       openDrawer();
-      showDrawerHandle();
-      if (!isLocationsVisible) {
-        showLocations();
-      }
+      setDrawerToLocations();
     }
   }
 
@@ -49,14 +46,11 @@ const RouteWidget = ({ isSettingsVisible, isDrawerOpen, openDrawer, showDrawerHa
 
     if (!isDrawerOpen) {
       openDrawer();
-      showDrawerHandle();
-      if (!isLocationsVisible) {
-        showLocations();
-      }
+      setDrawerToLocations();
     }
   }
 
-  return html`<section inert=${isSettingsVisible} id="plot-route-widget" class="relative ${isDrawerOpen ? 'z-2' : ''} px-4 pt-4 bg-transparent">
+  return html`<section aria-hidden=${drawerMode !== 'settings' ? false : true} inert=${drawerMode !== 'settings' ? false : true} id="plot-route-widget" class="relative ${drawerMode !== 'settings' ? 'z-2' : ''} px-4 pt-4 bg-transparent">
       <h2 class="sr-only">Plot a route</h2>
       <form id="plot-route-form"> 
         <fieldset class="bg-transparent relative">

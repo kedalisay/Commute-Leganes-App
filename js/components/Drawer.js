@@ -4,8 +4,7 @@ import html from '../html.js'
 
 const Drawer = ({
   children,
-  isBackgroundVisible,
-  isHandleVisible,
+  drawerMode,
   isOpen,
   closeDrawer,
   label = 'Drawer',
@@ -26,18 +25,18 @@ const Drawer = ({
     const drawer = drawerRef.current
     if (!drawer) return
 
-    if (isOpen) {
-      previouslyFocusedElement.current = document.activeElement
-      const firstFocusableElement = drawer.querySelector(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      )
-      ;(firstFocusableElement || drawer).focus()
-    } else {
-      if (previouslyFocusedElement.current && typeof previouslyFocusedElement.current.focus === 'function') {
-        previouslyFocusedElement.current.focus()
-      }
-      drawer.style.height = ''
-    }
+    // if (isOpen) {
+    //   previouslyFocusedElement.current = document.activeElement
+    //   const firstFocusableElement = drawer.querySelector(
+    //     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+    //   )
+    //   ;(firstFocusableElement || drawer).focus()
+    // } else {
+    //   if (previouslyFocusedElement.current && typeof previouslyFocusedElement.current.focus === 'function') {
+    //     previouslyFocusedElement.current.focus()
+    //   }
+    //   drawer.style.height = ''
+    // }
   }, [isOpen])
 
   const onKeyDown = (e) => {
@@ -59,16 +58,16 @@ const Drawer = ({
       return
     }
 
-    const firstElement = focusableElements[0]
-    const lastElement = focusableElements[focusableElements.length - 1]
+    // const firstElement = focusableElements[0]
+    // const lastElement = focusableElements[focusableElements.length - 1]
 
-    if (e.shiftKey && document.activeElement === firstElement) {
-      e.preventDefault()
-      lastElement.focus()
-    } else if (!e.shiftKey && document.activeElement === lastElement) {
-      e.preventDefault()
-      firstElement.focus()
-    }
+    // if (e.shiftKey && document.activeElement === firstElement) {
+    //   e.preventDefault()
+    //   lastElement.focus()
+    // } else if (!e.shiftKey && document.activeElement === lastElement) {
+    //   e.preventDefault()
+    //   firstElement.focus()
+    // }
   }
 
   const onPointerDown = (e) => {
@@ -111,8 +110,8 @@ const Drawer = ({
     drawerRef.current.style.height = `${newHeight}px`
   }
 
-  const backdropClass = isOpen
-    ? `${isBackgroundVisible ? 'bg-black opacity-80' : 'opacity-0'} z-1 pointer-events-auto`
+  const backdropClass = isOpen && (drawerMode === 'locations' || drawerMode === 'routes')
+    ? 'bg-black opacity-80 z-1 pointer-events-auto'
     : 'opacity-0 z-0 pointer-events-none'
 
   return html`
@@ -128,12 +127,12 @@ const Drawer = ({
         aria-label=${label}
         tabIndex="-1"
         onKeyDown=${onKeyDown}
-        class="${isOpen ? 'translate-y-0 z-2' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 overflow-y-auto w-full max-w-[768px] max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default) p-8"
+        class="${isOpen ? 'translate-y-0 z-3' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 overflow-y-auto w-full max-w-[768px] max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default) p-8"
       >
         <button
           type="button"
           aria-label="Resize drawer. Use Arrow Up to expand or Arrow Down to close."
-          class="${isHandleVisible ? 'block' : 'hidden'} absolute top-3 left-1/2 transform -translate-x-1/2 max-w-[100px] w-full h-[5px] bg-(--color-gray-700) rounded-full"
+          class="${drawerMode === 'locations' || drawerMode === 'routes' ? 'block' : 'hidden'} absolute top-3 left-1/2 transform -translate-x-1/2 max-w-[100px] w-full h-[5px] bg-(--color-gray-700) rounded-full"
           onKeyDown=${onHandleKeyDown}
           onPointerDown=${onPointerDown}
           onPointerMove=${onPointerMove}
