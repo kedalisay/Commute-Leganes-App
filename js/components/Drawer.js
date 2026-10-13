@@ -4,8 +4,9 @@ import html from '../html.js'
 
 const Drawer = ({
   children,
-  drawerMode,
   isOpen,
+  drawerMode,
+  setDrawerToDefault,
   closeDrawer,
   label = 'Drawer',
 }) => {
@@ -114,6 +115,10 @@ const Drawer = ({
     ? 'bg-black opacity-80 z-1 pointer-events-auto'
     : 'opacity-0 z-0 pointer-events-none'
 
+  if(!isOpen && (drawerMode === 'locations' || drawerMode === 'routes')) {
+    setDrawerToDefault()
+  }
+  
   return html`
     <div id="drawer-wrapper">
       <div onClick=${closeDrawer} aria-hidden=${!isOpen} class="${backdropClass} fixed inset-0 transition-all bg-(--color-gray-700)"></div>

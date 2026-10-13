@@ -106,10 +106,8 @@ const App = () => {
   // Drawer state management
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const openDrawer = () => setIsDrawerOpen(true)
-  const closeDrawer = () => {
-    setDrawerToDefault()
-    setIsDrawerOpen(false)
-  }
+  const closeDrawer = () => setIsDrawerOpen(false)
+  
   const [drawerMode, setDrawerMode] = useState('default') 
   const setDrawerToSettings = () => setDrawerMode('settings')
   const setDrawerToLocations = () => setDrawerMode('locations')
@@ -206,6 +204,7 @@ const App = () => {
       <${Drawer} 
         isOpen=${isDrawerOpen} 
         drawerMode=${drawerMode}
+        setDrawerToDefault=${setDrawerToDefault}
         closeDrawer=${closeDrawer}
       >
         ${drawerMode === 'settings' ? html`<${ActionButtons} buttons=${settingsActions} direction="row" />` : null}
