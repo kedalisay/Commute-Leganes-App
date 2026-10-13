@@ -176,6 +176,7 @@ const App = () => {
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
         drawerMode=${drawerMode}
+        setDrawerToDefault=${setDrawerToDefault}
         setDrawerToLocations=${setDrawerToLocations}
         isDrawerOpen=${isDrawerOpen} 
         openDrawer=${openDrawer} 

@@ -1,8 +1,16 @@
 import html from '../html.js'
 
-const RouteWidget = ({ drawerMode, setDrawerToLocations, isDrawerOpen, openDrawer, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, isDrawerOpen, openDrawer, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
 
   const handleFromInput = (event) => {
+    setDrawerToLocations();
+    if (event.target.value === '') {
+      setFromLocation('');
+      setIsFromLocationFocused(false);
+      setDrawerToDefault();
+      return;
+    }
+
     const fromValue = event.target.value;
     setFromLocation(fromValue);
     setIsFromLocationFocused(true);
@@ -22,11 +30,18 @@ const RouteWidget = ({ drawerMode, setDrawerToLocations, isDrawerOpen, openDrawe
 
     if (!isDrawerOpen) {
       openDrawer();
-      setDrawerToLocations();
     }
   }
 
   const handleToInput = (event) => {
+    setDrawerToLocations();
+    if (event.target.value === '') {
+      setToLocation('');
+      setIsToLocationFocused(false);
+      setDrawerToDefault();
+      return;
+    }
+
     const toValue = event.target.value;
     setToLocation(toValue);
     setIsToLocationFocused(true);
@@ -46,7 +61,6 @@ const RouteWidget = ({ drawerMode, setDrawerToLocations, isDrawerOpen, openDrawe
 
     if (!isDrawerOpen) {
       openDrawer();
-      setDrawerToLocations();
     }
   }
 
