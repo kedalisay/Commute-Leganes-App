@@ -2,13 +2,13 @@ import * as esbuild from 'esbuild';
 import {copyFileSync} from 'fs';
 
 await esbuild.build({
-    entryPoints: ['js/main.js'],
+    entryPoints: ['src/js/main.js'],
     bundle: true,
-    outfile: 'js/output.js',
+    outfile: 'dist/output.js',
     format: 'esm'
 });
 
 copyFileSync(
     'node_modules/maplibre-gl/dist/maplibre-gl-worker.mjs',
-    'js/maplibre-gl-worker.mjs'
+    'src/js/maplibre-gl-worker.mjs'
 );
