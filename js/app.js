@@ -180,6 +180,7 @@ const App = () => {
         setDrawerToLocations=${setDrawerToLocations}
         isDrawerOpen=${isDrawerOpen} 
         openDrawer=${openDrawer} 
+        closeDrawer=${closeDrawer}
         setLocations=${setLocations}
         fromLocation=${fromLocation} 
         setFromLocation=${setFromLocation}

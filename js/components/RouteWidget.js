@@ -1,6 +1,6 @@
 import html from '../html.js'
 
-const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, isDrawerOpen, openDrawer, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, isDrawerOpen, openDrawer, closeDrawer,  setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
 
   const handleFromInput = (event) => {
     setDrawerToLocations();
@@ -8,6 +8,7 @@ const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, isD
       setFromLocation('');
       setIsFromLocationFocused(false);
       setDrawerToDefault();
+      closeDrawer();
       return;
     }
 
@@ -39,6 +40,7 @@ const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, isD
       setToLocation('');
       setIsToLocationFocused(false);
       setDrawerToDefault();
+      closeDrawer();
       return;
     }
 

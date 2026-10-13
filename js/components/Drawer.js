@@ -26,18 +26,20 @@ const Drawer = ({
     const drawer = drawerRef.current
     if (!drawer) return
 
-    // if (isOpen) {
-    //   previouslyFocusedElement.current = document.activeElement
-    //   const firstFocusableElement = drawer.querySelector(
-    //     'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-    //   )
-    //   ;(firstFocusableElement || drawer).focus()
-    // } else {
-    //   if (previouslyFocusedElement.current && typeof previouslyFocusedElement.current.focus === 'function') {
-    //     previouslyFocusedElement.current.focus()
-    //   }
-    //   drawer.style.height = ''
-    // }
+    if (!isOpen) drawer.style.height = ''
+
+  //   if (isOpen) {
+  //     previouslyFocusedElement.current = document.activeElement
+  //     const firstFocusableElement = drawer.querySelector(
+  //       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+  //     )
+  //     ;(firstFocusableElement || drawer).focus()
+  //   } else {
+  //     if (previouslyFocusedElement.current && typeof previouslyFocusedElement.current.focus === 'function') {
+  //       previouslyFocusedElement.current.focus()
+  //     }
+  //     drawer.style.height = ''
+  //   }
   }, [isOpen])
 
   const onKeyDown = (e) => {
@@ -118,7 +120,7 @@ const Drawer = ({
   if(!isOpen && (drawerMode === 'locations' || drawerMode === 'routes')) {
     setDrawerToDefault()
   }
-  
+
   return html`
     <div id="drawer-wrapper">
       <div onClick=${closeDrawer} aria-hidden=${!isOpen} class="${backdropClass} fixed inset-0 transition-all bg-(--color-gray-700)"></div>
