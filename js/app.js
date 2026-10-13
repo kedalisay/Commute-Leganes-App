@@ -95,10 +95,10 @@ const RouteCardList = ({ routes }) => {
 
 const App = () => {
   // Location state management
-  const [fromLocation, setFromLocation] = useState(null)
+  const [fromLocation, setFromLocation] = useState('')
   const [isFromLocationFocused, setIsFromLocationFocused] = useState(false)
 
-  const [toLocation, setToLocation] = useState(null)
+  const [toLocation, setToLocation] = useState('')
   const [isToLocationFocused, setIsToLocationFocused] = useState(false)
 
   const [locations, setLocations] = useState([])
