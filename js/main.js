@@ -9,10 +9,8 @@ import html from './html.js'
 setWorkerUrl(new URL(`./maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
 
 new Map({
-    container: 'map', // container id
-    style: '../assets/osm_bright_custom_commute_leganes.json', // style URL
-    center: [122.60455, 10.7875], // starting position [lng, lat]
-    zoom: 13 // starting zoom
+    container: 'map',
+    style: '../assets/osm_custom_bright_commute_leganes.json', 
   });
 
 render(html`<${App} />`, document.getElementById('app'))
