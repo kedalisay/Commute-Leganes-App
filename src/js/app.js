@@ -13,24 +13,29 @@ import LocationCard from './components/LocationCard.js'
 import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
-window.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('DOMContentLoaded', async () => {
+    const routes = await (await fetch('/data/routes.json')).json()
+
     window.map.on('load', () => {
       window.map.addSource('routes', {
       'type': 'geojson',
-      'data': '/data/routes.json'
+      'data': routes
       });
 
-      window.map.addLayer({
-        id: "route-lines",
-        type: "line",
-        source: "routes",
-        layout: { "line-join": "round", "line-cap": "round" },
-        paint: { 
-          "line-color": ["get", "stroke"], 
-          "line-width": ["get", "stroke-width"], 
-          "line-opacity": 0,
-        },
-      });
+      routes.features.forEach((route) => {
+        window.map.addLayer({
+          'id': `route-${route.properties['route-name']}`,
+          'type': 'line',
+          'source': 'routes',
+          'layout': { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+          'paint': {
+            'line-color': route.properties['stroke'],
+            'line-width': route.properties['stroke-width'],
+            'line-opacity': route.properties['stroke-opacity'],
+          },
+          'filter': ['==', 'route-name', route.properties['route-name']],
+        })
+      })
   })
 })
 
@@ -102,12 +107,31 @@ const LocationCardList = ({ locations, closeDrawer, isFromLocationFocused, setFr
 }
 
 const RouteCardList = ({ routes }) => {
+  const focusRoute = (route) => {
+    const features = window.map.getSource('routes')._data.geojson.features
+    // check if all routes are not hidden
+    // if all routes are hidden, show the selected route
+    const allRoutesShown = features.every((feature) => window.map.getLayoutProperty(`route-${feature.properties['route-name']}`, 'visibility') === 'visible')
+    if (allRoutesShown) {
+      features.forEach((feature) => {
+        window.map.setLayoutProperty(`route-${feature.properties['route-name']}`, 'visibility', 'none')
+      })
+      window.map.setLayoutProperty(`route-${route.name}`, 'visibility', 'visible')
+    } else {
+        if (window.map.getLayoutProperty(`route-${route.name}`, 'visibility') === 'visible') {
+        window.map.setLayoutProperty(`route-${route.name}`, 'visibility', 'none');
+      } else {
+        window.map.setLayoutProperty(`route-${route.name}`, 'visibility', 'visible');
+      }
+    }
+  }
+
   return html`
     <section aria-labelledby="routes-heading">
       <h2 id="routes-heading" class="sr-only">Choose a route</h2>
       <form id="routes-form">
         <fieldset class="flex flex-col gap-3 w-full">
-        ${routes.map((route) => html`<${route.public ? PublicRouteCard : RouteCard} route=${route} onClick=${() => console.log(`${route.name} clicked`)} />`)}
+        ${routes.map((route) => html`<${route.public ? PublicRouteCard : RouteCard} route=${route} onClick=${() => route.public ? focusRoute(route) : () => {}} />`)}
         </fieldset>
       </form>
     </section>
@@ -177,11 +201,36 @@ const App = () => {
   ]
 
   // Routes state management
+  const [routes, setRoutes] = useState([])
   const toggleRoutes = () => {
-    window.map.setPaintProperty('route-lines', 'line-opacity', window.map.getPaintProperty('route-lines', 'line-opacity') === 0 ? 1 : 0)
+    const features = window.map.getSource('routes')._data.geojson.features
+    const routeData = []
+
+    const allRoutesNotShown = features.every((feature) => window.map.getLayoutProperty(`route-${feature.properties['route-name']}`, 'visibility') === 'none')
+
+    features.forEach((feature) => {
+      const routeName = feature.properties['route-name']
+      const isVisible = window.map.getLayoutProperty(`route-${routeName}`, 'visibility') === 'visible'
+
+      if (!allRoutesNotShown) {
+        window.map.setLayoutProperty(`route-${routeName}`, 'visibility', isVisible ? 'none' : 'none')  
+        return;
+      } 
+
+      window.map.setLayoutProperty(`route-${routeName}`, 'visibility', isVisible ? 'none' : 'visible')
+
+      routeData.push({
+        name: routeName,
+        public: true,
+        total_distance: 1
+      })
+    });
+
     if (drawerMode === 'routes') {
       closeDrawer()
     } else if (drawerMode === 'default') {
+      setRoutes(routeData)
+
       openDrawer()
       setDrawerToRoutes()
     }
@@ -253,6 +302,7 @@ const App = () => {
             setToLocation=${setToLocation} 
           />` 
           : null}
+        ${drawerMode === 'routes' ? html`<${RouteCardList} routes=${routes} />` : null}
       </${Drawer}>
     </main>
     `
