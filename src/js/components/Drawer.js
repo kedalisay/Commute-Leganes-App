@@ -113,7 +113,7 @@ const Drawer = ({
     drawerRef.current.style.height = `${newHeight}px`
   }
 
-  const backdropClass = isOpen && (drawerMode === 'locations' || drawerMode === 'routes')
+  const backdropClass = isOpen && (drawerMode === 'locations')
     ? 'bg-black opacity-80 z-1 pointer-events-auto'
     : 'opacity-0 z-0 pointer-events-none'
 
