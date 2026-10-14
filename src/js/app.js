@@ -13,6 +13,23 @@ import LocationCard from './components/LocationCard.js'
 import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
+window.addEventListener('DOMContentLoaded', () => {
+    window.map.on('load', () => {
+      window.map.addSource('routes', {
+      'type': 'geojson',
+      'data': '/data/routes.json'
+      });
+
+      window.map.addLayer({
+        id: "route-line",
+        type: "line",
+        source: "routes",
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: { "line-color": ["get", "stroke"], "line-width": ["get", "stroke-width"], "line-opacity": ["get", "stroke-opacity"] },
+      });
+  })
+})
+
 const AppButtons = ({ drawerMode, onSettingsClick }) => {
   return html`
     <section aria-hidden=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'routes' ? true : false} inert=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'routes' ? true : false} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
