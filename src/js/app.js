@@ -109,8 +109,7 @@ const LocationCardList = ({ locations, closeDrawer, isFromLocationFocused, setFr
 const RouteCardList = ({ routes }) => {
   const focusRoute = (route) => {
     const features = window.map.getSource('routes')._data.geojson.features
-    // check if all routes are not hidden
-    // if all routes are hidden, show the selected route
+
     const allRoutesShown = features.every((feature) => window.map.getLayoutProperty(`route-${feature.properties['route-name']}`, 'visibility') === 'visible')
     if (allRoutesShown) {
       features.forEach((feature) => {
@@ -202,20 +201,14 @@ const App = () => {
 
   // Routes state management
   const [routes, setRoutes] = useState([])
-  const toggleRoutes = () => {
+
+  const showPublicRoutes = () => {
     const features = window.map.getSource('routes')._data.geojson.features
     const routeData = []
-
-    const allRoutesNotShown = features.every((feature) => window.map.getLayoutProperty(`route-${feature.properties['route-name']}`, 'visibility') === 'none')
 
     features.forEach((feature) => {
       const routeName = feature.properties['route-name']
       const isVisible = window.map.getLayoutProperty(`route-${routeName}`, 'visibility') === 'visible'
-
-      if (!allRoutesNotShown) {
-        window.map.setLayoutProperty(`route-${routeName}`, 'visibility', isVisible ? 'none' : 'none')  
-        return;
-      } 
 
       window.map.setLayoutProperty(`route-${routeName}`, 'visibility', isVisible ? 'none' : 'visible')
 
@@ -225,15 +218,21 @@ const App = () => {
         total_distance: 1
       })
     });
+    setRoutes(routeData)
+    setDrawerToRoutes()
+    openDrawer()
+  }
 
-    if (drawerMode === 'routes') {
-      closeDrawer()
-    } else if (drawerMode === 'default') {
-      setRoutes(routeData)
+  const hidePublicRoutes = () => {
+    const features = window.map.getSource('routes')._data.geojson.features
 
-      openDrawer()
-      setDrawerToRoutes()
-    }
+    features.forEach((feature) => {
+      const routeName = feature.properties['route-name']
+      window.map.setLayoutProperty(`route-${routeName}`, 'visibility', 'none')
+    });
+    setRoutes([])
+    setDrawerToDefault()
+    closeDrawer()
   }
 
   useEffect(() => {
@@ -273,7 +272,7 @@ const App = () => {
       <${AppButtons} 
         drawerMode=${drawerMode} 
         onSettingsClick=${showSettings}
-        onRoutesClick=${toggleRoutes}
+        onRoutesClick=${drawerMode === 'routes' ? hidePublicRoutes : showPublicRoutes}
       />
       <${Settings}
         drawerMode=${drawerMode}
