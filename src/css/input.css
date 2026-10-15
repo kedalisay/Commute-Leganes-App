@@ -218,7 +218,8 @@ input[type="text"]:focus-visible,
   outline-offset: 3px;
 }
 
-#routes-form > input[type="radio"]:checked + label {
+#routes-form input[type="radio"]:checked + label,
+#routes-form input[type="checkbox"]:checked + label {
   color: var(--text-primary);
   border-color: var(--border-focus);
 }
