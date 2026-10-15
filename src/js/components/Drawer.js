@@ -134,7 +134,7 @@ const Drawer = ({
         aria-label=${label}
         tabIndex="-1"
         onKeyDown=${onKeyDown}
-        class="${isOpen ? 'translate-y-0 z-3' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 overflow-y-auto w-full max-w-[768px] max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default) p-8"
+        class="${isOpen ? 'translate-y-0 z-3' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 w-full max-w-[768px] ${drawerMode === 'routes' ? 'h-3/8' : ''} max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default) p-8"
       >
         <button
           type="button"
