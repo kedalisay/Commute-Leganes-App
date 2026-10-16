@@ -85,7 +85,7 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
 
 const LocationCardList = ({ locations, closeDrawer, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {
   return html`
-    <section aria-labelledby="locations-heading " class="overflow-y-auto max-h-full">
+    <section aria-labelledby="locations-heading" class="pb-8 overflow-y-auto max-h-full">
       <h2 id="locations-heading" class="sr-only">Choose a location</h2>
       <form id="locations-form">
         <fieldset class="flex flex-col gap-1 w-full">
@@ -126,7 +126,7 @@ const RouteCardList = ({ routes }) => {
   }
 
   return html`
-    <section aria-labelledby="routes-heading" class="overflow-y-auto max-h-full">
+    <section aria-labelledby="routes-heading" class="pb-8 overflow-y-auto max-h-full">
       <h2 id="routes-heading" class="sr-only">Choose a route</h2>
       <form id="routes-form">
         <fieldset class="flex flex-col gap-3 w-full">
