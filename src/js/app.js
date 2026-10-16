@@ -210,6 +210,8 @@ const App = () => {
       const routeName = feature.properties['route-name']
       const routeColor = feature.properties['stroke']
       const routeTotalDistance = feature.properties['total-distance']
+      const routeFare = feature.properties['route-fare']
+      const routeDirection = feature.properties['direction'][0].toUpperCase() + feature.properties['direction'].slice(1)
       const routeModeOfTransport = feature.properties['mode-of-transport'].split(',').map(mode => mode.trim())
       const routePoints = feature.properties['route-points'].split(',').map(point => point.trim())
 
@@ -223,6 +225,8 @@ const App = () => {
         total_distance: routeTotalDistance,
         mode_of_transport: routeModeOfTransport,
         points: routePoints,
+        direction: routeDirection,
+        fare: routeFare,
         color: routeColor
       })
     });
