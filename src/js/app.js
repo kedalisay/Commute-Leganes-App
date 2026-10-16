@@ -319,10 +319,4 @@ const App = () => {
     `
 }
 
-// <${RouteCardList} routes=${[
-//           {name: 'Guinobatan', total_fare: 23, total_duration: 13, total_transfers: 1, total_distance: 1.1},
-//           {name: 'Napnud', total_fare: 25, total_duration: 15, total_transfers: 2, total_distance: 1.3},
-//           {public: true, name: 'GUITODA - Guinobatan', total_fare: 30, total_duration: 20, total_transfers: 3, total_distance: 2.0},
-//         ]} />
-
 export default App
