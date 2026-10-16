@@ -14,6 +14,17 @@ import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
 window.addEventListener('DOMContentLoaded', async () => {
+    window.userCoords = navigator.geolocation ? await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition((position) => {
+        resolve({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        })
+      }, (error) => {
+        reject(error)
+      })
+    }) : null
+
     const routes = await (await fetch('/data/routes.json')).json()
 
     window.map.on('load', () => {
@@ -89,7 +100,7 @@ const LocationCardList = ({ locations, closeDrawer, isFromLocationFocused, setFr
       <h2 id="locations-heading" class="sr-only">Choose a location</h2>
       <form id="locations-form">
         <fieldset class="flex flex-col gap-1 w-full">
-        <${UseCurrentLocationButton} coords=${{latitude: 10.7875, longitude: 122.60455}}/>
+        ${window.userCoords ? html`<${UseCurrentLocationButton} coords=${window.userCoords}/>` : ''}
         <${ChooseOnMapButton} />
         ${locations.map((location) => html`<${LocationCard} location=${location} onClick=${() => {
           if (isFromLocationFocused) {
