@@ -14,17 +14,21 @@ import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
 window.addEventListener('DOMContentLoaded', async () => {
-    window.userCoords = navigator.geolocation ? await new Promise((resolve, reject) => {
-      navigator.geolocation.getCurrentPosition((position) => {
-        resolve({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude
+    try {
+      window.userCoords = navigator.geolocation ? await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition((position) => {
+          resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          })
+        }, (error) => {
+          reject(error)
         })
-      }, (error) => {
-        reject(error)
-      })
-    }) : null
-
+      }) : null
+    } catch (error) {
+      console.error('Error getting user location:', error)
+    }
+    
     const routes = await (await fetch('/data/routes.json')).json()
 
     window.map.on('load', () => {
