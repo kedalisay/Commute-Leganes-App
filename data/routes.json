@@ -17,7 +17,9 @@
         "direction": "inbound-outbound",
         "total-distance": 2,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Iglesia ni Cristo - Leganes, Deca Homes Leganes, Stone Gate, Leganes National High School, La Maison, Guinobatan Elementary School, Guinobatan Multi-Purpose Hall"
+        "route-points": "Leganes Tricycle Terminal, Iglesia ni Cristo - Leganes, Deca Homes Leganes, Stone Gate, Leganes National High School, La Maison, Guinobatan Elementary School, Guinobatan Multi-Purpose Hall",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -156,7 +158,9 @@
         "direction": "inbound-outbound",
         "total-distance": 4.6,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Whitehaven Gardens, Napnud Proper, Sitio Paho, Gua-an, Leganes Integrated Katunggan Ecopark"
+        "route-points": "Leganes Tricycle Terminal, Whitehaven Gardens, Napnud Proper, Sitio Paho, Gua-an, Leganes Integrated Katunggan Ecopark",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -271,7 +275,9 @@
         "direction": "inbound-outbound",
         "total-distance": 2.5,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, KJ Fairmart, M.V. Hechanova Barangay Hall, Playa de Jaen Beach Resort"
+        "route-points": "Leganes Tricycle Terminal, KJ Fairmart, M.V. Hechanova Barangay Hall, Playa de Jaen Beach Resort",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -390,7 +396,9 @@
         "direction": "inbound-outbound",
         "total-distance": 1.2,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, San Vicente Multi-Purpose Hall, San Vicente Dragon Fruit Farm, Coliseo de Leganes"
+        "route-points": "Leganes Commercial Complex, San Vicente Multi-Purpose Hall, San Vicente Dragon Fruit Farm, Coliseo de Leganes",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -461,7 +469,15 @@
         "direction": "inbound-outbound",
         "total-distance": 4.3,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Uncommon Grounds Bistro, Calaboa Barangay Hall, Calaboa Elementary School"
+        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Uncommon Grounds Bistro, Calaboa Barangay Hall, Calaboa Elementary School",
+        "route-fare": [
+          {
+            "mode": "tricycle",
+            "amount": 30,
+            "type": "per person"
+          }
+        ],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -628,7 +644,9 @@
         "direction": "inbound-outbound",
         "total-distance": 3.6,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Cari Mayor Barangay Hall, Cari Mayor Elementary School"
+        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Cari Mayor Barangay Hall, Cari Mayor Elementary School",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -855,7 +873,9 @@
         "direction": "inbound-outbound",
         "total-distance": 3,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Cari Minor Multi-Purpose Hall, Cari Minor Chapel"
+        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Cari Minor Multi-Purpose Hall, Cari Minor Chapel",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -982,7 +1002,9 @@
         "direction": "inbound-outbound",
         "total-distance": 7,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Leganes Integrated Katunggan Ecopark, Bungso-an Elementary School, Camp Martin P. Jaen Sr., Nabitasan Multi-Purpose Hall"
+        "route-points": "Leganes Tricycle Terminal, Leganes Integrated Katunggan Ecopark, Bungso-an Elementary School, Camp Martin P. Jaen Sr., Nabitasan Multi-Purpose Hall",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -1193,7 +1215,9 @@
         "direction": "inbound-outbound",
         "total-distance": 3.2,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Coastal Hotel, Kingfields Trade, Vela Amanda, Bigke Proper"
+        "route-points": "Leganes Tricycle Terminal, Coastal Hotel, Kingfields Trade, Vela Amanda, Bigke Proper",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -1320,7 +1344,9 @@
         "direction": "inbound-outbound",
         "total-distance": 1.5,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Leganes Plaza, Jardeleza Arcade, Jolibee Leganes, San Vicente Village Subdivision, Glenville Subdivision, Guihaman-Buntatala Elementary School, Buntatala Barangay Hall, Villa Amelia Subdivision"
+        "route-points": "Leganes Commercial Complex, Leganes Plaza, Jardeleza Arcade, Jolibee Leganes, San Vicente Village Subdivision, Glenville Subdivision, Guihaman-Buntatala Elementary School, Buntatala Barangay Hall, Villa Amelia Subdivision",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -1455,7 +1481,9 @@
         "direction": "inbound-outbound",
         "total-distance": 3.3,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Villa Leganes Subdivision, Cagamutan Norte Elementary School"
+        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Villa Leganes Subdivision, Cagamutan Norte Elementary School",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -1542,7 +1570,9 @@
         "direction": "inbound-outbound",
         "total-distance": 4,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Whitehaven Gardens, Vela Amanda, Guintas Barangay Hall, Camangay Proper"
+        "route-points": "Leganes Tricycle Terminal, Whitehaven Gardens, Vela Amanda, Guintas Barangay Hall, Camangay Proper",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
@@ -1721,7 +1751,9 @@
         "direction": "inbound-outbound",
         "total-distance": 3.5,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Plaza, Lopez Galleria, Jardeleza Subdivision, Saint Peter Chapels, Lapayon Chapel, Lapayon Barangay Hall, Lapayon Elementary School, Lapayon National High School,"
+        "route-points": "Leganes Plaza, Lopez Galleria, Jardeleza Subdivision, Saint Peter Chapels, Lapayon Chapel, Lapayon Barangay Hall, Lapayon Elementary School, Lapayon National High School,",
+        "route-fare": [],
+        "route-fare-currency": "PHP"
       },
       "geometry": {
         "type": "LineString",
