@@ -203,11 +203,16 @@ const App = () => {
   const [routes, setRoutes] = useState([])
 
   const showPublicRoutes = () => {
-    const features = window.map.getSource('routes')._data.geojson.features
+    const features = window.map.getSource('routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name']))
     const routeData = []
 
     features.forEach((feature) => {
       const routeName = feature.properties['route-name']
+      const routeColor = feature.properties['stroke']
+      const routeTotalDistance = feature.properties['total-distance']
+      const routeModeOfTransport = feature.properties['mode-of-transport'].split(',').map(mode => mode.trim())
+      const routePoints = feature.properties['route-points'].split(',').map(point => point.trim())
+
       const isVisible = window.map.getLayoutProperty(`route-${routeName}`, 'visibility') === 'visible'
 
       window.map.setLayoutProperty(`route-${routeName}`, 'visibility', isVisible ? 'none' : 'visible')
@@ -215,7 +220,10 @@ const App = () => {
       routeData.push({
         name: routeName,
         public: true,
-        total_distance: 1
+        total_distance: routeTotalDistance,
+        mode_of_transport: routeModeOfTransport,
+        points: routePoints,
+        color: routeColor
       })
     });
     setRoutes(routeData)
