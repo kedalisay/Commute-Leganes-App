@@ -13,22 +13,9 @@ import LocationCard from './components/LocationCard.js'
 import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
+import { getGeolocation } from './utils/Geolocation.js'
+
 window.addEventListener('DOMContentLoaded', async () => {
-    try {
-      window.userCoords = navigator.geolocation ? await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition((position) => {
-          resolve({
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude
-          })
-        }, (error) => {
-          reject(error)
-        })
-      }) : null
-    } catch (error) {
-      console.error('Error getting user location:', error)
-    }
-    
     const routes = await (await fetch('/data/routes.json')).json()
 
     window.map.on('load', () => {
@@ -98,13 +85,42 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
   `
 }
 
-const LocationCardList = ({ locations, closeDrawer, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {
+const LocationCardList = ({ locations, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
+const useCurrentLocationHandler = async () => {
+    const coords = await getGeolocation()
+    if (!coords) {
+      alert('Unable to get your current location. Please make sure you have granted location access to this web app.')
+      closeDrawer()
+      return
+    }
+
+    if (deviceLocation !== null) {
+      if (coords['latitude'] !== deviceLocation['latitude'] && coords['longitude'] !== deviceLocation['longitude']) {
+        setDeviceLocation(coords)
+      }
+      if (isFromLocationFocused) {
+        setFromLocation(deviceLocation)
+      } else if (isToLocationFocused) {
+        setToLocation(deviceLocation)
+      }
+    } else {
+      setDeviceLocation(coords)
+      if (isFromLocationFocused) {
+        setFromLocation(coords)
+      } else if (isToLocationFocused) {
+        setToLocation(coords)
+      }
+    }
+    
+    closeDrawer()
+  }
+
   return html`
     <section aria-labelledby="locations-heading" class="pb-8 overflow-y-auto max-h-full">
       <h2 id="locations-heading" class="sr-only">Choose a location</h2>
       <form id="locations-form">
         <fieldset class="flex flex-col gap-1 w-full">
-        ${window.userCoords ? html`<${UseCurrentLocationButton} coords=${window.userCoords}/>` : ''}
+        <${UseCurrentLocationButton} onClick=${useCurrentLocationHandler} />
         <${ChooseOnMapButton} />
         ${locations.map((location) => html`<${LocationCard} location=${location} onClick=${() => {
           if (isFromLocationFocused) {
@@ -154,10 +170,38 @@ const RouteCardList = ({ routes }) => {
 
 const App = () => {
   // Location state management
+  const [deviceLocation, setDeviceLocation] = useState(null)
+
   const [fromLocation, setFromLocation] = useState('')
+  const setFromLocationHandler = (location) => {
+    if (typeof location === 'object' && location !== null) {
+      if (location.hasOwnProperty('latitude') && location.hasOwnProperty('longitude')) {
+        setFromLocation(`${location.latitude}, ${location.longitude}`)
+      } else {
+        setFromLocation(location.toString())
+      }
+      return
+    }
+
+    setFromLocation(location)
+  }
+
   const [isFromLocationFocused, setIsFromLocationFocused] = useState(false)
 
   const [toLocation, setToLocation] = useState('')
+  const setToLocationHandler = (location) => {
+    if (typeof location === 'object' && location !== null) {
+      if (location.hasOwnProperty('latitude') && location.hasOwnProperty('longitude')) {
+        setToLocation(`${location.latitude}, ${location.longitude}`)
+      } else {
+        setToLocation(location.toString())
+      }
+      return
+    }
+
+    setToLocation(location)
+  }
+  
   const [isToLocationFocused, setIsToLocationFocused] = useState(false)
 
   const [locations, setLocations] = useState([])
@@ -290,10 +334,10 @@ const App = () => {
         closeDrawer=${closeDrawer}
         setLocations=${setLocations}
         fromLocation=${fromLocation} 
-        setFromLocation=${setFromLocation}
+        setFromLocation=${setFromLocationHandler}
         setIsFromLocationFocused=${setIsFromLocationFocused}
         toLocation=${toLocation} 
-        setToLocation=${setToLocation}
+        setToLocation=${setToLocationHandler}
         setIsToLocationFocused=${setIsToLocationFocused}
       />
       <${AppButtons} 
@@ -322,10 +366,12 @@ const App = () => {
           ? html`<${LocationCardList} 
             locations=${locations} 
             closeDrawer=${closeDrawer} 
+            deviceLocation=${deviceLocation}
+            setDeviceLocation=${setDeviceLocation}
             isFromLocationFocused=${isFromLocationFocused} 
-            setFromLocation=${setFromLocation} 
+            setFromLocation=${setFromLocationHandler} 
             isToLocationFocused=${isToLocationFocused} 
-            setToLocation=${setToLocation} 
+            setToLocation=${setToLocationHandler} 
           />` 
           : null}
         ${drawerMode === 'routes' ? html`<${RouteCardList} routes=${routes} />` : null}
