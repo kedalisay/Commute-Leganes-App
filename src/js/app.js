@@ -14,6 +14,23 @@ import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
 
 import { getGeolocation } from './utils/Geolocation.js'
+import { addMarkerToMap, removeMarkerFromMap } from './utils/MapLibreGL.js'
+
+let markerFrom = null
+let markerTo = null
+
+const centerMarker = (map, marker) => {
+  const center = map.getCenter();
+  marker.setLngLat([center.lng, center.lat]);
+}
+
+const centerMarkerFromListener = (e) => {
+  centerMarker(window.map, markerFrom)
+}
+
+const centerMarkerToListener = (e) => {
+  centerMarker(window.map, markerTo)
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
     const routes = await (await fetch('/data/routes.json')).json()
@@ -85,8 +102,8 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
   `
 }
 
-const LocationCardList = ({ locations, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
-const useCurrentLocationHandler = async () => {
+const LocationCardList = ({ locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
+  const useCurrentLocationHandler = async () => {
     const coords = await getGeolocation()
     if (!coords) {
       alert('Unable to get your current location. Please make sure you have granted location access to this web app.')
@@ -111,8 +128,30 @@ const useCurrentLocationHandler = async () => {
         setToLocation(coords)
       }
     }
+
+    isFromLocationFocused ? (markerFrom = addMarkerToMap(window.map, coords, isFromLocationFocused)) : (markerTo = addMarkerToMap(window.map, coords, isFromLocationFocused))
+    window.map.flyTo({
+      center: [coords['longitude'], coords['latitude']],
+    })
     
     closeDrawer()
+  }
+
+  const centerMarkerFromOnMapDrag = () => {
+    window.map.on('drag', centerMarkerFromListener);
+    window.map.on('zoom', centerMarkerFromListener);
+  }
+
+  const centerMarkerToOnMapDrag = () => {
+    window.map.on('drag', centerMarkerToListener);
+    window.map.on('zoom', centerMarkerToListener);
+  }
+
+  const chooseOnMapHandler = () => {
+    const coords = window.map.getCenter()
+    setDrawerToLocationActions()
+    isFromLocationFocused ? (markerFrom = addMarkerToMap(window.map, coords, isFromLocationFocused)) : (markerTo = addMarkerToMap(window.map, coords, isFromLocationFocused))
+    isFromLocationFocused ? centerMarkerFromOnMapDrag() : centerMarkerToOnMapDrag()
   }
 
   return html`
@@ -121,7 +160,7 @@ const useCurrentLocationHandler = async () => {
       <form id="locations-form">
         <fieldset class="flex flex-col gap-1 w-full">
         <${UseCurrentLocationButton} onClick=${useCurrentLocationHandler} />
-        <${ChooseOnMapButton} />
+        <${ChooseOnMapButton} onClick=${chooseOnMapHandler}/>
         ${locations.map((location) => html`<${LocationCard} location=${location} onClick=${() => {
           if (isFromLocationFocused) {
             setFromLocation(location.full_address)
@@ -206,6 +245,32 @@ const App = () => {
 
   const [locations, setLocations] = useState([])
 
+  const stopCenterMarkerOnMapDrag = () => {
+    window.map.off('drag', centerMarkerFromListener);
+    window.map.off('zoom', centerMarkerFromListener);
+    window.map.off('drag', centerMarkerToListener);
+    window.map.off('zoom', centerMarkerToListener);
+  }
+
+
+  const confirmLocation = () => {
+    const center = window.map.getCenter()
+    const coords = { latitude: center.lat, longitude: center.lng }
+    if (isFromLocationFocused) {
+      setFromLocationHandler(coords)
+      stopCenterMarkerOnMapDrag()
+    } else if (isToLocationFocused) {
+      setToLocationHandler(coords)
+      stopCenterMarkerOnMapDrag()
+    }
+    closeDrawer()
+  }
+
+  const locationActions = [
+    { label: 'Confirm location', onClick: confirmLocation, variant: 'primary' },
+    { label: 'Go back to list of locations', onClick: () => setDrawerToLocations(), variant: 'secondary' },
+  ]
+
   // Drawer state management
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const openDrawer = () => setIsDrawerOpen(true)
@@ -214,6 +279,7 @@ const App = () => {
   const [drawerMode, setDrawerMode] = useState('default') 
   const setDrawerToSettings = () => setDrawerMode('settings')
   const setDrawerToLocations = () => setDrawerMode('locations')
+  const setDrawerToLocationActions = () => setDrawerMode('locations-action')
   const setDrawerToRoutes = () => setDrawerMode('routes')
   const setDrawerToDefault = () => setDrawerMode('default')
 
@@ -365,6 +431,8 @@ const App = () => {
         ${drawerMode === 'locations' 
           ? html`<${LocationCardList} 
             locations=${locations} 
+            drawerMode=${drawerMode}
+            setDrawerToLocationActions=${setDrawerToLocationActions}
             closeDrawer=${closeDrawer} 
             deviceLocation=${deviceLocation}
             setDeviceLocation=${setDeviceLocation}
@@ -373,6 +441,9 @@ const App = () => {
             isToLocationFocused=${isToLocationFocused} 
             setToLocation=${setToLocationHandler} 
           />` 
+          : null}
+        ${drawerMode === 'locations-action' 
+          ? html`<${ActionButtons} buttons=${locationActions} direction="column" />` 
           : null}
         ${drawerMode === 'routes' ? html`<${RouteCardList} routes=${routes} />` : null}
       </${Drawer}>
