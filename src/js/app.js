@@ -245,13 +245,12 @@ const App = () => {
 
   const [locations, setLocations] = useState([])
 
-  const stopCenterMarkerOnMapDrag = () => {
+  const stopCenterMarkerOnMapDrag = (listener) => {
     window.map.off('drag', centerMarkerFromListener);
     window.map.off('zoom', centerMarkerFromListener);
     window.map.off('drag', centerMarkerToListener);
     window.map.off('zoom', centerMarkerToListener);
   }
-
 
   const confirmLocation = () => {
     const center = window.map.getCenter()
@@ -268,7 +267,10 @@ const App = () => {
 
   const locationActions = [
     { label: 'Confirm location', onClick: confirmLocation, variant: 'primary' },
-    { label: 'Go back to list of locations', onClick: () => setDrawerToLocations(), variant: 'secondary' },
+    { label: 'Go back to list of locations', onClick: () => {
+      setDrawerToLocations()
+      isFromLocationFocused ? removeMarkerFromMap(markerFrom) : removeMarkerFromMap(markerTo)
+    }, variant: 'secondary' },
   ]
 
   // Drawer state management
