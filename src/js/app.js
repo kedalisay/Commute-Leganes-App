@@ -1,3 +1,4 @@
+import { Map, getVersion, setWorkerUrl } from 'maplibre-gl';
 import { useEffect, useState } from 'https://esm.sh/preact/hooks'
 
 import html from './html.js'
@@ -16,43 +17,37 @@ import PublicRouteCard from './components/PublicRouteCard.js'
 import { getGeolocation } from './utils/Geolocation.js'
 import { addMarkerToMap, removeMarkerFromMap } from './utils/MapLibreGL.js'
 
-let markerFrom = null
-let markerTo = null
+setWorkerUrl(new URL(`/src/js/maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
 
-const centerMarker = (map, marker) => {
-  const center = map.getCenter();
-  marker.setLngLat([center.lng, center.lat]);
-}
+const MAP = new Map({
+  container: 'map',
+  style: '/assets/osm_custom_bright_commute_leganes.json', 
+});
 
-const centerMarkerFromListener = (e) => {
-  centerMarker(window.map, markerFrom)
-}
-
-const centerMarkerToListener = (e) => {
-  centerMarker(window.map, markerTo)
-}
+// let markerFrom = null
+// let markerTo = null
 
 window.addEventListener('DOMContentLoaded', async () => {
-    const routes = await (await fetch('/data/routes.json')).json()
+    const PUBLIC_ROUTES = await (await fetch('/data/public_routes.json')).json()
 
-    window.map.on('load', () => {
-      window.map.addSource('routes', {
+    MAP.on('load', () => {
+      MAP.addSource('public-routes', {
       'type': 'geojson',
-      'data': routes
+      'data': PUBLIC_ROUTES
       });
 
-      routes.features.forEach((route) => {
-        window.map.addLayer({
-          'id': `route-${route.properties['route-name']}`,
+      PUBLIC_ROUTES.features.forEach((route) => {
+        MAP.addLayer({
+          'id': `public-route-${route.properties['route-name']}`,
           'type': 'line',
-          'source': 'routes',
+          'source': 'public-routes',
           'layout': { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
           'paint': {
             'line-color': route.properties['stroke'],
             'line-width': route.properties['stroke-width'],
             'line-opacity': route.properties['stroke-opacity'],
           },
-          'filter': ['==', 'route-name', route.properties['route-name']],
+          'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
         })
       })
   })
@@ -103,6 +98,14 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
 }
 
 const LocationCardList = ({ locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
+  const centerMarkerFromListener = (e) => {
+    centerMarker(MAP, markerFrom)
+  }
+
+  const centerMarkerToListener = (e) => {
+    centerMarker(MAP, markerTo)
+  }
+  
   const useCurrentLocationHandler = async () => {
     const coords = await getGeolocation()
     if (!coords) {
@@ -129,30 +132,30 @@ const LocationCardList = ({ locations, setDrawerToLocationActions, closeDrawer, 
       }
     }
 
-    isFromLocationFocused ? (markerFrom = addMarkerToMap(window.map, coords, isFromLocationFocused)) : (markerTo = addMarkerToMap(window.map, coords, isFromLocationFocused))
-    window.map.flyTo({
+    isFromLocationFocused ? (markerFrom = addMarkerToMap(map, coords, isFromLocationFocused)) : (markerTo = addMarkerToMap(map, coords, isFromLocationFocused))
+    MAP.flyTo({
       center: [coords['longitude'], coords['latitude']],
     })
     
     closeDrawer()
   }
 
-  const centerMarkerFromOnMapDrag = () => {
-    window.map.on('drag', centerMarkerFromListener);
-    window.map.on('zoom', centerMarkerFromListener);
-  }
+  // const centerMarkerFromOnMapDrag = () => {
+  //  MAP.on('drag', centerMarkerFromListener);
+  //  MAP.on('zoom', centerMarkerFromListener);
+  // }
 
-  const centerMarkerToOnMapDrag = () => {
-    window.map.on('drag', centerMarkerToListener);
-    window.map.on('zoom', centerMarkerToListener);
-  }
+  // const centerMarkerToOnMapDrag = () => {
+  //  MAP.on('drag', centerMarkerToListener);
+  //  MAP.on('zoom', centerMarkerToListener);
+  // }
 
-  const chooseOnMapHandler = () => {
-    const coords = window.map.getCenter()
-    setDrawerToLocationActions()
-    isFromLocationFocused ? (markerFrom = addMarkerToMap(window.map, coords, isFromLocationFocused)) : (markerTo = addMarkerToMap(window.map, coords, isFromLocationFocused))
-    isFromLocationFocused ? centerMarkerFromOnMapDrag() : centerMarkerToOnMapDrag()
-  }
+  // const chooseOnMapHandler = () => {
+  //   const coords =MAP.getCenter()
+  //   setDrawerToLocationActions()
+  //   isFromLocationFocused ? (markerFrom = addMarkerToMap(map, coords, isFromLocationFocused)) : (markerTo = addMarkerToMap(map, coords, isFromLocationFocused))
+  //   isFromLocationFocused ? centerMarkerFromOnMapDrag() : centerMarkerToOnMapDrag()
+  // }
 
   return html`
     <section aria-labelledby="locations-heading" class="pb-8 overflow-y-auto max-h-full">
@@ -178,19 +181,19 @@ const LocationCardList = ({ locations, setDrawerToLocationActions, closeDrawer, 
 
 const RouteCardList = ({ routes }) => {
   const focusRoute = (route) => {
-    const features = window.map.getSource('routes')._data.geojson.features
+    const features = MAP.getSource('public-routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
 
-    const allRoutesShown = features.every((feature) => window.map.getLayoutProperty(`route-${feature.properties['route-name']}`, 'visibility') === 'visible')
+    const allRoutesShown = features.every((feature) => MAP.getLayoutProperty(`public-route-${feature.properties['route-name']}`, 'visibility') === 'visible')
     if (allRoutesShown) {
       features.forEach((feature) => {
-        window.map.setLayoutProperty(`route-${feature.properties['route-name']}`, 'visibility', 'none')
+        MAP.setLayoutProperty(`public-route-${feature.properties['route-name']}`, 'visibility', 'none')
       })
-      window.map.setLayoutProperty(`route-${route.name}`, 'visibility', 'visible')
+      MAP.setLayoutProperty(`public-route-${route.name}`, 'visibility', 'visible')
     } else {
-        if (window.map.getLayoutProperty(`route-${route.name}`, 'visibility') === 'visible') {
-        window.map.setLayoutProperty(`route-${route.name}`, 'visibility', 'none');
+        if (MAP.getLayoutProperty(`public-route-${route.name}`, 'visibility') === 'visible') {
+       MAP.setLayoutProperty(`public-route-${route.name}`, 'visibility', 'none');
       } else {
-        window.map.setLayoutProperty(`route-${route.name}`, 'visibility', 'visible');
+       MAP.setLayoutProperty(`public-route-${route.name}`, 'visibility', 'visible');
       }
     }
   }
@@ -246,14 +249,14 @@ const App = () => {
   const [locations, setLocations] = useState([])
 
   const stopCenterMarkerOnMapDrag = (listener) => {
-    window.map.off('drag', centerMarkerFromListener);
-    window.map.off('zoom', centerMarkerFromListener);
-    window.map.off('drag', centerMarkerToListener);
-    window.map.off('zoom', centerMarkerToListener);
+    MAP.off('drag', centerMarkerFromListener);
+    MAP.off('zoom', centerMarkerFromListener);
+    MAP.off('drag', centerMarkerToListener);
+    MAP.off('zoom', centerMarkerToListener);
   }
 
   const confirmLocation = () => {
-    const center = window.map.getCenter()
+    const center =MAP.getCenter()
     const coords = { latitude: center.lat, longitude: center.lng }
     if (isFromLocationFocused) {
       setFromLocationHandler(coords)
@@ -330,11 +333,12 @@ const App = () => {
   const [routes, setRoutes] = useState([])
 
   const showPublicRoutes = () => {
-    const features = window.map.getSource('routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name']))
+    const features = MAP.getSource('public-routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
     const routeData = []
 
     features.forEach((feature) => {
       const routeName = feature.properties['route-name']
+      const isPublic = feature.properties['public']
       const routeColor = feature.properties['stroke']
       const routeTotalDistance = feature.properties['total-distance']
       const routeFare = feature.properties['route-fare']
@@ -342,13 +346,13 @@ const App = () => {
       const routeModeOfTransport = feature.properties['mode-of-transport'].split(',').map(mode => mode.trim())
       const routePoints = feature.properties['route-points'].split(',').map(point => point.trim())
 
-      const isVisible = window.map.getLayoutProperty(`route-${routeName}`, 'visibility') === 'visible'
+      const isVisible = MAP.getLayoutProperty(`public-route-${routeName}`, 'visibility') === 'visible'
 
-      window.map.setLayoutProperty(`route-${routeName}`, 'visibility', isVisible ? 'none' : 'visible')
+      MAP.setLayoutProperty(`public-route-${routeName}`, 'visibility', isVisible ? 'none' : 'visible')
 
       routeData.push({
         name: routeName,
-        public: true,
+        public: isPublic,
         total_distance: routeTotalDistance,
         mode_of_transport: routeModeOfTransport,
         points: routePoints,
@@ -357,23 +361,26 @@ const App = () => {
         color: routeColor
       })
     });
+
     setRoutes(routeData)
     setDrawerToRoutes()
     openDrawer()
   }
 
   const hidePublicRoutes = () => {
-    const features = window.map.getSource('routes')._data.geojson.features
+    const features = MAP.getSource('public-routes')._data.geojson.features.filter((feature) => feature.properties['public'] === true)
 
     features.forEach((feature) => {
       const routeName = feature.properties['route-name']
-      window.map.setLayoutProperty(`route-${routeName}`, 'visibility', 'none')
+      MAP.setLayoutProperty(`public-route-${routeName}`, 'visibility', 'none')
     });
+
     setRoutes([])
     setDrawerToDefault()
     closeDrawer()
   }
 
+  // Update document title based on drawer mode
   useEffect(() => {
     switch (drawerMode) {
       case 'settings':
