@@ -142,6 +142,7 @@ const App = () => {
     }
 
     stopMarkerCentering.current()    
+    setDrawerToDefault()
     closeDrawer()
   }
 
