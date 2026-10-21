@@ -13,6 +13,7 @@ import ChooseOnMapButton from './components/ChooseOnMapButton.js'
 import LocationCard from './components/LocationCard.js'
 import RouteCard from './components/RouteCard.js'
 import PublicRouteCard from './components/PublicRouteCard.js'
+import RouteCardList from './components/RouteCardList.js'
 
 import { getGeolocation } from './utils/Geolocation.js'
 import { addMarkerToMap, removeMarkerFromMap } from './utils/MapLibreGL.js'
@@ -173,37 +174,6 @@ const LocationCardList = ({ locations, setDrawerToLocationActions, closeDrawer, 
             closeDrawer()
           }
         }} />`)}
-        </fieldset>
-      </form>
-    </section>
-  `
-}
-
-const RouteCardList = ({ routes }) => {
-  const focusRoute = (route) => {
-    const features = MAP.getSource('public-routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
-
-    const allRoutesShown = features.every((feature) => MAP.getLayoutProperty(`public-route-${feature.properties['route-name']}`, 'visibility') === 'visible')
-    if (allRoutesShown) {
-      features.forEach((feature) => {
-        MAP.setLayoutProperty(`public-route-${feature.properties['route-name']}`, 'visibility', 'none')
-      })
-      MAP.setLayoutProperty(`public-route-${route.name}`, 'visibility', 'visible')
-    } else {
-        if (MAP.getLayoutProperty(`public-route-${route.name}`, 'visibility') === 'visible') {
-       MAP.setLayoutProperty(`public-route-${route.name}`, 'visibility', 'none');
-      } else {
-       MAP.setLayoutProperty(`public-route-${route.name}`, 'visibility', 'visible');
-      }
-    }
-  }
-
-  return html`
-    <section aria-labelledby="routes-heading" class="pb-8 overflow-y-auto max-h-full">
-      <h2 id="routes-heading" class="sr-only">Choose a route</h2>
-      <form id="routes-form">
-        <fieldset class="flex flex-col gap-3 w-full">
-        ${routes.map((route) => html`<${route.public ? PublicRouteCard : RouteCard} route=${route} onClick=${() => route.public ? focusRoute(route) : () => {}} />`)}
         </fieldset>
       </form>
     </section>
@@ -454,7 +424,7 @@ const App = () => {
         ${drawerMode === 'locations-action' 
           ? html`<${ActionButtons} buttons=${locationActions} direction="column" />` 
           : null}
-        ${drawerMode === 'routes' ? html`<${RouteCardList} routes=${routes} />` : null}
+        ${drawerMode === 'routes' ? html`<${RouteCardList} map=${MAP} routes=${routes} />` : null}
       </${Drawer}>
     </main>
     `
