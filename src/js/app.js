@@ -11,6 +11,8 @@ import ActionButtons from './components/ActionButtons.js'
 import LocationCardList from './components/LocationCardList.js'
 import RouteCardList from './components/RouteCardList.js'
 
+import { removeMarkerFromMap } from './utils/MapLibreGL.js';
+
 setWorkerUrl(new URL(`/src/js/maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
 
 const MAP = new Map({
@@ -147,6 +149,7 @@ const App = () => {
     { label: 'Confirm location', onClick: confirmLocation, variant: 'primary' },
     { label: 'Go back to list of locations', onClick: () => {
       setDrawerToLocations()
+      stopMarkerCentering.current()
       isFromLocationFocused ? removeMarkerFromMap(fromMarker) : removeMarkerFromMap(toMarker)
     }, variant: 'secondary' },
   ]
