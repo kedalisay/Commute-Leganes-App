@@ -2,13 +2,14 @@ import html from '../html.js'
 
 import { removeMarkerFromMap } from '../utils/MapLibreGL.js'
 
-const RouteWidget = ({ map,drawerMode, setDrawerToDefault, setDrawerToLocations, isDrawerOpen, openDrawer, closeDrawer,  setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, toMarker, isDrawerOpen, openDrawer, closeDrawer,  setLocations, fromLocation, setFromLocation, isFromLocationFocused, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
 
   const handleFromInput = (event) => {
     setDrawerToLocations();
     if (event.target.value === '') {
       setFromLocation('');
-      removeMarkerFromMap(map, true);
+      stopMarkerCentering.current()
+      removeMarkerFromMap(fromMarker);
       setIsFromLocationFocused(false);
       setDrawerToDefault();
       closeDrawer();
@@ -41,7 +42,8 @@ const RouteWidget = ({ map,drawerMode, setDrawerToDefault, setDrawerToLocations,
     setDrawerToLocations();
     if (event.target.value === '') {
       setToLocation('');
-      removeMarkerFromMap(map, false);
+      stopMarkerCentering.current()
+      removeMarkerFromMap(toMarker);
       setIsToLocationFocused(false);
       setDrawerToDefault();
       closeDrawer();

@@ -48,7 +48,7 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
   return html`
-    <section aria-hidden=${drawerMode === 'settings' || drawerMode === 'locations' ? true : false} inert=${drawerMode === 'settings' || drawerMode === 'locations' ? true : false} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
+    <section aria-hidden=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} inert=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
       <h2 class="sr-only">App Buttons</h2>
       <button onClick=${onSettingsClick} class="${drawerMode === 'settings' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
         <svg width="22" xmlns="http://www.w3.org/2000/svg" height="22" id="screenshot-53f07293-9876-8096-8008-ad032f479751" viewBox="-1564.2 -1177.5 30 32" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
@@ -145,13 +145,15 @@ const App = () => {
     closeDrawer()
   }
 
+  const goBackToLocations = () => {
+    stopMarkerCentering.current()
+    isFromLocationFocused ? removeMarkerFromMap(fromMarker) : removeMarkerFromMap(toMarker)
+    setDrawerToLocations()
+  }
+
   const locationActions = [
     { label: 'Confirm location', onClick: confirmLocation, variant: 'primary' },
-    { label: 'Go back to list of locations', onClick: () => {
-      setDrawerToLocations()
-      stopMarkerCentering.current()
-      isFromLocationFocused ? removeMarkerFromMap(fromMarker) : removeMarkerFromMap(toMarker)
-    }, variant: 'secondary' },
+    { label: 'Go back to list of locations', onClick: goBackToLocations, variant: 'secondary' },
   ]
 
   // Drawer state management
@@ -279,7 +281,9 @@ const App = () => {
     <main class="relative z-1">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
-        map=${MAP}
+        stopMarkerCentering=${stopMarkerCentering}
+        fromMarker=${fromMarker} 
+        toMarker=${toMarker}
         drawerMode=${drawerMode}
         setDrawerToDefault=${setDrawerToDefault}
         setDrawerToLocations=${setDrawerToLocations}
@@ -287,18 +291,22 @@ const App = () => {
         openDrawer=${openDrawer} 
         closeDrawer=${closeDrawer}
         setLocations=${setLocations}
-        fromLocation=${fromLocation} 
+        fromLocation=${fromLocation}
         setFromLocation=${setFromLocationHandler}
+        isFromLocationFocused=${isFromLocationFocused} 
         setIsFromLocationFocused=${setIsFromLocationFocused}
         toLocation=${toLocation} 
         setToLocation=${setToLocationHandler}
         setIsToLocationFocused=${setIsToLocationFocused}
       />
-      <${AppButtons} 
-        drawerMode=${drawerMode} 
-        onSettingsClick=${showSettings}
-        onRoutesClick=${drawerMode === 'routes' ? hidePublicRoutes : showPublicRoutes}
-      />
+      ${drawerMode !== 'locations-action'
+        ? html`<${AppButtons} 
+            drawerMode=${drawerMode} 
+            onSettingsClick=${showSettings}
+            onRoutesClick=${drawerMode === 'routes' ? hidePublicRoutes : showPublicRoutes}
+          />`
+        : null
+      }
       <${Settings}
         drawerMode=${drawerMode}
         hideSettings=${hideSettings}
