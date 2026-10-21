@@ -1,8 +1,8 @@
 {
   "type": "FeatureCollection",
   "metadata": {
-    "name": "Commute Leganes Routes",
-    "description": "A collection of tricycle, trisikad, e-trike, and jeepney routes in Leganes, Iloilo.",
+    "name": "Commute Leganes Public Routes",
+    "description": "A collection of public tricycle, trisikad, e-trike, and jeepney routes in Leganes, Iloilo.",
     "last-updated": "2026-10-21T10:00:00Z"
   },
   "features": [
