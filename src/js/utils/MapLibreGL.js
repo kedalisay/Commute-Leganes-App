@@ -14,4 +14,30 @@ const removeMarkerFromMap = (marker) => {
   marker.remove();
 }
 
-export { addMarkerToMap, removeMarkerFromMap }
+const centerMarkerOnMap = (map, marker) => {
+  const center = map.getCenter();
+  marker.setLngLat([center.lng, center.lat]);
+}
+
+const keepMarkerOnMapCentered = (map, marker) => {
+  const centerMarkerListener = (e) => {
+    centerMarkerOnMap(map, marker)
+  }
+
+  const stopMarkerCentering = () => {
+    map.off('drag', centerMarkerListener);
+    map.off('zoom', centerMarkerListener);
+  }
+
+  map.on('drag', centerMarkerListener);
+  map.on('zoom', centerMarkerListener);
+
+  return stopMarkerCentering;
+}
+
+export { 
+  addMarkerToMap, 
+  removeMarkerFromMap, 
+  centerMarkerOnMap, 
+  keepMarkerOnMapCentered
+}

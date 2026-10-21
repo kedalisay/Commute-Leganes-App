@@ -1,5 +1,5 @@
 import { Map, getVersion, setWorkerUrl } from 'maplibre-gl';
-import { useEffect, useState } from 'https://esm.sh/preact/hooks'
+import { useEffect, useState, useRef } from 'https://esm.sh/preact/hooks'
 
 import html from './html.js'
 
@@ -8,15 +8,8 @@ import Settings from './views/Settings.js'
 import Drawer from './components/Drawer.js'
 import RouteWidget from './components/RouteWidget.js'
 import ActionButtons from './components/ActionButtons.js'
-import UseCurrentLocationButton from './components/UseCurrentLocationButton.js'
-import ChooseOnMapButton from './components/ChooseOnMapButton.js'
-import LocationCard from './components/LocationCard.js'
-import RouteCard from './components/RouteCard.js'
-import PublicRouteCard from './components/PublicRouteCard.js'
+import LocationCardList from './components/LocationCardList.js'
 import RouteCardList from './components/RouteCardList.js'
-
-import { getGeolocation } from './utils/Geolocation.js'
-import { addMarkerToMap, removeMarkerFromMap } from './utils/MapLibreGL.js'
 
 setWorkerUrl(new URL(`/src/js/maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
 
@@ -24,9 +17,6 @@ const MAP = new Map({
   container: 'map',
   style: '/assets/osm_custom_bright_commute_leganes.json', 
 });
-
-// let markerFrom = null
-// let markerTo = null
 
 window.addEventListener('DOMContentLoaded', async () => {
     const PUBLIC_ROUTES = await (await fetch('/data/public_routes.json')).json()
@@ -98,97 +88,19 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
   `
 }
 
-const LocationCardList = ({ locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
-  const centerMarkerFromListener = (e) => {
-    centerMarker(MAP, markerFrom)
-  }
-
-  const centerMarkerToListener = (e) => {
-    centerMarker(MAP, markerTo)
-  }
-  
-  const useCurrentLocationHandler = async () => {
-    const coords = await getGeolocation()
-    if (!coords) {
-      alert('Unable to get your current location. Please make sure you have granted location access to this web app.')
-      closeDrawer()
-      return
-    }
-
-    if (deviceLocation !== null) {
-      if (coords['latitude'] !== deviceLocation['latitude'] && coords['longitude'] !== deviceLocation['longitude']) {
-        setDeviceLocation(coords)
-      }
-      if (isFromLocationFocused) {
-        setFromLocation(deviceLocation)
-      } else if (isToLocationFocused) {
-        setToLocation(deviceLocation)
-      }
-    } else {
-      setDeviceLocation(coords)
-      if (isFromLocationFocused) {
-        setFromLocation(coords)
-      } else if (isToLocationFocused) {
-        setToLocation(coords)
-      }
-    }
-
-    isFromLocationFocused ? (markerFrom = addMarkerToMap(map, coords, isFromLocationFocused)) : (markerTo = addMarkerToMap(map, coords, isFromLocationFocused))
-    MAP.flyTo({
-      center: [coords['longitude'], coords['latitude']],
-    })
-    
-    closeDrawer()
-  }
-
-  // const centerMarkerFromOnMapDrag = () => {
-  //  MAP.on('drag', centerMarkerFromListener);
-  //  MAP.on('zoom', centerMarkerFromListener);
-  // }
-
-  // const centerMarkerToOnMapDrag = () => {
-  //  MAP.on('drag', centerMarkerToListener);
-  //  MAP.on('zoom', centerMarkerToListener);
-  // }
-
-  // const chooseOnMapHandler = () => {
-  //   const coords =MAP.getCenter()
-  //   setDrawerToLocationActions()
-  //   isFromLocationFocused ? (markerFrom = addMarkerToMap(map, coords, isFromLocationFocused)) : (markerTo = addMarkerToMap(map, coords, isFromLocationFocused))
-  //   isFromLocationFocused ? centerMarkerFromOnMapDrag() : centerMarkerToOnMapDrag()
-  // }
-
-  return html`
-    <section aria-labelledby="locations-heading" class="pb-8 overflow-y-auto max-h-full">
-      <h2 id="locations-heading" class="sr-only">Choose a location</h2>
-      <form id="locations-form">
-        <fieldset class="flex flex-col gap-1 w-full">
-        <${UseCurrentLocationButton} onClick=${useCurrentLocationHandler} />
-        <${ChooseOnMapButton} onClick=${chooseOnMapHandler}/>
-        ${locations.map((location) => html`<${LocationCard} location=${location} onClick=${() => {
-          if (isFromLocationFocused) {
-            setFromLocation(location.full_address)
-            closeDrawer()
-          } else if (isToLocationFocused) {
-            setToLocation(location.full_address)
-            closeDrawer()
-          }
-        }} />`)}
-        </fieldset>
-      </form>
-    </section>
-  `
-}
-
 const App = () => {
+  // Marker state management
+  const [fromMarker, setFromMarker] = useState(null)
+  const [toMarker, setToMarker] = useState(null)
+
   // Location state management
   const [deviceLocation, setDeviceLocation] = useState(null)
 
   const [fromLocation, setFromLocation] = useState('')
   const setFromLocationHandler = (location) => {
     if (typeof location === 'object' && location !== null) {
-      if (location.hasOwnProperty('latitude') && location.hasOwnProperty('longitude')) {
-        setFromLocation(`${location.latitude}, ${location.longitude}`)
+      if (location.hasOwnProperty('lat') && location.hasOwnProperty('lng')) {
+        setFromLocation(`${location.lat}, ${location.lng}`)
       } else {
         setFromLocation(location.toString())
       }
@@ -197,14 +109,13 @@ const App = () => {
 
     setFromLocation(location)
   }
-
   const [isFromLocationFocused, setIsFromLocationFocused] = useState(false)
 
   const [toLocation, setToLocation] = useState('')
   const setToLocationHandler = (location) => {
     if (typeof location === 'object' && location !== null) {
-      if (location.hasOwnProperty('latitude') && location.hasOwnProperty('longitude')) {
-        setToLocation(`${location.latitude}, ${location.longitude}`)
+      if (location.hasOwnProperty('lat') && location.hasOwnProperty('lng')) {
+        setToLocation(`${location.lat}, ${location.lng}`)
       } else {
         setToLocation(location.toString())
       }
@@ -213,28 +124,22 @@ const App = () => {
 
     setToLocation(location)
   }
-  
   const [isToLocationFocused, setIsToLocationFocused] = useState(false)
-
+  
   const [locations, setLocations] = useState([])
 
-  const stopCenterMarkerOnMapDrag = (listener) => {
-    MAP.off('drag', centerMarkerFromListener);
-    MAP.off('zoom', centerMarkerFromListener);
-    MAP.off('drag', centerMarkerToListener);
-    MAP.off('zoom', centerMarkerToListener);
-  }
+  const stopMarkerCentering = useRef(null)
 
   const confirmLocation = () => {
-    const center =MAP.getCenter()
-    const coords = { latitude: center.lat, longitude: center.lng }
+    const coords = MAP.getCenter()
+
     if (isFromLocationFocused) {
       setFromLocationHandler(coords)
-      stopCenterMarkerOnMapDrag()
-    } else if (isToLocationFocused) {
+    } else {
       setToLocationHandler(coords)
-      stopCenterMarkerOnMapDrag()
     }
+
+    stopMarkerCentering.current()    
     closeDrawer()
   }
 
@@ -242,7 +147,7 @@ const App = () => {
     { label: 'Confirm location', onClick: confirmLocation, variant: 'primary' },
     { label: 'Go back to list of locations', onClick: () => {
       setDrawerToLocations()
-      isFromLocationFocused ? removeMarkerFromMap(markerFrom) : removeMarkerFromMap(markerTo)
+      isFromLocationFocused ? removeMarkerFromMap(fromMarker) : removeMarkerFromMap(toMarker)
     }, variant: 'secondary' },
   ]
 
@@ -409,6 +314,10 @@ const App = () => {
         ${drawerMode === 'settings' ? html`<${ActionButtons} buttons=${settingsActions} direction="row" />` : null}
         ${drawerMode === 'locations' 
           ? html`<${LocationCardList} 
+            map=${MAP}
+            setFromMarker=${setFromMarker}
+            setToMarker=${setToMarker}
+            stopMarkerCentering=${stopMarkerCentering}
             locations=${locations} 
             drawerMode=${drawerMode}
             setDrawerToLocationActions=${setDrawerToLocationActions}
