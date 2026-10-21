@@ -279,6 +279,7 @@ const App = () => {
     <main class="relative z-1">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
+        map=${MAP}
         drawerMode=${drawerMode}
         setDrawerToDefault=${setDrawerToDefault}
         setDrawerToLocations=${setDrawerToLocations}
