@@ -51,11 +51,13 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
     setDrawerToLocationActions()
 
     if (isFromLocationFocused) {
+      if (fromMarker) removeMarkerFromMap(fromMarker)
       setFromMarker(marker)
       stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
       return
     } 
 
+    if (toMarker) removeMarkerFromMap(toMarker)
     setToMarker(marker)
     stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
   }
