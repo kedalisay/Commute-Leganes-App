@@ -349,7 +349,7 @@ const App = () => {
             setFromMarker=${setFromMarker}
             toMarker=${toMarker}
             setToMarker=${setToMarker}
-            stopMarkerCentering=${stopMarkerCentering.current}
+            stopMarkerCentering=${stopMarkerCentering}
             locations=${locations} 
             drawerMode=${drawerMode}
             setDrawerToLocationActions=${setDrawerToLocationActions}

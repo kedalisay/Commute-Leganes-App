@@ -7,7 +7,7 @@ import LocationCard from './LocationCard.js'
 import { getGeolocation } from '../utils/Geolocation.js'
 import { addMarkerToMap, removeMarkerFromMap, keepMarkerOnMapCentered } from '../utils/MapLibreGL.js'
 
-const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
+const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
   const useCurrentLocation = async () => {
     const coords = await getGeolocation()
     if (!coords) {
@@ -52,12 +52,12 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
 
     if (isFromLocationFocused) {
       setFromMarker(marker)
-      stopMarkerCentering = keepMarkerOnMapCentered(map, marker)
+      stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
       return
     } 
 
-   setToMarker(marker)
-    stopMarkerCentering = keepMarkerOnMapCentered(map, marker)
+    setToMarker(marker)
+    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
   }
 
   return html`
