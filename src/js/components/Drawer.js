@@ -117,7 +117,7 @@ const Drawer = ({
     ? 'bg-black opacity-80 z-1 pointer-events-auto'
     : 'opacity-0 z-0 pointer-events-none'
 
-  if(!isOpen && (drawerMode === 'locations' || drawerMode === 'routes')) {
+  if(!isOpen && (drawerMode === 'locations' || drawerMode === 'routes' || drawerMode === 'routes-public')) {
     setDrawerToDefault()
   }
 
@@ -134,12 +134,12 @@ const Drawer = ({
         aria-label=${label}
         tabIndex="-1"
         onKeyDown=${onKeyDown}
-        class="${drawerMode === 'locations'|| drawerMode === 'routes' ? 'pt-8 pl-8 pr-8' : 'p-8'} ${isOpen ? 'translate-y-0 z-3' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 w-full max-w-[768px] ${drawerMode === 'locations' ? 'h-6/8' : drawerMode === 'routes' ? 'h-3/8' : ''} max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default)"
+        class="${drawerMode === 'locations'|| drawerMode === 'routes' || drawerMode === 'routes-public' ? 'pt-8 pl-8 pr-8' : 'p-8'} ${isOpen ? 'translate-y-0 z-3' : 'translate-y-full z-0'} fixed bottom-0 left-1/2 w-full max-w-[768px] ${drawerMode === 'routes-public' ? 'min-h-[200px]' : '' } ${drawerMode === 'locations' ? 'h-6/8' : drawerMode === 'routes' || drawerMode === 'routes-public' ? 'h-3/8' : ''} max-h-7/8 transition-transform -translate-x-1/2 rounded-t-2xl bg-white border-t border-l border-r border-(--border-default)"
       >
         <button
           type="button"
           aria-label="Resize drawer. Use Arrow Up to expand or Arrow Down to close."
-          class="${drawerMode === 'locations' || drawerMode === 'routes' ? 'block' : 'hidden'} absolute top-3 left-1/2 transform -translate-x-1/2 max-w-[100px] w-full h-[5px] bg-(--color-gray-700) rounded-full"
+          class="${drawerMode === 'locations' || drawerMode === 'routes' || drawerMode === 'routes-public' ? 'block' : 'hidden'} absolute top-3 left-1/2 transform -translate-x-1/2 max-w-[100px] w-full h-[5px] bg-(--color-gray-700) rounded-full"
           onKeyDown=${onHandleKeyDown}
           onPointerDown=${onPointerDown}
           onPointerMove=${onPointerMove}
