@@ -52,12 +52,12 @@ const LocationCardList = ({ map, setFromMarker, setToMarker, stopMarkerCentering
 
     if (isFromLocationFocused) {
       setFromMarker(marker)
-      stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
+      stopMarkerCentering = keepMarkerOnMapCentered(map, marker)
       return
     } 
 
    setToMarker(marker)
-    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
+    stopMarkerCentering = keepMarkerOnMapCentered(map, marker)
   }
 
   return html`
@@ -69,12 +69,12 @@ const LocationCardList = ({ map, setFromMarker, setToMarker, stopMarkerCentering
         <${ChooseOnMapButton} onClick=${chooseOnMap}/>
         ${locations.map((location) => html`<${LocationCard} location=${location} onClick=${() => {
           if (isFromLocationFocused) {
-            setFromLocation(location.full_address)
+            setFromLocation(location.coordinates.toString())
             closeDrawer()
             return
           } 
 
-          setToLocation(location.full_address)
+          setToLocation(location.coordinates.toString())
           closeDrawer()
           }
         }} />`)}

@@ -2,14 +2,20 @@ import html from '../html.js'
 
 import { removeMarkerFromMap } from '../utils/MapLibreGL.js'
 
-const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, toMarker, isDrawerOpen, openDrawer, closeDrawer,  setLocations, fromLocation, setFromLocation, isFromLocationFocused, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, toMarker, isDrawerOpen, openDrawer, closeDrawer,  locations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+  const locationHasMatchingName = (location, value) => {
+    const locationRegex = new RegExp(`.*${value}.*`, 'gi')
+    return locationRegex.test(location)
+  }
 
   const handleFromInput = (event) => {
     setDrawerToLocations();
     if (event.target.value === '') {
       setFromLocation('');
-      stopMarkerCentering.current()
-      removeMarkerFromMap(fromMarker);
+      if (stopMarkerCentering) {
+        stopMarkerCentering()
+        removeMarkerFromMap(fromMarker)
+      } 
       setIsFromLocationFocused(false);
       setDrawerToDefault();
       closeDrawer();
@@ -20,18 +26,25 @@ const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, sto
     setFromLocation(fromValue);
     setIsFromLocationFocused(true);
     setIsToLocationFocused(false);
-    
-    const mockResponses = [
-      { coordinates: [10.7875, 122.60455], address: 'Leganes, Philippines' },
-      { coordinates: [10.7890, 122.6050], address: 'Nearby Location 1' },
-      { coordinates: [10.7900, 122.6060], address: 'Nearby Location 2' },
-    ]
 
-    setLocations(mockResponses.map(response => ({
-      name: response.coordinates.toString(),
-      coordinates: response.coordinates,
-      full_address: response.address,
-    })));
+    const filteredLocations = []
+
+    for (const location of locations) {
+      if (locationHasMatchingName(location.name, fromValue)) {
+        filteredLocations.push(location);
+      } else {
+        if (location.aliases) {
+        for (const alias in location.aliases) {
+          if (locationHasMatchingName(alias, fromValue)) {
+            location.name = alias
+            filteredLocations.push(location);
+          }
+        }
+      }
+      }
+    }
+
+    setLocations(filteredLocations);
 
     if (!isDrawerOpen) {
       openDrawer();
@@ -42,8 +55,10 @@ const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, sto
     setDrawerToLocations();
     if (event.target.value === '') {
       setToLocation('');
-      stopMarkerCentering.current()
-      removeMarkerFromMap(toMarker);
+      if (stopMarkerCentering) {
+        stopMarkerCentering()
+        removeMarkerFromMap(toMarker);
+      }
       setIsToLocationFocused(false);
       setDrawerToDefault();
       closeDrawer();
@@ -55,18 +70,24 @@ const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, sto
     setIsToLocationFocused(true);
     setIsFromLocationFocused(false);
 
-    const mockResponses = [
-      { coordinates: [10.7875, 122.60455], address: 'Leganes, Philippines' },
-      { coordinates: [10.7890, 122.6050], address: 'Nearby Location 1' },
-      { coordinates: [10.7900, 122.6060], address: 'Nearby Location 2' },
-    ]
+    const filteredLocations = []
 
-    setLocations(mockResponses.map(response => ({
-      name: response.coordinates.toString(),
-      coordinates: response.coordinates,
-      full_address: response.address,
-    })));
+    for (const location of locations) {
+      if (locationHasMatchingName(location.name, toValue)) {
+        filteredLocations.push(location);
+      } else {
+        if (location.aliases) {
+          for (const alias in location.aliases) {
+            if (locationHasMatchingName(alias, toValue) && !filteredLocations.some((loc) => loc.name === alias)) {
+              location.name = alias
+              filteredLocations.push(location);
+            }
+          }
+        }
+      }
+    }
 
+    setLocations(filteredLocations);
     if (!isDrawerOpen) {
       openDrawer();
     }

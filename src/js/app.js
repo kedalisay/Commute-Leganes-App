@@ -20,8 +20,25 @@ const MAP = new Map({
   style: '/assets/osm_custom_bright_commute_leganes.json', 
 });
 
+const STATIC_LOCATIONS = []
+
 window.addEventListener('DOMContentLoaded', async () => {
     const PUBLIC_ROUTES = await (await fetch('/data/public_routes.json')).json()
+
+    const locationsData = await (await fetch('/data/locations.json')).json()
+    locationsData.features.forEach((feature) => {
+      const locationName = feature.properties['location-name']
+      const locationCoordinates = feature.geometry.coordinates
+      const locationAliases = feature.properties['location-aliases']
+
+      const location = { 
+        name: locationName, 
+        coordinates: locationCoordinates, 
+        aliases: locationAliases 
+      }
+
+      STATIC_LOCATIONS.push(location)
+    })
 
     MAP.on('load', () => {
       MAP.addSource('public-routes', {
@@ -282,7 +299,7 @@ const App = () => {
     <main class="relative z-1">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
-        stopMarkerCentering=${stopMarkerCentering}
+        stopMarkerCentering=${stopMarkerCentering.current}
         fromMarker=${fromMarker} 
         toMarker=${toMarker}
         drawerMode=${drawerMode}
@@ -291,10 +308,10 @@ const App = () => {
         isDrawerOpen=${isDrawerOpen} 
         openDrawer=${openDrawer} 
         closeDrawer=${closeDrawer}
+        locations=${STATIC_LOCATIONS}
         setLocations=${setLocations}
         fromLocation=${fromLocation}
         setFromLocation=${setFromLocationHandler}
-        isFromLocationFocused=${isFromLocationFocused} 
         setIsFromLocationFocused=${setIsFromLocationFocused}
         toLocation=${toLocation} 
         setToLocation=${setToLocationHandler}
@@ -330,7 +347,7 @@ const App = () => {
             map=${MAP}
             setFromMarker=${setFromMarker}
             setToMarker=${setToMarker}
-            stopMarkerCentering=${stopMarkerCentering}
+            stopMarkerCentering=${stopMarkerCentering.current}
             locations=${locations} 
             drawerMode=${drawerMode}
             setDrawerToLocationActions=${setDrawerToLocationActions}
