@@ -408,6 +408,7 @@
       "type": "Feature",
       "properties": {
         "route-name": "San Vicente",
+        "public": true,
         "stroke-width": 3,
         "stroke-opacity": 1,
         "stroke": "rgba(191, 191, 191, 1)",
