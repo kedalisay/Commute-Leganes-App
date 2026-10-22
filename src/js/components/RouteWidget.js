@@ -1,8 +1,8 @@
 import html from '../html.js'
 
-import { removeMarkerFromMap } from '../utils/MapLibreGL.js'
+import { addMarkerToMap, removeMarkerFromMap } from '../utils/MapLibreGL.js'
 
-const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, toMarker, isDrawerOpen, openDrawer, closeDrawer,  locations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer,  locations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
   const locationHasMatchingName = (location, value) => {
     const locationRegex = new RegExp(`.*${value}.*`, 'gi')
     return locationRegex.test(location)
@@ -96,9 +96,17 @@ const RouteWidget = ({ drawerMode, setDrawerToDefault, setDrawerToLocations, sto
   const handleSwapLocations = () => {
     if (!fromLocation && !toLocation) return;
 
+    removeMarkerFromMap(fromMarker);
+    removeMarkerFromMap(toMarker);
+
     const tempLocation = fromLocation;
     setFromLocation(toLocation);
     setToLocation(tempLocation);
+
+    const newFromMarker = addMarkerToMap(map, toMarker.getLngLat(), true);
+    setFromMarker(newFromMarker);
+    const newToMarker = addMarkerToMap(map, fromMarker.getLngLat(), false);
+    setToMarker(newToMarker);
   }
 
   return html`<section aria-hidden=${drawerMode !== 'settings' ? false : true} inert=${drawerMode !== 'settings' ? false : true} id="plot-route-widget" class="relative ${drawerMode !== 'settings' ? 'z-2' : ''} px-4 pt-4 bg-transparent">

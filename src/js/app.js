@@ -309,9 +309,12 @@ const App = () => {
     <main class="relative z-1">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
+        map=${MAP}
         stopMarkerCentering=${stopMarkerCentering.current}
         fromMarker=${fromMarker} 
+        setFromMarker=${setFromMarker}
         toMarker=${toMarker}
+        setToMarker=${setToMarker}
         drawerMode=${drawerMode}
         setDrawerToDefault=${setDrawerToDefault}
         setDrawerToLocations=${setDrawerToLocations}
