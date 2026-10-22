@@ -215,6 +215,13 @@ const App = () => {
   }
 
   const showSettings = () => {
+    const features = MAP.getSource('public-routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
+   
+    features.forEach((feature) => {
+      MAP.setLayoutProperty(`public-route-${feature.properties['route-name']}`, 'visibility', 'none')
+    })
+
+    closeDrawer()
     setDraftSettings(savedSettings)
     setDrawerToSettings()
   }
