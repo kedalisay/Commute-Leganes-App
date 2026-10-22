@@ -345,7 +345,9 @@ const App = () => {
         ${drawerMode === 'locations' 
           ? html`<${LocationCardList} 
             map=${MAP}
+            fromMarker=${fromMarker}
             setFromMarker=${setFromMarker}
+            toMarker=${toMarker}
             setToMarker=${setToMarker}
             stopMarkerCentering=${stopMarkerCentering.current}
             locations=${locations} 

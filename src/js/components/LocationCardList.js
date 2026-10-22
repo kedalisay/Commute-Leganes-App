@@ -5,9 +5,9 @@ import ChooseOnMapButton from './ChooseOnMapButton.js'
 import LocationCard from './LocationCard.js'
 
 import { getGeolocation } from '../utils/Geolocation.js'
-import { addMarkerToMap, keepMarkerOnMapCentered } from '../utils/MapLibreGL.js'
+import { addMarkerToMap, removeMarkerFromMap, keepMarkerOnMapCentered } from '../utils/MapLibreGL.js'
 
-const LocationCardList = ({ map, setFromMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
+const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
   const useCurrentLocation = async () => {
     const coords = await getGeolocation()
     if (!coords) {
@@ -67,17 +67,31 @@ const LocationCardList = ({ map, setFromMarker, setToMarker, stopMarkerCentering
         <fieldset class="flex flex-col gap-1 w-full">
         <${UseCurrentLocationButton} onClick=${() => useCurrentLocation()} />
         <${ChooseOnMapButton} onClick=${chooseOnMap}/>
-        ${locations.map((location) => html`<${LocationCard} location=${location} onClick=${() => {
-          if (isFromLocationFocused) {
-            setFromLocation(location.coordinates.toString())
-            closeDrawer()
-            return
-          } 
+        ${locations.map((location) => 
+          html`<${LocationCard} location=${location} onClick=${
+            () => {
+              const coords = { lat: location.coordinates[1], lng: location.coordinates[0] }
+              const coordsString = `${coords['lat']}, ${coords['lng']}`
+              const marker = addMarkerToMap(map, coords, isFromLocationFocused)
+              map.flyTo({
+                center: location.coordinates,
+              })
 
-          setToLocation(location.coordinates.toString())
-          closeDrawer()
-          }
-        }} />`)}
+              if (isFromLocationFocused) {
+                setFromLocation(coordsString)
+                if (fromMarker) removeMarkerFromMap(fromMarker)
+                setFromMarker(marker)
+                closeDrawer()
+                return
+              } 
+
+              setToLocation(coordsString)
+              if (toMarker) removeMarkerFromMap(toMarker)
+              setToMarker(marker)
+              closeDrawer()
+              }
+            } 
+          />`)}
         </fieldset>
       </form>
     </section>
