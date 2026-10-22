@@ -274,7 +274,6 @@ const App = () => {
     });
 
     setRoutes([])
-    setDrawerToDefault()
     closeDrawer()
   }
 
