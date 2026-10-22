@@ -116,22 +116,6 @@
       "type": "Feature",
       "properties": {
         "location-aliases": [
-          "Leganes Balay Turismo"
-        ],
-        "location-name": "Leganes Culture, Arts, History, and Tourism Office"
-      },
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          122.5899467,
-          10.7856413
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "location-aliases": [
           "LNHS"
         ],
         "location-name": "Leganes National High School"
