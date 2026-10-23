@@ -1,7 +1,7 @@
 {
   "version": 8,
   "name": "OSM Custom Bright Commute Leganes",
-  "metadata": {},
+  "metadata": {"maputnik:renderer": "mbgljs"},
   "center": [122.58877438815884, 10.785177609043593],
   "zoom": 16,
   "sources": {
@@ -1219,7 +1219,6 @@
       ],
       "layout": {"line-cap": "butt", "line-join": "round"},
       "paint": {
-        "line-color": "#e9ac77",
         "line-opacity": 1,
         "line-width": [
           "interpolate",
@@ -1229,7 +1228,8 @@
           1.5,
           20,
           17
-        ]
+        ],
+        "line-color": "rgba(217, 217, 217, 1)"
       }
     },
     {
@@ -1246,7 +1246,7 @@
       ],
       "layout": {"line-cap": "butt", "line-join": "round"},
       "paint": {
-        "line-color": "#e9ac77",
+        "line-color": "rgba(217, 217, 217, 1)",
         "line-opacity": ["interpolate", ["linear"], ["zoom"], 7, 0, 8, 1],
         "line-width": [
           "interpolate",
@@ -1277,7 +1277,6 @@
       ],
       "layout": {"line-cap": "butt", "line-join": "round"},
       "paint": {
-        "line-color": "#e9ac77",
         "line-opacity": ["interpolate", ["linear"], ["zoom"], 5, 0, 6, 1],
         "line-width": [
           "interpolate",
@@ -1291,7 +1290,8 @@
           1.5,
           20,
           22
-        ]
+        ],
+        "line-color": "rgba(217, 217, 217, 1)"
       }
     },
     {
@@ -1345,7 +1345,7 @@
         ["==", ["get", "class"], "path"]
       ],
       "paint": {
-        "line-color": "#cba",
+        "line-color": "rgba(255, 255, 255, 1)",
         "line-dasharray": [1.5, 0.75],
         "line-width": [
           "interpolate",
@@ -2624,7 +2624,8 @@
         "text-color": "#666",
         "text-halo-blur": 0.5,
         "text-halo-color": "#ffffff",
-        "text-halo-width": 1
+        "text-halo-width": 1,
+        "icon-translate-anchor": "map"
       }
     },
     {
