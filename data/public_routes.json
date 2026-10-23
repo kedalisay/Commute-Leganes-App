@@ -411,13 +411,19 @@
         "public": true,
         "stroke-width": 3,
         "stroke-opacity": 1,
-        "stroke": "rgba(191, 191, 191, 1)",
+        "stroke": "rgba(108, 108, 108, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
         "total-distance": 1.2,
         "unit-of-distance": "kilometer",
         "route-points": "Leganes Commercial Complex, San Vicente Multi-Purpose Hall, San Vicente Dragon Fruit Farm, Coliseo de Leganes",
-        "route-fare": [],
+        "route-fare": [
+          {
+            "mode": "tricycle",
+            "amount": 20,
+            "type": "per person"
+          }
+        ],
         "route-fare-currency": "PHP"
       },
       "geometry": {
@@ -1253,7 +1259,7 @@
         "public": true,
         "stroke-opacity": 1,
         "stroke-width": 3,
-        "stroke": "rgba(228, 228, 228, 1)",
+        "stroke": "rgba(108, 108, 108, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
         "total-distance": 3.2,
@@ -1392,7 +1398,7 @@
         "stroke": "#505050",
         "mode-of-transport": "jeepney",
         "direction": "inbound-outbound",
-        "total-distance": 1.5,
+        "total-distance": 2,
         "unit-of-distance": "kilometer",
         "route-points": "Leganes Commercial Complex, Leganes Plaza, Jardeleza Arcade, Jolibee Leganes, San Vicente Village Subdivision, Glenville Subdivision, Guihaman-Buntatala Elementary School, Buntatala Barangay Hall, Villa Amelia Subdivision",
         "route-fare": [
@@ -1836,7 +1842,13 @@
         "total-distance": 3.5,
         "unit-of-distance": "kilometer",
         "route-points": "Leganes Plaza, Lopez Galleria, Jardeleza Subdivision, Saint Peter Chapels, Lapayon Chapel, Lapayon Barangay Hall, Lapayon Elementary School, Lapayon National High School,",
-        "route-fare": [],
+        "route-fare": [
+          {
+            "mode": "tricycle",
+            "amount": 25,
+            "type": "per person"
+          }
+        ],
         "route-fare-currency": "PHP"
       },
       "geometry": {
