@@ -1,0 +1,191 @@
+{
+  "type": "FeatureCollection",
+  "metadata": {
+    "name": "Leganes Locations",
+    "description": "A collection of local locations in Leganes, Iloilo.",
+    "last-updated": "2026-10-21T16:20:00Z"
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "location-aliases": [
+          "Leganes Balay Turismo"
+        ],
+        "location-name": "Leganes Culture, Arts, History, and Tourism Office"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5898066,
+          10.7868103
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-aliases": [
+          "Leganes Municipal Hall"
+        ],
+        "location-name": "Leganes Town Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.590116,
+          10.7850664
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Leganes Legislative Building"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.590135,
+          10.7853945
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Leganes Evacuation Center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5907209,
+          10.7855705
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-aliases": [
+          "Leganes Church"
+        ],
+        "location-name": "Archdiocesan Shrine of Saint Vincent Ferrer"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5903648,
+          10.7864371
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-aliases": [
+          "Leganes Primary Care Facility"
+        ],
+        "location-name": "Leganes Rural Health Unit"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5896797,
+          10.7847251
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-aliases": [
+          "Leganes MPSTMO"
+        ],
+        "location-name": "Leganes Municipal Public Safety and Transportation Management Office"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.589009,
+          10.7860604
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-aliases": [
+          "LNHS"
+        ],
+        "location-name": "Leganes National High School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5953695,
+          10.7822093
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-aliases": [
+          "LCES"
+        ],
+        "location-name": "Leganes Central Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5895159,
+          10.7883742
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Leganes Plaza"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5888755,
+          10.7852499
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Jollibee Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5876576,
+          10.7846009
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Leganes Integrated Katunggan Ecopark",
+        "location-aliases": [
+          "LIKE",
+          "Katunggan Park"
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6254601,
+          10.7803844
+        ]
+      }
+    }
+  ]
+}

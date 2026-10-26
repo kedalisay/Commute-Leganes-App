@@ -1,3 +1,5 @@
+import 'maplibre-gl/dist/maplibre-gl.css';
+
 import { render } from 'https://esm.sh/preact'
 
 import App from './app.js'
