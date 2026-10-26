@@ -27,7 +27,7 @@ const Settings = ({
   return html`
     <section aria-hidden=${drawerMode !== 'settings' ? true : false} inert=${drawerMode !== 'settings' ? true : false} id="settings" class="z-3 absolute top-0 ${drawerMode !== 'settings' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col gap-3 w-full h-screen p-4 transition-all duration-300 ease-in-out">
       <h2 class="text-2xl font-bold font-display">Settings</h2>
-      <button class="absolute top-4 right-4 rounded-md p-2 w-[40px] h-[40px]" onClick=${hideSettings}>
+      <button aria-label="Close settings" class="absolute top-4 right-4 rounded-md p-2 w-[40px] h-[40px]" onClick=${hideSettings}>
         <svg width="40" xmlns="http://www.w3.org/2000/svg" height="40" id="screenshot-18d99545-70d7-8033-8008-b7a66cfdf76d" viewBox="-1940 -568 40 40" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
           <g id="shape-18d99545-70d7-8033-8008-b7a66cfdf76d" style="fill:#000000" rx="0" ry="0">
             <g id="shape-18d99545-70d7-8033-8008-b7a66d04b44f" style="display:none">
