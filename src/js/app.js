@@ -22,8 +22,11 @@ const MAP = new Map({
 
 const STATIC_LOCATIONS = []
 
+const PUBLIC_ROUTES = {}
+
 MAP.on('load', async () => {
-  const PUBLIC_ROUTES = await (await fetch('/data/public_routes.json')).json()
+  const publicRoutesData = await (await fetch('/data/public_routes.json')).json()
+  PUBLIC_ROUTES.features = publicRoutesData.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
 
   const locationsData = await (await fetch('/data/locations.json')).json()
   locationsData.features.forEach((feature) => {
@@ -42,7 +45,7 @@ MAP.on('load', async () => {
 
   MAP.addSource('public-routes', {
   'type': 'geojson',
-  'data': PUBLIC_ROUTES
+  'data': publicRoutesData,
   });
 
   PUBLIC_ROUTES.features.forEach((route) => {
@@ -213,9 +216,7 @@ const App = () => {
   }
 
   const showSettings = () => {
-    const features = MAP.getSource('public-routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
-   
-    features.forEach((feature) => {
+    PUBLIC_ROUTES.features.forEach((feature) => {
       MAP.setLayoutProperty(`public-route-${feature.properties['route-name']}`, 'visibility', 'none')
     })
 
@@ -237,10 +238,9 @@ const App = () => {
   const [routes, setRoutes] = useState([])
 
   const showPublicRoutes = () => {
-    const features = MAP.getSource('public-routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
     const routeData = []
 
-    features.forEach((feature) => {
+    PUBLIC_ROUTES.features.forEach((feature) => {
       const routeName = feature.properties['route-name']
       const isPublic = feature.properties['public']
       const routeColor = feature.properties['stroke']
@@ -272,9 +272,7 @@ const App = () => {
   }
 
   const hidePublicRoutes = () => {
-    const features = MAP.getSource('public-routes')._data.geojson.features.filter((feature) => feature.properties['public'] === true)
-
-    features.forEach((feature) => {
+    PUBLIC_ROUTES.features.forEach((feature) => {
       const routeName = feature.properties['route-name']
       MAP.setLayoutProperty(`public-route-${routeName}`, 'visibility', 'none')
     });
