@@ -3,10 +3,7 @@ import html from '../html.js'
 import { addMarkerToMap, removeMarkerFromMap } from '../utils/MapLibreGL.js'
 
 const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer,  locations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
-  const locationHasMatchingName = (location, value) => {
-    const locationRegex = new RegExp(`.*${value}.*`, 'gi')
-    return locationRegex.test(location)
-  }
+  const locationHasMatchingName = (location, value) => location.toLocaleLowerCase().includes(value.toLocaleLowerCase())
 
   const handleFromInput = (event) => {
     setDrawerToLocations();
