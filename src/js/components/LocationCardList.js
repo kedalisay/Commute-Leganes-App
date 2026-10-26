@@ -16,27 +16,25 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
       return
     }
 
-    if (deviceLocation !== null) {
-      if (coords['lat'] !== deviceLocation['lat'] && coords['lng'] !== deviceLocation['lng']) {
-        setDeviceLocation(coords)
-      }
-      if (isFromLocationFocused) {
-        setFromLocation(deviceLocation)
-      } else if (isToLocationFocused) {
-        setToLocation(deviceLocation)
-      }
-    } else {
+    if (deviceLocation === null 
+      || coords['lat'] !== deviceLocation['lat'] 
+      || coords['lng'] !== deviceLocation['lng']) {
       setDeviceLocation(coords)
-      if (isFromLocationFocused) {
-        setFromLocation(coords)
-      } else if (isToLocationFocused) {
-        setToLocation(coords)
-      }
     }
 
-    isFromLocationFocused 
-      ? (setFromMarker(addMarkerToMap(map, coords, isFromLocationFocused))) 
-      : (setToMarker(addMarkerToMap(map, coords, isFromLocationFocused)))
+    if (isFromLocationFocused) {
+      setFromLocation(coords)
+      if (fromMarker) {
+        removeMarkerFromMap(fromMarker)
+      }
+      setFromMarker(addMarkerToMap(map, coords, isFromLocationFocused))
+    } else if (isToLocationFocused) {
+      setToLocation(coords)
+      if (toMarker) {
+        removeMarkerFromMap(toMarker)
+      }
+      setToMarker(addMarkerToMap(map, coords, isFromLocationFocused))
+    }
 
     map.flyTo({
       center: [coords['lng'], coords['lat']],
