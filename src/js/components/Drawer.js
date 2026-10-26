@@ -60,17 +60,6 @@ const Drawer = ({
       e.currentTarget.focus()
       return
     }
-
-    // const firstElement = focusableElements[0]
-    // const lastElement = focusableElements[focusableElements.length - 1]
-
-    // if (e.shiftKey && document.activeElement === firstElement) {
-    //   e.preventDefault()
-    //   lastElement.focus()
-    // } else if (!e.shiftKey && document.activeElement === lastElement) {
-    //   e.preventDefault()
-    //   firstElement.focus()
-    // }
   }
 
   const onPointerDown = (e) => {
@@ -128,7 +117,7 @@ const Drawer = ({
         id="drawer"
         ref=${drawerRef}
         role="dialog"
-        aria-modal="true"
+        aria-modal="false"
         aria-hidden=${!isOpen}
         inert=${!isOpen}
         aria-label=${label}
