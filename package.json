@@ -5,8 +5,11 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tailwind": "npx @tailwindcss/cli -i src/css/input.css -o dist/tailwind.css --watch",
-    "build": "node build.mjs"
+    "tailwind": "npx tailwindcss -i src/css/input.css -o dist/tailwind.css --watch",
+    "esbuild": "npx esbuild src/js/main.js --outfile=dist/output.js --format=esm --bundle --watch",
+    "build:tailwind": "npx @tailwindcss/cli -i src/css/input.css -o dist/tailwind.css --minify",
+    "build:esbuild": "node build.mjs",
+    "build": "npm-run-all --parallel build:*"
   },
   "repository": {
     "type": "git",
@@ -19,8 +22,9 @@
   },
   "homepage": "https://github.com/kedalisay/Commute-Leganes-App#readme",
   "devDependencies": {
-    "esbuild": "^0.28.2",
     "@tailwindcss/cli": "^4.3.3",
+    "esbuild": "^0.28.2",
+    "npm-run-all": "^4.1.5",
     "tailwindcss": "^4.3.3"
   },
   "dependencies": {
