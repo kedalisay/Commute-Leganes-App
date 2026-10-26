@@ -14,7 +14,7 @@ See the [public routes](data/public_routes.json) and [locations](data/locations.
 
 ## Features
 
-- View all commute routes under the juristiction of Leganes
+- View all commute routes under the jurisdiction of Leganes
 - Route between two points within Leganes with consideration of commute routes 
 
 ## License
