@@ -91,7 +91,7 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
   }
 
   const handleSwapLocations = () => {
-    if (!fromLocation && !toLocation) return;
+    if (!fromLocation || !toLocation || !fromMarker || !toMarker) return;
 
     removeMarkerFromMap(fromMarker);
     removeMarkerFromMap(toMarker);
