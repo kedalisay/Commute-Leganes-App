@@ -22,44 +22,42 @@ const MAP = new Map({
 
 const STATIC_LOCATIONS = []
 
-window.addEventListener('DOMContentLoaded', async () => {
-    const PUBLIC_ROUTES = await (await fetch('/data/public_routes.json')).json()
+MAP.on('load', async () => {
+  const PUBLIC_ROUTES = await (await fetch('/data/public_routes.json')).json()
 
-    const locationsData = await (await fetch('/data/locations.json')).json()
-    locationsData.features.forEach((feature) => {
-      const locationName = feature.properties['location-name']
-      const locationCoordinates = feature.geometry.coordinates
-      const locationAliases = feature.properties['location-aliases']
+  const locationsData = await (await fetch('/data/locations.json')).json()
+  locationsData.features.forEach((feature) => {
+    const locationName = feature.properties['location-name']
+    const locationCoordinates = feature.geometry.coordinates
+    const locationAliases = feature.properties['location-aliases']
 
-      const location = { 
-        name: locationName, 
-        coordinates: locationCoordinates, 
-        aliases: locationAliases 
-      }
+    const location = { 
+      name: locationName, 
+      coordinates: locationCoordinates, 
+      aliases: locationAliases 
+    }
 
-      STATIC_LOCATIONS.push(location)
+    STATIC_LOCATIONS.push(location)
+  })
+
+  MAP.addSource('public-routes', {
+  'type': 'geojson',
+  'data': PUBLIC_ROUTES
+  });
+
+  PUBLIC_ROUTES.features.forEach((route) => {
+    MAP.addLayer({
+      'id': `public-route-${route.properties['route-name']}`,
+      'type': 'line',
+      'source': 'public-routes',
+      'layout': { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+      'paint': {
+        'line-color': route.properties['stroke'],
+        'line-width': route.properties['stroke-width'],
+        'line-opacity': route.properties['stroke-opacity'],
+      },
+      'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
     })
-
-    MAP.on('load', () => {
-      MAP.addSource('public-routes', {
-      'type': 'geojson',
-      'data': PUBLIC_ROUTES
-      });
-
-      PUBLIC_ROUTES.features.forEach((route) => {
-        MAP.addLayer({
-          'id': `public-route-${route.properties['route-name']}`,
-          'type': 'line',
-          'source': 'public-routes',
-          'layout': { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
-          'paint': {
-            'line-color': route.properties['stroke'],
-            'line-width': route.properties['stroke-width'],
-            'line-opacity': route.properties['stroke-opacity'],
-          },
-          'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
-        })
-      })
   })
 })
 
