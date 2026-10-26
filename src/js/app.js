@@ -65,7 +65,7 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
   return html`
     <section aria-hidden=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} inert=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
       <h2 class="sr-only">App Buttons</h2>
-      <button onClick=${onSettingsClick} class="${drawerMode === 'settings' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
+      <button aria-label="Open settings" onClick=${onSettingsClick} class="${drawerMode === 'settings' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
         <svg width="22" xmlns="http://www.w3.org/2000/svg" height="22" id="screenshot-53f07293-9876-8096-8008-ad032f479751" viewBox="-1564.2 -1177.5 30 32" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
           <g id="shape-53f07293-9876-8096-8008-ad032f479751" style="fill:#000000" width="22" height="22" rx="0" ry="0">
             <g id="shape-53f07293-9876-8096-8008-ad032f479752" style="display:none">
@@ -83,7 +83,7 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
           </g>
         </svg>
       </button>
-      <button onClick=${onRoutesClick} class="${drawerMode === 'routes-public' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
+      <button aria-label="Show public routes" onClick=${onRoutesClick} class="${drawerMode === 'routes-public' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
         <svg width="18" xmlns="http://www.w3.org/2000/svg" height="18" id="screenshot-53f07293-9876-8096-8008-ad032f47974c" viewBox="-1565.854 -1132 30 30" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
           <g id="shape-53f07293-9876-8096-8008-ad032f47974c" style="fill:#000000" width="18" height="18" rx="0" ry="0">
             <g id="shape-53f07293-9876-8096-8008-ad032f47974d" style="display:none">

@@ -110,10 +110,9 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
   }
 
   return html`<section aria-hidden=${drawerMode !== 'settings' ? false : true} inert=${drawerMode !== 'settings' ? false : true} id="plot-route-widget" class="relative ${drawerMode !== 'settings' ? 'z-2' : ''} px-4 pt-4 bg-transparent">
-      <h2 class="sr-only">Plot a route</h2>
       <form id="plot-route-form"> 
+        <h2 class="sr-only">Plot a route</h2>
         <fieldset class="bg-transparent relative">
-          <legend class="sr-only">Plan a trip</legend>
           <label class="relative inline-block w-full max-w-[calc(100%-45px)] h-[35px] mb-4">
             <svg class="stroke-(--brand-primary) stroke-4  absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="10" cx="12.5" cy="12.5" fill="none"/>
@@ -131,7 +130,7 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
               <path stroke-dasharray="10,2" d="M 5 27 L 5 60" />
             </g>
           </svg>
-          <button type="button" onClick=${handleSwapLocations} class="absolute top-1/2 right-0 translate-y-[-50%] bg-(--bg-surface) border border-(--border-default) rounded-full p-2 mb-2 max-w-[35px] max-h-[35px]" aria-label="Swap from and to">
+          <button aria-label="Swap from and to" onClick=${handleSwapLocations} type="button" class="absolute top-1/2 right-0 translate-y-[-50%] bg-(--bg-surface) border border-(--border-default) rounded-full p-2 mb-2 max-w-[35px] max-h-[35px]">
             <svg class="fill-(--color-gray-700)" width="25" xmlns="http://www.w3.org/2000/svg" height="25" viewBox="-2286.5 -1519 25 25" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
               <g id="shape-34a2cc8f-b94b-80f6-8008-b877a2503443" style="fill:#000000" rx="0" ry="0">
                 <g id="shape-34a2cc8f-b94b-80f6-8008-b877a2530ff9" style="display:none">
