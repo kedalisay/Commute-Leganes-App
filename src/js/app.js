@@ -1,4 +1,6 @@
 import { Map, getVersion, setWorkerUrl } from 'maplibre-gl';
+import PathFinder, { pathToGeoJSON }  from "geojson-path-finder";
+import leganes_road_network_geojson from '../../data/leganes_road_network.json'
 import { useEffect, useState, useRef } from 'https://esm.sh/preact/hooks'
 
 import html from './html.js'
@@ -19,6 +21,10 @@ const MAP = new Map({
   container: 'map',
   style: '/assets/osm_custom_bright_commute_leganes.json', 
 });
+
+const PATHFINDER = new PathFinder(leganes_road_network_geojson, { tolerance: 1e-5 });
+const VERTICES = Object.values(PATHFINDER.graph.vertices).map(vertex => Object.keys(vertex).map(key => key.split(',').map(coord => parseFloat(coord))));
+console.log(VERTICES)
 
 const STATIC_LOCATIONS = []
 
@@ -300,6 +306,73 @@ const App = () => {
         document.title = 'Commute Leganes'
     }
   }, [drawerMode])
+
+  // after from and two are filled, find the route and display it on the map
+  useEffect(() => {
+    if (fromLocation && toLocation) {
+      const fromCoords = fromLocation.split(',').map(coord => parseFloat(coord.trim())).reverse()
+      const toCoords = toLocation.split(',').map(coord => parseFloat(coord.trim())).reverse() 
+
+      if (fromCoords.length !== 2 || toCoords.length !== 2 || fromCoords.some(isNaN) || toCoords.some(isNaN)) {
+        console.error('Invalid coordinates:', fromCoords, toCoords)
+        return
+      }
+
+      // const fromPoint = { type: 'Point', geometry: { type: 'Point', coordinates: [122.59463000000001, 10.76139] } }
+      // const toPoint = { type: 'Point', geometry: { type: 'Point', coordinates: [122.59383000000001, 10.79569] } }
+      // console.log(fromCoords, toCoords)
+
+      // check if fromcoords and tocoords are within the bounds of the road network based on vertices variable
+      // checking by the number that's closest to the fromcoords and tocoords, if the distance is greater than 0.01, then it's out of bounds
+      const closestFromVertex = VERTICES.reduce((closest, vertex) => {
+        const distance = Math.sqrt(Math.pow(vertex[0][0] - fromCoords[0], 2) + Math.pow(vertex[0][1] - fromCoords[1], 2))
+        return distance < closest.distance ? { vertex, distance } : closest
+      }, { vertex: null, distance: Infinity })
+
+      const closestToVertex = VERTICES.reduce((closest, vertex) => {
+        const distance = Math.sqrt(Math.pow(vertex[0][0] - toCoords[0], 2) + Math.pow(vertex[0][1] - toCoords[1], 2))
+        return distance < closest.distance ? { vertex, distance } : closest
+      }, { vertex: null, distance: Infinity })
+
+      if (closestFromVertex.distance > 0.01 || closestToVertex.distance > 0.01) {
+        console.error('Coordinates are out of bounds of the road network:', fromCoords, toCoords)
+        return
+      }
+      
+      console.log(fromCoords, toCoords)
+      console.log(closestFromVertex, closestToVertex)
+
+      const fromPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestFromVertex.vertex[0] } }
+      const toPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestToVertex.vertex[0] } }
+
+
+      const path = PATHFINDER.findPath(fromPoint, toPoint)
+
+      console.log(path)
+      if (!path) {
+        console.error('No path found between the specified locations.')
+        return
+      }
+      const geojson = pathToGeoJSON(path)
+
+      MAP.addLayer({
+        id: `new-route-${Date.now()}`,
+        type: 'line',
+        source: {
+          type: 'geojson',
+          data: geojson
+        },
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#3b82f6',
+          'line-width': 8
+        }
+      })
+    }
+  }, [fromLocation, toLocation])
 
   return html`
     <main class="relative z-1">
