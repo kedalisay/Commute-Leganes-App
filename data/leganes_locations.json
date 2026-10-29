@@ -3,7 +3,7 @@
   "metadata": {
     "name": "Leganes Locations",
     "description": "A collection of local locations in Leganes, Iloilo.",
-    "last-updated": "2026-10-21T16:20:00Z"
+    "last-updated": "2026-10-29T11:20:00Z"
   },
   "features": [
     {
@@ -17,8 +17,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          122.5898066,
-          10.7868103
+          122.5898937,
+          10.7856855
         ]
       }
     },
@@ -184,6 +184,692 @@
         "coordinates": [
           122.6254601,
           10.7803844
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Leganes Commercial Complex",
+        "location-aliases": [
+          "LCC",
+          "Leganes Public Market"
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5897837,
+          10.7868327
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Leganes Children's Playground"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.589187,
+          10.7846192
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Leganes Day Care Center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5894091,
+          10.7843958
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Cooperative Development Authority - Regional Office 6"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5887411,
+          10.7844777
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Iglesia ni Cristo - Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5925474,
+          10.7834398
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Leganes Public Cemetery"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5940372,
+          10.7816345
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "La Maison Du Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5961101,
+          10.7807851
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Kingdom Hall of Jehovah's Witnesses - Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5918203,
+          10.7867431
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Saint Vincent Ferrer Parochial School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.590802,
+          10.785832
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "The Church of Jesus Christ of Latter-day Saints"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5880316,
+          10.7865994
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Lopez Galleria"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5877145,
+          10.7861677
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "ILECO-1 Leganes Collection Office"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5878983,
+          10.7859722
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Queenbank - Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5885591,
+          10.7862995
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Seventh-day Adventist Church - Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.58846,
+          10.784752
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Deca Homes - Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5919503,
+          10.7804672
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Glenville Subdivision - Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5871925,
+          10.7807747
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Guihaman Day Care Center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.587292,
+          10.7788686
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Whitehaven Gardens - Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6004653,
+          10.7775483
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Napnud Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6036611,
+          10.7770871
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Bungso-an Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6362339,
+          10.7890095
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Saint Vincent College of Science and Technology",
+        "location-aliases": [
+          "St. Vincent College"
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.595169,
+          10.7991644
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Cagamutan Norte Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.601186,
+          10.8118747
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Calaboa Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5837596,
+          10.8122122
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Lapayon Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5705692,
+          10.8022889
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Lapayon National High School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5706746,
+          10.8025994
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Lapayon Barangay Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5705391,
+          10.8020326
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Saint Peter Chapels - Leganes",
+        "location-aliases": [
+          "St. Peter Chapels"
+        ]
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5792142,
+          10.7896912
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Coliseo de Leganes"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5799372,
+          10.7924225
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Villa Feliza Subdivision"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5922526,
+          10.7876039
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Cagamutan Sur Barangay Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5918163,
+          10.7894604
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Guinobatan Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6000287,
+          10.7836223
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Barangay Guinobatan Multi-Purpose Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5996992,
+          10.7843238
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Vela Amanda"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5982552,
+          10.7729126
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Cari Minor Barangay Multi-Purpose Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.601042,
+          10.7924592
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Cari Mayor Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6082485,
+          10.7947593
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Calaboa Barangay Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5818564,
+          10.8092714
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Brackishwater Aquaculture Center"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6355435,
+          10.7892108
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Guintas Barangay Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.591194,
+          10.7682486
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Guintas Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.592962,
+          10.7658984
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Guihaman-Buntatala Elementary School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5843663,
+          10.7766694
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Buntatala Barangay Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5844329,
+          10.7764155
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Saint Bertille Integrated School"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5849963,
+          10.7762539
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Villa Alemia Subdivision"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5854478,
+          10.7748664
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Santa Rosa North Subdivision"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5916967,
+          10.7890899
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Manuela Subdivision"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5945058,
+          10.7881799
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "San Vicente Barangay Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5830699,
+          10.792161
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Barangay Bigke Gym"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.600551,
+          10.765207
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Barangay Napnud Multi-Purpose Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6082484,
+          10.780096
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Barangay Gua-an Multi-Purpose Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6144422,
+          10.7813546
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Barangay Nabitasan Multi-Purpose Hall"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6400499,
+          10.7899722
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Villa Leganes Subdivision"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.5979563,
+          10.8068812
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "location-name": "Cari Mayor Basketball Court"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          122.6086172,
+          10.7966684
         ]
       }
     }
