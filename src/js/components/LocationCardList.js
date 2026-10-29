@@ -60,6 +60,28 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
     stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
   }
 
+  const handleLocationClick = (location) => {
+    const coords = { lat: location.coordinates[1], lng: location.coordinates[0] }
+    const coordsString = `${coords['lat']}, ${coords['lng']}`
+    const marker = addMarkerToMap(map, coords, isFromLocationFocused)
+    map.flyTo({
+      center: location.coordinates,
+    })
+
+    if (isFromLocationFocused) {
+      setFromLocation(coordsString)
+      if (fromMarker) removeMarkerFromMap(fromMarker)
+      setFromMarker(marker)
+      closeDrawer()
+      return
+    } 
+
+    setToLocation(coordsString)
+    if (toMarker) removeMarkerFromMap(toMarker)
+    setToMarker(marker)
+    closeDrawer()
+  }
+
   return html`
     <section aria-labelledby="locations-heading" class="pb-8 overflow-y-auto max-h-full">
       <h2 id="locations-heading" class="sr-only">Choose a location</h2>
@@ -68,29 +90,9 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
         <${UseCurrentLocationButton} onClick=${() => useCurrentLocation()} />
         <${ChooseOnMapButton} onClick=${chooseOnMap}/>
         ${locations.map((location) => 
-          html`<${LocationCard} location=${location} onClick=${
-            () => {
-              const coords = { lat: location.coordinates[1], lng: location.coordinates[0] }
-              const coordsString = `${coords['lat']}, ${coords['lng']}`
-              const marker = addMarkerToMap(map, coords, isFromLocationFocused)
-              map.flyTo({
-                center: location.coordinates,
-              })
-
-              if (isFromLocationFocused) {
-                setFromLocation(coordsString)
-                if (fromMarker) removeMarkerFromMap(fromMarker)
-                setFromMarker(marker)
-                closeDrawer()
-                return
-              } 
-
-              setToLocation(coordsString)
-              if (toMarker) removeMarkerFromMap(toMarker)
-              setToMarker(marker)
-              closeDrawer()
-              }
-            } 
+          html`<${LocationCard} 
+          location=${location} 
+          onClick=${() => handleLocationClick(location)} 
           />`)}
         </fieldset>
       </form>
