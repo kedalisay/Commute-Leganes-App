@@ -28,7 +28,7 @@ const PATH_EDGES = Object.values(PATHFINDER.graph.vertices).map(edge => Object.k
 const WALKING_ROUTE_SOURCE_ID = 'calculated-walking-route'
 const WALKING_ROUTE_LAYER_ID = 'calculated-walking-route'
 
-const STATIC_LOCATIONS = []
+const STATIC_LOCATIONS = {}
 
 const PUBLIC_ROUTES = {}
 
@@ -37,18 +37,16 @@ MAP.on('load', async () => {
   PUBLIC_ROUTES.features = publicRoutesData.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
 
   const locationsData = await (await fetch('/data/leganes_locations.json')).json()
-  locationsData.features.forEach((feature) => {
+  STATIC_LOCATIONS.features = locationsData.features.map((feature) => {
     const locationName = feature.properties['location-name']
-    const locationCoordinates = feature.geometry.coordinates
+    const locationCoordinates = feature.geometry.coords
     const locationAliases = feature.properties['location-aliases']
 
-    const location = { 
+    return { 
       name: locationName, 
-      coordinates: locationCoordinates, 
+      coords: locationCoordinates, 
       aliases: locationAliases 
     }
-
-    STATIC_LOCATIONS.push(location)
   })
 
   MAP.addSource('public-routes', {
@@ -120,17 +118,17 @@ const App = () => {
   // Marker state management
   const [fromMarker, setFromMarker] = useState(null)
   const [toMarker, setToMarker] = useState(null)
-
+  
   // Location state management
   const [deviceLocation, setDeviceLocation] = useState(null)
 
   const [fromLocation, setFromLocation] = useState('')
   const setFromLocationHandler = (location) => {
     if (typeof location === 'object' && location !== null) {
-      if (location.hasOwnProperty('lat') && location.hasOwnProperty('lng')) {
-        setFromLocation(`${location.lat}, ${location.lng}`)
+      if (location.hasOwnProperty('name')) {
+        setFromLocation(location)
       } else {
-        setFromLocation(location.toString())
+        setFromLocation({ name: `${location.coords[1]}, ${location.coords[0]}`, coords: location.coords })
       }
       return
     }
@@ -142,10 +140,10 @@ const App = () => {
   const [toLocation, setToLocation] = useState('')
   const setToLocationHandler = (location) => {
     if (typeof location === 'object' && location !== null) {
-      if (location.hasOwnProperty('lat') && location.hasOwnProperty('lng')) {
-        setToLocation(`${location.lat}, ${location.lng}`)
+      if (location.hasOwnProperty('name')) {
+        setToLocation(location)
       } else {
-        setToLocation(location.toString())
+        setToLocation({ name: `${location.coords[1]}, ${location.coords[0]}`, coords: location.coords })
       }
       return
     }
@@ -159,7 +157,9 @@ const App = () => {
   const stopMarkerCentering = useRef(null)
 
   const confirmLocation = () => {
-    const coords = MAP.getCenter()
+    const coords = {
+      'coords':MAP.getCenter().toArray()
+    }
 
     if (isFromLocationFocused) {
       setFromLocationHandler(coords)
@@ -291,8 +291,21 @@ const App = () => {
 
   const findRoute = () => {
     if (fromMarker && toMarker) {
-      const fromCoords = fromLocation.split(',').map(coord => parseFloat(coord.trim())).reverse()
-      const toCoords = toLocation.split(',').map(coord => parseFloat(coord.trim())).reverse() 
+      let fromLoc = fromLocation
+      let toLoc = toLocation
+
+      if (!fromLoc || !toLoc) {
+        return 
+      }
+      if (typeof fromLocation === 'object' && fromLocation !== null) {
+        fromLoc = `${fromLocation.coords[1]}, ${fromLocation.coords[0]}`
+      }
+      if (typeof toLocation === 'object' && toLocation !== null) {
+        toLoc = `${toLocation.coords[1]}, ${toLocation.coords[0]}`
+      }
+
+      const fromCoords = fromLoc.split(',').map(coord => parseFloat(coord.trim())).reverse()
+      const toCoords = toLoc.split(',').map(coord => parseFloat(coord.trim())).reverse() 
 
       if (fromCoords.length !== 2 || toCoords.length !== 2 || fromCoords.some(isNaN) || toCoords.some(isNaN)) {
         console.error('Invalid coordinates:', fromCoords, toCoords)
@@ -372,7 +385,7 @@ const App = () => {
     }
   }
 
-  useEffect(findRoute, [fromMarker, toMarker])
+  useEffect(findRoute, [fromLocation, toLocation])
 
   // Update document title based on drawer mode
   useEffect(() => {
@@ -410,7 +423,7 @@ const App = () => {
         isDrawerOpen=${isDrawerOpen} 
         openDrawer=${openDrawer} 
         closeDrawer=${closeDrawer}
-        locations=${STATIC_LOCATIONS}
+        locations=${STATIC_LOCATIONS.features}
         setLocations=${setLocations}
         fromLocation=${fromLocation}
         setFromLocation=${setFromLocationHandler}

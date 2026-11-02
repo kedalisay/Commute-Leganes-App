@@ -17,19 +17,19 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
     }
 
     if (deviceLocation === null 
-      || coords['lat'] !== deviceLocation['lat'] 
-      || coords['lng'] !== deviceLocation['lng']) {
+      || coords[1] !== deviceLocation[1] 
+      || coords[0] !== deviceLocation[0]) {
       setDeviceLocation(coords)
     }
 
     if (isFromLocationFocused) {
-      setFromLocation(coords)
+      setFromLocation({ name: `${coords[1]}, ${coords[0]}`, coords: coords })
       if (fromMarker) {
         removeMarkerFromMap(fromMarker)
       }
       setFromMarker(addMarkerToMap(map, coords, isFromLocationFocused))
     } else if (isToLocationFocused) {
-      setToLocation(coords)
+      setToLocation({ name: `${coords[1]}, ${coords[0]}`, coords: coords })
       if (toMarker) {
         removeMarkerFromMap(toMarker)
       }
@@ -37,14 +37,14 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
     }
 
     map.flyTo({
-      center: [coords['lng'], coords['lat']],
+      center: [coords[0], coords[1]],
     })
     
     closeDrawer()
   }
 
   const chooseOnMap = () => {
-    const coords = map.getCenter()
+    const coords = map.getCenter().toArray()
     const marker = addMarkerToMap(map, coords, isFromLocationFocused)
     setDrawerToLocationActions()
 
@@ -61,22 +61,20 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
   }
 
   const handleLocationClick = (location) => {
-    const coords = { lat: location.coordinates[1], lng: location.coordinates[0] }
-    const coordsString = `${coords['lat']}, ${coords['lng']}`
-    const marker = addMarkerToMap(map, coords, isFromLocationFocused)
+    const marker = addMarkerToMap(map, location.coords, isFromLocationFocused)
     map.flyTo({
-      center: location.coordinates,
+      center: location.coords,
     })
 
     if (isFromLocationFocused) {
-      setFromLocation(coordsString)
+      setFromLocation(location)
       if (fromMarker) removeMarkerFromMap(fromMarker)
       setFromMarker(marker)
       closeDrawer()
       return
     } 
 
-    setToLocation(coordsString)
+    setToLocation(location)
     if (toMarker) removeMarkerFromMap(toMarker)
     setToMarker(marker)
     closeDrawer()

@@ -3,10 +3,7 @@ const getGeolocation = async () => {
   try {
     return navigator.geolocation ? await new Promise((resolve, reject) => {
       navigator.geolocation.getCurrentPosition((position) => {
-        resolve({
-          lat: position.coords.latitude,
-          lng: position.coords.longitude
-        })
+        resolve([position.coords.longitude, position.coords.latitude])
       }, (error) => {
         reject(error)
       })

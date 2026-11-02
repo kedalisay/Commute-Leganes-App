@@ -7,7 +7,7 @@ const addMarkerToMap = (map, coords, isFromLocationFocused) => {
   markerElement.style.width = '55px'
   markerElement.style.height = '55px'
 
-  return new Marker({ element: markerElement }).setLngLat([coords['lng'], coords['lat']]).setOffset([0, -27.5]).addTo(map)
+  return new Marker({ element: markerElement }).setLngLat([coords[0], coords[1]]).setOffset([0, -27.5]).addTo(map)
 }
 
 const removeMarkerFromMap = (marker) => {

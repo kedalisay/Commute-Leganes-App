@@ -20,7 +20,13 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
     }
 
     const fromValue = event.target.value;
-    setFromLocation(fromValue);
+    if (fromLocation && typeof fromLocation === 'object') {
+      fromLocation.name = fromValue
+      setFromLocation(fromLocation);
+    } else {
+      setFromLocation({ name: fromValue });
+    }
+
     setIsFromLocationFocused(true);
     setIsToLocationFocused(false);
 
@@ -63,7 +69,12 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
     }
 
     const toValue = event.target.value;
-    setToLocation(toValue);
+    if (toLocation && typeof toLocation === 'object') {
+      toLocation.name = toValue
+      setToLocation(toLocation);
+    } else {
+      setToLocation({ name: toValue });
+    }
     setIsToLocationFocused(true);
     setIsFromLocationFocused(false);
 
@@ -100,9 +111,9 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
     setFromLocation(toLocation);
     setToLocation(tempLocation);
 
-    const newFromMarker = addMarkerToMap(map, toMarker.getLngLat(), true);
+    const newFromMarker = addMarkerToMap(map, toMarker.getLngLat().toArray(), true);
     setFromMarker(newFromMarker);
-    const newToMarker = addMarkerToMap(map, fromMarker.getLngLat(), false);
+    const newToMarker = addMarkerToMap(map, fromMarker.getLngLat().toArray(), false);
     setToMarker(newToMarker);
   }
 
@@ -114,13 +125,13 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
             <svg class="stroke-(--brand-primary) stroke-4  absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="10" cx="12.5" cy="12.5" fill="none"/>
             </svg>
-            <input onInput=${handleFromInput} type="text" name="from" placeholder="Where from?" value=${fromLocation} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full\ h-full" />
+            <input onInput=${handleFromInput} type="text" name="from" placeholder="Where from?" value=${fromLocation.name} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full\ h-full" />
           </label>
           <label class="relative inline-block w-full max-w-[calc(100%-45px)] h-[35px]">
             <svg class="fill-(--brand-secondary) absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="12.5" cx="12.5" cy="12.5"/>
             </svg>
-            <input onInput=${handleToInput} type="text" name="to" placeholder="Where to?" value=${toLocation} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full h-full" />
+            <input onInput=${handleToInput} type="text" name="to" placeholder="Where to?" value=${toLocation.name} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full h-full" />
           </label>
           <svg class="stroke-(--color-gray-500) stroke-8 absolute top-0 left-[13.5px]" width="5" height="80" xmlns="http://www.w3.org/2000/svg">
             <g>
