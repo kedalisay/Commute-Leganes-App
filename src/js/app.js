@@ -23,8 +23,11 @@ const MAP = new Map({
 });
 
 const PATHFINDER = new PathFinder(leganes_road_network_geojson, { tolerance: 1e-5 });
-const VERTICES = Object.values(PATHFINDER.graph.vertices).map(vertex => Object.keys(vertex).map(key => key.split(',').map(coord => parseFloat(coord))));
-console.log(VERTICES)
+const PATH_VERTICES = Object.keys(PATHFINDER.graph.vertices)
+const PATH_EDGES = Object.values(PATHFINDER.graph.vertices).map(edge => Object.keys(edge).map(vertex => vertex.split(',').map(coord => parseFloat(coord))));
+
+const WALKING_ROUTE_SOURCE_ID = 'calculated-walking-route'
+const WALKING_ROUTE_LAYER_ID = 'calculated-walking-route'
 
 const STATIC_LOCATIONS = []
 
@@ -287,6 +290,91 @@ const App = () => {
     closeDrawer()
   }
 
+  const findRoute = () => {
+    if (fromMarker && toMarker) {
+      const fromCoords = fromLocation.split(',').map(coord => parseFloat(coord.trim())).reverse()
+      const toCoords = toLocation.split(',').map(coord => parseFloat(coord.trim())).reverse() 
+
+      if (fromCoords.length !== 2 || toCoords.length !== 2 || fromCoords.some(isNaN) || toCoords.some(isNaN)) {
+        console.error('Invalid coordinates:', fromCoords, toCoords)
+        setRoutes([])
+        return
+      }
+
+      setDrawerToRoutes()
+      openDrawer()
+
+      const closestFromVertex = PATH_EDGES.reduce((closest, vertex) => {
+        const distance = Math.sqrt(Math.pow(vertex[0][0] - fromCoords[0], 2) + Math.pow(vertex[0][1] - fromCoords[1], 2))
+        return distance < closest.distance ? { vertex, distance } : closest
+      }, { vertex: null, distance: Infinity })
+
+      const closestToVertex = PATH_EDGES.reduce((closest, vertex) => {
+        const distance = Math.sqrt(Math.pow(vertex[0][0] - toCoords[0], 2) + Math.pow(vertex[0][1] - toCoords[1], 2))
+        return distance < closest.distance ? { vertex, distance } : closest
+      }, { vertex: null, distance: Infinity })
+
+      if (closestFromVertex.distance > 0.01 || closestToVertex.distance > 0.01) {
+        console.error('Coordinates are out of bounds of the road network:', fromCoords, toCoords)
+        return
+      }
+
+      const fromPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestFromVertex.vertex[0] } }
+      const toPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestToVertex.vertex[0] } }
+
+      const path = PATHFINDER.findPath(fromPoint, toPoint)
+
+      if (!path) {
+        console.error('No path found between the specified locations.')
+        setRoutes([])
+        return
+      }
+      const geojsonPath = pathToGeoJSON(path)
+
+      if (MAP.getSource(WALKING_ROUTE_SOURCE_ID)) {
+        MAP.getSource(WALKING_ROUTE_SOURCE_ID).setData(geojsonPath)
+      } else {
+        MAP.addSource(WALKING_ROUTE_SOURCE_ID, {
+          type: 'geojson',
+          data: geojsonPath,
+        })
+      }
+
+      if (!MAP.getLayer(WALKING_ROUTE_LAYER_ID)) {
+        MAP.addLayer({
+          id: WALKING_ROUTE_LAYER_ID,
+          type: 'line',
+          source: WALKING_ROUTE_SOURCE_ID,
+          layout: {
+            'line-join': 'round',
+            'line-cap': 'round',
+          },
+          paint: {
+            'line-color': '#3b82f6',
+            'line-width': 8,
+          },
+        })
+      }
+
+      setRoutes([{
+        name: 'Walking Route',
+        public: false,
+        total_distance: path.weight.toFixed(2),
+        total_duration: Math.round((path.weight / 5).toFixed(2) * 60),
+        total_transfers: 0,
+        fare: null,
+        color: '#3b82f6',
+        legs: [{
+          mode: 'walking',
+          from: fromLocation,
+          to: toLocation,
+        }],
+      }])
+    }
+  }
+
+  useEffect(findRoute, [fromMarker, toMarker])
+
   // Update document title based on drawer mode
   useEffect(() => {
     switch (drawerMode) {
@@ -306,73 +394,6 @@ const App = () => {
         document.title = 'Commute Leganes'
     }
   }, [drawerMode])
-
-  // after from and two are filled, find the route and display it on the map
-  useEffect(() => {
-    if (fromLocation && toLocation) {
-      const fromCoords = fromLocation.split(',').map(coord => parseFloat(coord.trim())).reverse()
-      const toCoords = toLocation.split(',').map(coord => parseFloat(coord.trim())).reverse() 
-
-      if (fromCoords.length !== 2 || toCoords.length !== 2 || fromCoords.some(isNaN) || toCoords.some(isNaN)) {
-        console.error('Invalid coordinates:', fromCoords, toCoords)
-        return
-      }
-
-      // const fromPoint = { type: 'Point', geometry: { type: 'Point', coordinates: [122.59463000000001, 10.76139] } }
-      // const toPoint = { type: 'Point', geometry: { type: 'Point', coordinates: [122.59383000000001, 10.79569] } }
-      // console.log(fromCoords, toCoords)
-
-      // check if fromcoords and tocoords are within the bounds of the road network based on vertices variable
-      // checking by the number that's closest to the fromcoords and tocoords, if the distance is greater than 0.01, then it's out of bounds
-      const closestFromVertex = VERTICES.reduce((closest, vertex) => {
-        const distance = Math.sqrt(Math.pow(vertex[0][0] - fromCoords[0], 2) + Math.pow(vertex[0][1] - fromCoords[1], 2))
-        return distance < closest.distance ? { vertex, distance } : closest
-      }, { vertex: null, distance: Infinity })
-
-      const closestToVertex = VERTICES.reduce((closest, vertex) => {
-        const distance = Math.sqrt(Math.pow(vertex[0][0] - toCoords[0], 2) + Math.pow(vertex[0][1] - toCoords[1], 2))
-        return distance < closest.distance ? { vertex, distance } : closest
-      }, { vertex: null, distance: Infinity })
-
-      if (closestFromVertex.distance > 0.01 || closestToVertex.distance > 0.01) {
-        console.error('Coordinates are out of bounds of the road network:', fromCoords, toCoords)
-        return
-      }
-      
-      console.log(fromCoords, toCoords)
-      console.log(closestFromVertex, closestToVertex)
-
-      const fromPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestFromVertex.vertex[0] } }
-      const toPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestToVertex.vertex[0] } }
-
-
-      const path = PATHFINDER.findPath(fromPoint, toPoint)
-
-      console.log(path)
-      if (!path) {
-        console.error('No path found between the specified locations.')
-        return
-      }
-      const geojson = pathToGeoJSON(path)
-
-      MAP.addLayer({
-        id: `new-route-${Date.now()}`,
-        type: 'line',
-        source: {
-          type: 'geojson',
-          data: geojson
-        },
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': '#3b82f6',
-          'line-width': 8
-        }
-      })
-    }
-  }, [fromLocation, toLocation])
 
   return html`
     <main class="relative z-1">
