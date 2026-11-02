@@ -350,8 +350,9 @@ const App = () => {
             'line-cap': 'round',
           },
           paint: {
-            'line-color': '#3b82f6',
-            'line-width': 8,
+            'line-color': '#0b38a8',
+            'line-width': 4,
+            'line-dasharray': [2, 4],
           },
         })
       }
@@ -363,7 +364,6 @@ const App = () => {
         total_duration: Math.round((path.weight / 5).toFixed(2) * 60),
         total_transfers: 0,
         fare: null,
-        color: '#3b82f6',
         legs: [{
           mode: 'walking',
           from: fromLocation,
