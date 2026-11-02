@@ -13,8 +13,8 @@ const RouteCard = ({route, onClick}) => {
     <input class="sr-only" type="radio" name="route" id=${inputId} value=${route.name} />
     <label for=${inputId} class="flex flex-col gap-2 p-4 bg-white border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
       <div class="flex flex-row flex-nowrap gap-2 w-full">
-        <h3 class="text-xl font-bold font-display text-left basis-1/2 sm:basis-5/6 inline-block">${route.name}</h3>
-        <div class="basis-1/2 sm:basis-1/6 flex flex-col gap-1 items-end justify-center">
+        <h3 class="text-xl font-bold font-display text-left basis-1/2 sm:basis-4/6 inline-block">${route.name}</h3>
+        <div class="basis-1/2 sm:basis-2/6 flex flex-col gap-1 items-end justify-center">
           ${fare !== null && fare !== undefined ? html`<data class="text-right" value="${fare}"><b>₱${fare}</b></data>` : null}
           ${duration !== null && duration !== undefined
             ? html`<time class="text-right"><b>${duration} minute${duration !== 1 ? 's' : ''}</b></time>`
