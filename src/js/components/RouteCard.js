@@ -2,6 +2,12 @@ import html from '../html.js'
 
 const RouteCard = ({route, onClick}) => {
   const inputId = `route-${route.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+  const fare = route.fare !== undefined && route.fare !== null
+    ? route.fare
+    : route.total_fare
+  const duration = route.total_duration
+  const distance = route.total_distance
+  const transfers = route.total_transfers
 
   return html`
     <input class="sr-only" type="radio" name="route" id=${inputId} value=${route.name} />
@@ -9,14 +15,22 @@ const RouteCard = ({route, onClick}) => {
       <div class="flex flex-row flex-nowrap gap-2 w-full">
         <h3 class="text-xl font-bold font-display text-left basis-1/2 sm:basis-5/6 inline-block">${route.name}</h3>
         <div class="basis-1/2 sm:basis-1/6 flex flex-col gap-1 items-end justify-center">
-          <data class="text-right" value="${route.total_fare}"><b>₱${route.total_fare}</b></data>
-          <time class="text-right" datetime="0d 0h 13m 0s"><b>${route.total_duration} minute${route.total_duration !== 1 ? 's' : ''}</b></time>
-          <data class="text-right" value="${route.total_transfers}">${route.total_transfers} transfer${route.total_transfers !== 1 ? 's' : ''}</data>
-          <data class="text-right" value="${route.total_distance}"> ${route.total_distance} kilometer${route.total_distance !== 1 ? 's' : ''}</data>
+          ${fare !== null && fare !== undefined ? html`<data class="text-right" value="${fare}"><b>₱${fare}</b></data>` : null}
+          ${duration !== null && duration !== undefined
+            ? html`<time class="text-right"><b>${duration} minute${duration !== 1 ? 's' : ''}</b></time>`
+            : null}
+          ${transfers !== null && transfers !== undefined
+            ? html`<data class="text-right" value="${transfers}">${transfers} transfer${transfers !== 1 ? 's' : ''}</data>`
+            : null}
+          ${distance !== null && distance !== undefined
+            ? html`<data class="text-right" value="${distance}">${distance} kilometer${distance !== 1 ? 's' : ''}</data>`
+            : null}
         </div>
       </div>
       <div>
-        #TODO: Add route path visualization here
+        ${route.legs
+          ? route.legs.map((leg) => html`<p class="text-left">${leg.mode}: ${leg.from} to ${leg.to}</p>`)
+          : null}
       </div>
     </label>
   `
