@@ -2,8 +2,9 @@ import html from '../html.js'
 
 import { addMarkerToMap, removeMarkerFromMap } from '../utils/MapLibreGL.js'
 
-const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer,  locations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer,  locations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
   const locationHasMatchingName = (location, value) => location.toLocaleLowerCase().includes(value.toLocaleLowerCase())
+  const getLocationName = (location) => typeof location === 'object' && location !== null ? location.name || '' : location || ''
 
   const handleFromInput = (event) => {
     setDrawerToLocations();
@@ -11,6 +12,7 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
       setFromLocation('');
       if (stopMarkerCentering) {
         stopMarkerCentering()
+        setFromMarker(null)
         removeMarkerFromMap(fromMarker)
       } 
       setIsFromLocationFocused(false);
@@ -20,9 +22,38 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
     }
 
     const fromValue = event.target.value;
+
+    const coords = fromValue.split(',').map((coord) => parseFloat(coord.trim()));
+    if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+      setFromLocation({ name: `${coords[1]}, ${coords[0]}`, coords: coords })
+      if (fromMarker) {
+        setFromMarker(null)
+        removeMarkerFromMap(fromMarker)
+      }
+
+      const closestFromVertex = edges.reduce((closest, vertex) => {
+        const distance = Math.sqrt(Math.pow(vertex[0][0] - coords[0], 2) + Math.pow(vertex[0][1] - coords[1], 2))
+        return distance < closest.distance ? { vertex, distance } : closest
+      }, { vertex: null, distance: Infinity })
+
+      if (closestFromVertex.distance > 1) {
+        console.error('Coordinates are out of bounds of the road network:', coords)
+      } else {
+        const fromVertexCoords = [closestFromVertex.vertex[0][0], closestFromVertex.vertex[0][1]]
+        setFromLocation({ name: `${fromVertexCoords[1]}, ${fromVertexCoords[0]}`, coords: [fromVertexCoords[0], fromVertexCoords[1]] })
+
+        setFromMarker(addMarkerToMap(map, coords.reverse(), true))
+        map.flyTo({
+          center: [coords[0], coords[1]],
+        })
+
+        closeDrawer()
+        return;
+      }
+    }
+
     if (fromLocation && typeof fromLocation === 'object') {
-      fromLocation.name = fromValue
-      setFromLocation(fromLocation);
+      setFromLocation({ ...fromLocation, name: fromValue });
     } else {
       setFromLocation({ name: fromValue });
     }
@@ -39,8 +70,7 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
         if (location.aliases) {
         for (const alias in location.aliases) {
           if (locationHasMatchingName(alias, fromValue)) {
-            location.name = alias
-            filteredLocations.push(location);
+            filteredLocations.push({ ...location, name: alias });
           }
         }
       }
@@ -60,6 +90,7 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
       setToLocation('');
       if (stopMarkerCentering) {
         stopMarkerCentering()
+        setToMarker(null)
         removeMarkerFromMap(toMarker);
       }
       setIsToLocationFocused(false);
@@ -69,9 +100,38 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
     }
 
     const toValue = event.target.value;
+
+    const coords = toValue.split(',').map((coord) => parseFloat(coord.trim()));
+    if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
+      setToLocation({ name: `${coords[1]}, ${coords[0]}`, coords: coords })
+      if (toMarker) {
+        setToMarker(null)
+        removeMarkerFromMap(toMarker)
+      }
+
+      const closestToVertex = edges.reduce((closest, vertex) => {
+        const distance = Math.sqrt(Math.pow(vertex[0][0] - coords[0], 2) + Math.pow(vertex[0][1] - coords[1], 2))
+        return distance < closest.distance ? { vertex, distance } : closest
+      }, { vertex: null, distance: Infinity })
+
+      if (closestToVertex.distance > 1) {
+        console.error('Coordinates are out of bounds of the road network:', coords)
+      } else {
+        const toVertexCoords = [closestToVertex.vertex[0][0], closestToVertex.vertex[0][1]]
+        setToLocation({ name: `${toVertexCoords[1]}, ${toVertexCoords[0]}`, coords: [toVertexCoords[0], toVertexCoords[1]] })
+
+        setToMarker(addMarkerToMap(map, coords.reverse(), false))
+        map.flyTo({
+          center: [coords[0], coords[1]],
+        })
+
+        closeDrawer()
+        return;
+      }
+    }
+
     if (toLocation && typeof toLocation === 'object') {
-      toLocation.name = toValue
-      setToLocation(toLocation);
+      setToLocation({ ...toLocation, name: toValue });
     } else {
       setToLocation({ name: toValue });
     }
@@ -87,8 +147,7 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
         if (location.aliases) {
           for (const alias in location.aliases) {
             if (locationHasMatchingName(alias, toValue) && !filteredLocations.some((loc) => loc.name === alias)) {
-              location.name = alias
-              filteredLocations.push(location);
+              filteredLocations.push({ ...location, name: alias });
             }
           }
         }
@@ -125,13 +184,13 @@ const RouteWidget = ({ map, drawerMode, setDrawerToDefault, setDrawerToLocations
             <svg class="stroke-(--brand-primary) stroke-4  absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="10" cx="12.5" cy="12.5" fill="none"/>
             </svg>
-            <input onInput=${handleFromInput} type="text" name="from" placeholder="Where from?" value=${fromLocation.name} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full\ h-full" />
+            <input onInput=${handleFromInput} type="text" name="from" placeholder="Where from?" value=${getLocationName(fromLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full h-full" />
           </label>
           <label class="relative inline-block w-full max-w-[calc(100%-45px)] h-[35px]">
             <svg class="fill-(--brand-secondary) absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="12.5" cx="12.5" cy="12.5"/>
             </svg>
-            <input onInput=${handleToInput} type="text" name="to" placeholder="Where to?" value=${toLocation.name} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full h-full" />
+            <input onInput=${handleToInput} type="text" name="to" placeholder="Where to?" value=${getLocationName(toLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full h-full" />
           </label>
           <svg class="stroke-(--color-gray-500) stroke-8 absolute top-0 left-[13.5px]" width="5" height="80" xmlns="http://www.w3.org/2000/svg">
             <g>

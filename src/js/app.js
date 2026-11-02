@@ -291,23 +291,24 @@ const App = () => {
 
   const findRoute = () => {
     if (fromMarker && toMarker) {
-      let fromLoc = fromLocation
-      let toLoc = toLocation
+      const getCoordinates = (location) => {
+        if (typeof location === 'object' && location !== null) {
+          return Array.isArray(location.coords) ? location.coords : null
+        }
+        if (typeof location !== 'string' || location.trim() === '') {
+          return null
+        }
 
-      if (!fromLoc || !toLoc) {
-        return 
-      }
-      if (typeof fromLocation === 'object' && fromLocation !== null) {
-        fromLoc = `${fromLocation.coords[1]}, ${fromLocation.coords[0]}`
-      }
-      if (typeof toLocation === 'object' && toLocation !== null) {
-        toLoc = `${toLocation.coords[1]}, ${toLocation.coords[0]}`
+        const coordinates = location.split(',').map(coord => parseFloat(coord.trim()))
+        return coordinates.length === 2 && coordinates.every(Number.isFinite)
+          ? coordinates.reverse()
+          : null
       }
 
-      const fromCoords = fromLoc.split(',').map(coord => parseFloat(coord.trim())).reverse()
-      const toCoords = toLoc.split(',').map(coord => parseFloat(coord.trim())).reverse() 
+      const fromCoords = getCoordinates(fromLocation)
+      const toCoords = getCoordinates(toLocation)
 
-      if (fromCoords.length !== 2 || toCoords.length !== 2 || fromCoords.some(isNaN) || toCoords.some(isNaN)) {
+      if (!fromCoords || !toCoords || fromCoords.length !== 2 || toCoords.length !== 2 || fromCoords.some(isNaN) || toCoords.some(isNaN)) {
         console.error('Invalid coordinates:', fromCoords, toCoords)
         setRoutes([])
         return
@@ -326,13 +327,16 @@ const App = () => {
         return distance < closest.distance ? { vertex, distance } : closest
       }, { vertex: null, distance: Infinity })
 
-      if (closestFromVertex.distance > 0.01 || closestToVertex.distance > 0.01) {
+      if (closestFromVertex.distance > 1 || closestToVertex.distance > 1) {
         console.error('Coordinates are out of bounds of the road network:', fromCoords, toCoords)
         return
       }
 
-      const fromPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestFromVertex.vertex[0] } }
-      const toPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestToVertex.vertex[0] } }
+      const fromVertexCoords = [closestFromVertex.vertex[0][0], closestFromVertex.vertex[0][1]]
+      const toVertexCoords = [closestToVertex.vertex[0][0], closestToVertex.vertex[0][1]]
+
+      const fromPoint = { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } }
+      const toPoint = { type: 'Point', geometry: { type: 'Point', coordinates: toVertexCoords } }
 
       const path = PATHFINDER.findPath(fromPoint, toPoint)
 
@@ -378,11 +382,21 @@ const App = () => {
         fare: null,
         legs: [{
           mode: 'walking',
-          from: fromLocation,
-          to: toLocation,
+          from: { name: `${fromVertexCoords[0]}, ${fromVertexCoords[1]}`, coords: fromVertexCoords },
+          to: { name: `${toVertexCoords[0]}, ${toVertexCoords[1]}`, coords: toVertexCoords },
         }],
       }])
+
+      return
     }
+
+    if (MAP.getLayer(WALKING_ROUTE_LAYER_ID)) {
+      MAP.removeLayer(WALKING_ROUTE_LAYER_ID)
+    }
+    if (MAP.getSource(WALKING_ROUTE_SOURCE_ID)) {
+      MAP.removeSource(WALKING_ROUTE_SOURCE_ID)
+    }
+    setRoutes([])
   }
 
   useEffect(findRoute, [fromLocation, toLocation])
@@ -412,6 +426,7 @@ const App = () => {
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
         map=${MAP}
+        edges=${PATH_EDGES}
         stopMarkerCentering=${stopMarkerCentering.current}
         fromMarker=${fromMarker} 
         setFromMarker=${setFromMarker}
