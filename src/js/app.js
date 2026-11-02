@@ -23,7 +23,6 @@ const MAP = new Map({
 });
 
 const PATHFINDER = new PathFinder(leganes_road_network_geojson, { tolerance: 1e-5 });
-const PATH_VERTICES = Object.keys(PATHFINDER.graph.vertices)
 const PATH_EDGES = Object.values(PATHFINDER.graph.vertices).map(edge => Object.keys(edge).map(vertex => vertex.split(',').map(coord => parseFloat(coord))));
 
 const WALKING_ROUTE_SOURCE_ID = 'calculated-walking-route'
