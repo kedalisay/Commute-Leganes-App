@@ -39,7 +39,7 @@ MAP.on('load', async () => {
   const locationsData = await (await fetch('/data/leganes_locations.json')).json()
   STATIC_LOCATIONS.features = locationsData.features.map((feature) => {
     const locationName = feature.properties['location-name']
-    const locationCoordinates = feature.geometry.coords
+    const locationCoordinates = feature.geometry.coordinates
     const locationAliases = feature.properties['location-aliases']
 
     return { 
