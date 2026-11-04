@@ -10,6 +10,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Guinobatan",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
         "public": true,
         "stroke-opacity": 1,
         "stroke-width": 3,
@@ -158,6 +161,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Napnud, Gua-an",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
         "public": true,
         "stroke-opacity": 1,
         "stroke-width": 3,
@@ -280,6 +286,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "M.V. Hechanova",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
         "public": true,
         "stroke-opacity": 1,
         "stroke-width": 3,
@@ -408,6 +417,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "San Vicente",
+        "terminals": [
+          "MAGSATODA Terminal"
+        ],
         "public": true,
         "stroke-width": 3,
         "stroke-opacity": 1,
@@ -488,6 +500,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Calaboa",
+        "terminals": [
+          "CATODA, CAMALETODA, CAMILETODA Terminal"
+        ],
         "public": true,
         "stroke-width": 3,
         "stroke-opacity": 1,
@@ -664,6 +679,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Cari Mayor",
+        "terminals": [
+          "CATODA, CAMALETODA, CAMILETODA Terminal"
+        ],
         "public": true,
         "stroke-width": 3,
         "stroke-opacity": 1,
@@ -900,6 +918,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Cari Minor",
+        "terminals": [
+          "CATODA, CAMALETODA, CAMILETODA Terminal"
+        ],
         "public": true,
         "stroke-width": 3,
         "stroke-opacity": 1,
@@ -1036,6 +1057,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Nabitasan",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
         "public": true,
         "stroke-opacity": 1,
         "stroke-width": 3,
@@ -1256,6 +1280,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Bigke",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
         "public": true,
         "stroke-opacity": 1,
         "stroke-width": 3,
@@ -1392,6 +1419,10 @@
       "type": "Feature",
       "properties": {
         "route-name": "Guihaman, Buntatala",
+        "terminals": [
+          "Leganes Aquino Avenue Terminal",
+          "Leganes La Paz and Aquino Avenue Terminal"
+        ],
         "public": true,
         "stroke-width": 3,
         "stroke-opacity": 1,
@@ -1541,6 +1572,11 @@
       "type": "Feature",
       "properties": {
         "route-name": "Cagamutan Norte",
+        "terminals": [
+          "POSAMATODA Terminal",
+          "Provincial Jeep and Bus Terminal 2",
+          "Provincial Jeep and Bus Terminal 1"
+        ],
         "public": true,
         "stroke-width": 3,
         "stroke-opacity": 1,
@@ -1647,6 +1683,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Guintas, Camangay",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
         "public": true,
         "stroke-opacity": 1,
         "stroke-width": 3,
@@ -1833,6 +1872,9 @@
       "type": "Feature",
       "properties": {
         "route-name": "Lapayon",
+        "terminals": [
+          "Lapayon Terminal"
+        ],
         "public": true,
         "stroke-opacity": 1,
         "stroke-width": 3,
