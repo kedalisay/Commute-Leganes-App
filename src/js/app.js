@@ -29,12 +29,28 @@ const WALKING_ROUTE_SOURCE_ID = 'calculated-walking-route'
 const WALKING_ROUTE_LAYER_ID = 'calculated-walking-route'
 
 const STATIC_LOCATIONS = {}
+const STATIC_BARANGAYS = {}
 
 const PUBLIC_ROUTES = {}
 
 MAP.on('load', async () => {
   const publicRoutesData = await (await fetch('/data/leganes_public_routes.json')).json()
   PUBLIC_ROUTES.features = publicRoutesData.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
+
+  const barangaysData = await (await fetch('/data/leganes_barangays.json')).json()
+  STATIC_BARANGAYS.features = barangaysData.features.map((feature) => {
+    const barangayName = feature.properties.tags.name
+    const barangayCoordinates = feature.geometry.coordinates
+    const barangayFillColor = feature.properties.fill
+    const barangayStrokeColor = feature.properties.stroke
+
+    return {
+      name: barangayName,
+      coords: barangayCoordinates,
+      fill: barangayFillColor,
+      stroke: barangayStrokeColor
+    }
+  })
 
   const locationsData = await (await fetch('/data/leganes_locations.json')).json()
   STATIC_LOCATIONS.features = locationsData.features.map((feature) => {
