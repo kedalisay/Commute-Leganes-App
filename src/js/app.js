@@ -1,7 +1,9 @@
 import { Map, getVersion, setWorkerUrl } from 'maplibre-gl';
 import PathFinder, { pathToGeoJSON }  from "geojson-path-finder";
-import leganes_road_network_geojson from '../../data/leganes_road_network.json'
+import booleanPointInPolygon from '@turf/boolean-point-in-polygon';
 import { useEffect, useState, useRef } from 'https://esm.sh/preact/hooks'
+
+import leganes_road_network_geojson from '../../data/leganes_road_network.json'
 
 import html from './html.js'
 
@@ -40,13 +42,13 @@ MAP.on('load', async () => {
   const barangaysData = await (await fetch('/data/leganes_barangays.json')).json()
   STATIC_BARANGAYS.features = barangaysData.features.map((feature) => {
     const barangayName = feature.properties.tags.name
-    const barangayCoordinates = feature.geometry.coordinates
+    const barangayGeometry = feature.geometry
     const barangayFillColor = feature.properties.fill
     const barangayStrokeColor = feature.properties.stroke
 
     return {
       name: barangayName,
-      coords: barangayCoordinates,
+      geometry: barangayGeometry,
       fill: barangayFillColor,
       stroke: barangayStrokeColor
     }
@@ -321,6 +323,35 @@ const App = () => {
           : null
       }
 
+      const getBarangay = (coords) => {
+        if (!Array.isArray(coords) || coords.length !== 2 || !coords.every(Number.isFinite)) {
+          return null
+        }
+
+        const point = {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'Point',
+            coordinates: coords,
+          },
+        }
+
+        for (const barangay of STATIC_BARANGAYS.features) {
+          const barangayFeature = {
+            type: 'Feature',
+            properties: {},
+            geometry: barangay.geometry,
+          }
+
+          if (booleanPointInPolygon(point, barangayFeature)) {
+            return barangay.name
+          }
+        }
+
+        return null
+      }
+
       const fromCoords = getCoordinates(fromLocation)
       const toCoords = getCoordinates(toLocation)
 
@@ -329,6 +360,21 @@ const App = () => {
         setRoutes([])
         return
       }
+
+      const fromBarangay = getBarangay(fromCoords)
+      const toBarangay = getBarangay(toCoords)
+      
+      if (!fromBarangay || !toBarangay) {
+        console.error('Coordinates are outside the barangay boundaries:', {
+          fromCoords,
+          toCoords,
+          fromBarangay,
+          toBarangay
+        })
+
+        setRoutes([])
+        return
+      } 
 
       setDrawerToRoutes()
       openDrawer()
