@@ -1571,11 +1571,11 @@
     {
       "type": "Feature",
       "properties": {
-        "route-name": "Cagamutan Norte",
+        "route-name": "Cagamutan Norte, Cagamutan Sur",
         "terminals": [
           "POSAMATODA Terminal",
-          "Provincial Jeep and Bus Terminal 2",
-          "Provincial Jeep and Bus Terminal 1"
+          "Provincial Jeep and Bus Loading/Unloading Point 2",
+          "Provincial Jeep and Bus Loading/Unloading Point 1"
         ],
         "public": true,
         "stroke-width": 3,

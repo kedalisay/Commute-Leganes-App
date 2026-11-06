@@ -783,7 +783,7 @@
     {
       "type": "Feature",
       "properties": {
-        "terminal-name": "Provincial Jeep and Bus Terminal 2"
+        "terminal-name": "Provincial Jeep and Bus Loading/Unloading Point 2"
       },
       "geometry": {
         "type": "Polygon",
@@ -816,7 +816,7 @@
     {
       "type": "Feature",
       "properties": {
-        "terminal-name": "Provincial Jeep and Bus Terminal 1"
+        "terminal-name": "Provincial Jeep and Bus Loading/Unloading Point 1"
       },
       "geometry": {
         "type": "Polygon",
