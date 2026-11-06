@@ -39,6 +39,7 @@ const STATIC_BARANGAYS = {}
 const PUBLIC_ROUTES = {}
 
 const removeSuggestedRouteLayers = () => {
+  if (!MAP || !MAP.getStyle()) return
   const style = MAP.getStyle()
   const layerIds = (style.layers || [])
     .map((layer) => layer.id)
@@ -488,10 +489,15 @@ const App = () => {
       let i = 0
 
       for (const closestTerminal of closestTerminalVertices) {
+        let walkingDistance = 0
+        let commuteDistance = 0
+
         const { properties, closestVertex: terminalVertex } = closestTerminal
         const fromTerminalPoint = { type: 'Point', geometry: { type: 'Point', coordinates: terminalVertex.vertex[0] } }
         const pathToTerminal = PATHFINDER.findPath(fromPoint, fromTerminalPoint)
         if (!pathToTerminal) continue
+
+        walkingDistance += pathToTerminal.weight
 
         const geojsonPathToTerminal = pathToGeoJSON(pathToTerminal)
         const terminalGeometry = STATIC_TERMINALS.features.find((terminal) => terminal.name === properties.name)
@@ -580,7 +586,16 @@ const App = () => {
 
         const toDropoffPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestDropoffVertex.vertex[0] } }
         const pathFromDropoff = PATHFINDER.findPath(toDropoffPoint, toPoint)
+
         if (!pathFromDropoff) continue
+
+        walkingDistance += pathFromDropoff.weight
+
+        const pathFromTerminal = PATHFINDER.findPath(fromTerminalPoint, toDropoffPoint)
+
+        if (!pathFromTerminal) continue
+
+        commuteDistance += pathFromTerminal.weight
         
         console.log("To dropoff point: ", toDropoffPoint)
         console.log("Path from dropoff: ", pathFromDropoff)
@@ -611,9 +626,9 @@ const App = () => {
           id: routeId,
           name: `Route ${i + 1} from ${fromBarangay} to ${toBarangay}`,
           public: false,
-          total_distance: 3,
-          total_duration: 15,
-          total_transfers: 0,
+          total_distance: (walkingDistance + commuteDistance).toPrecision(2),
+          total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60), // calculate duration minutes based on distance and average speed (e.g., 5 km/h for walking, 40 km/h for commuting)
+          total_transfers: 1,
           fare: toRoute.properties['route-fare'][0]['amount'],
           layerIds,
         })
