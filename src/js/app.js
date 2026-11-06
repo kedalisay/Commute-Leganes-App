@@ -30,12 +30,31 @@ const PATH_EDGES = Object.values(PATHFINDER.graph.vertices).map(edge => Object.k
 
 const WALKING_ROUTE_SOURCE_ID = 'calculated-walking-route'
 const WALKING_ROUTE_LAYER_ID = 'calculated-walking-route'
+const SUGGESTED_ROUTE_PREFIX = 'suggested-route'
 
 const STATIC_LOCATIONS = {}
 const STATIC_TERMINALS = {}
 const STATIC_BARANGAYS = {}
 
 const PUBLIC_ROUTES = {}
+
+const removeSuggestedRouteLayers = () => {
+  const style = MAP.getStyle()
+  const layerIds = (style.layers || [])
+    .map((layer) => layer.id)
+    .filter((id) => id.startsWith(`${SUGGESTED_ROUTE_PREFIX}-`))
+
+  layerIds.forEach((layerId) => MAP.removeLayer(layerId))
+
+  const sourceIds = Object.keys(style.sources || {})
+    .filter((sourceId) => sourceId.startsWith(`${SUGGESTED_ROUTE_PREFIX}-`))
+
+  sourceIds.forEach((sourceId) => {
+    if (MAP.getSource(sourceId)) {
+      MAP.removeSource(sourceId)
+    }
+  })
+}
 
 MAP.on('load', async () => {
   const publicRoutesData = await (await fetch('/data/leganes_public_routes.json')).json()
@@ -275,6 +294,23 @@ const App = () => {
 
   // Routes state management
   const [routes, setRoutes] = useState([])
+  const [selectedRouteId, setSelectedRouteId] = useState(null)
+
+  const selectRoute = (routeId) => {
+    if (!routeId) return
+
+    routes.forEach((route) => {
+      if (!route.layerIds) return
+
+      route.layerIds.forEach((layerId) => {
+        if (MAP.getLayer(layerId)) {
+          MAP.setLayoutProperty(layerId, 'visibility', route.id === routeId ? 'visible' : 'none')
+        }
+      })
+    })
+
+    setSelectedRouteId(routeId)
+  }
 
   const showPublicRoutes = () => {
     const routeData = []
@@ -317,10 +353,14 @@ const App = () => {
     });
 
     setRoutes([])
+    setSelectedRouteId(null)
     closeDrawer()
   }
 
   const findRoute = () => {
+    removeSuggestedRouteLayers()
+    setSelectedRouteId(null)
+
     if (fromMarker && toMarker) {
       const getCoordinates = (location) => {
         if (typeof location === 'object' && location !== null) {
@@ -407,13 +447,12 @@ const App = () => {
       const fromVertexCoords = [closestFromVertex.vertex[0][0], closestFromVertex.vertex[0][1]]
       const toVertexCoords = [closestToVertex.vertex[0][0], closestToVertex.vertex[0][1]]
 
-      const fromRoute = PUBLIC_ROUTES.features.find(route => route.properties['route-name'].includes(fromBarangay)) || "Poblacion"
-      const toRoute = PUBLIC_ROUTES.features.find(route => route.properties['route-name'].includes(toBarangay)) || "Poblacion"
+      const fromRoute = PUBLIC_ROUTES.features.find(route => route.properties['route-name'].includes(fromBarangay))
+      const toRoute = PUBLIC_ROUTES.features.find(route => route.properties['route-name'].includes(toBarangay))
 
       console.log('Finding route from', fromCoords, 'in', fromBarangay, 'to', toCoords, 'in', toBarangay, 'via', fromRoute, 'and', toRoute)
 
-      // get terminal of the to route
-      const terminals = toRoute.properties.terminals
+      const terminals = toRoute?.properties.terminals
       if (!terminals) {
         console.error('No terminals found for the destination route:', toRoute)
         setRoutes([])
@@ -431,7 +470,12 @@ const App = () => {
 
       console.log('Terminal points for the destination route:', terminalPoints)
 
-      const closestTerminalVertices = [ ...terminalPoints.map(point => getClosestVertex(point.geometry.coordinates)) ]
+      const closestTerminalVertices = terminalPoints
+        .map((point) => ({
+          ...point,
+          closestVertex: getClosestVertex(point.geometry.coordinates),
+        }))
+        .filter(({ closestVertex }) => closestVertex.vertex)
 
       console.log('Closest terminal vertices for the destination route:', closestTerminalVertices)
 
@@ -440,19 +484,54 @@ const App = () => {
       const fromPoint = { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } }
       const toPoint = { type: 'Point', geometry: { type: 'Point', coordinates: toVertexCoords } }
 
-    for (let i = 0; i < closestTerminalVertices.length; i++) {
-        const terminalVertex = closestTerminalVertices[i]
+      const routeCandidates = []
+      let i = 0
+
+      for (const closestTerminal of closestTerminalVertices) {
+        const { properties, closestVertex: terminalVertex } = closestTerminal
         const fromTerminalPoint = { type: 'Point', geometry: { type: 'Point', coordinates: terminalVertex.vertex[0] } }
         const pathToTerminal = PATHFINDER.findPath(fromPoint, fromTerminalPoint)
-        const geojsonPathToTerminal = pathToGeoJSON(pathToTerminal)
+        if (!pathToTerminal) continue
 
-        MAP.addLayer({
-          id: `path-to-terminal-${i}`,
-          type: 'line',
-          source: {
+        const geojsonPathToTerminal = pathToGeoJSON(pathToTerminal)
+        const terminalGeometry = STATIC_TERMINALS.features.find((terminal) => terminal.name === properties.name)
+        if (!terminalGeometry) continue
+
+        const routeId = `${SUGGESTED_ROUTE_PREFIX}-${i+1}`
+        const sourceIds = {
+          pathToTerminal: `${routeId}-path-to-terminal-source`,
+          terminalPoint: `${routeId}-terminal-point-source`,
+          publicRoute: `${routeId}-public-route-source`,
+          pathFromDropoff: `${routeId}-path-from-dropoff-source`,
+        }
+        const layerIds = [
+          `${routeId}-path-to-terminal`,
+          `${routeId}-terminal-point`,
+          `${routeId}-public-route`,
+          `${routeId}-path-from-dropoff`,
+        ]
+
+        MAP.addSource(sourceIds.pathToTerminal, {
           type: 'geojson',
           data: geojsonPathToTerminal,
-        },
+        })
+        MAP.addSource(sourceIds.terminalPoint, {
+          type: 'geojson',
+          data: {
+            type: 'Feature',
+            properties: { name: properties.name },
+            geometry: terminalGeometry.geometry,
+          },
+        })
+        MAP.addSource(sourceIds.publicRoute, {
+          type: 'geojson',
+          data: toRoute,
+        })
+
+        MAP.addLayer({
+          id: layerIds[0],
+          type: 'line',
+          source: sourceIds.pathToTerminal,
           layout: {
             'line-join': 'round',
             'line-cap': 'round',
@@ -465,18 +544,9 @@ const App = () => {
         })
 
         MAP.addLayer({
-          id: `terminal-point-${i}`,
+          id: layerIds[1],
           type: 'fill',
-          source: {
-            type: 'geojson',
-            data: {
-              'type': 'Feature',
-              'properties': {
-                'name': terminals[i]
-              },
-              'geometry': STATIC_TERMINALS.features.find(t => t.name === terminals[i]).geometry,
-            },
-          },
+          source: sourceIds.terminalPoint,
           paint: {
             'fill-color': '#0b37a844',
             'fill-outline-color': '#0b38a8',
@@ -485,12 +555,9 @@ const App = () => {
         })
 
         MAP.addLayer({
-          id: `suggested-public-route-${i}`,
+          id: layerIds[2],
           type: 'line',
-          source: {
-            type: 'geojson',
-            data: toRoute,
-          },
+          source: sourceIds.publicRoute,
           layout: {
             'line-join': 'round',
             'line-cap': 'round',
@@ -509,21 +576,26 @@ const App = () => {
           return distance < closest.distance ? { vertex, distance } : closest
         }, { vertex: null, distance: Infinity }).vertex
 
+        if (!closestDropoffVertex) continue
+
         const toDropoffPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestDropoffVertex.vertex[0] } }
         const pathFromDropoff = PATHFINDER.findPath(toDropoffPoint, toPoint)
+        if (!pathFromDropoff) continue
         
         console.log("To dropoff point: ", toDropoffPoint)
         console.log("Path from dropoff: ", pathFromDropoff)
 
         const geojsonPathFromDropoff = pathToGeoJSON(pathFromDropoff)
-        
+
+        MAP.addSource(sourceIds.pathFromDropoff, {
+          type: 'geojson',
+          data: geojsonPathFromDropoff,
+        })
+
         MAP.addLayer({
-          id: `path-from-dropoff-${i}`,
+          id: layerIds[3],
           type: 'line',
-          source: {
-            type: 'geojson',
-            data: geojsonPathFromDropoff,
-          },
+          source: sourceIds.pathFromDropoff,
           layout: {
             'line-join': 'round',
             'line-cap': 'round',
@@ -535,22 +607,35 @@ const App = () => {
           },
         })
 
-        setRoutes([{
-          id: `route-${i}`,
+        routeCandidates.push({
+          id: routeId,
           name: `Route ${i + 1} from ${fromBarangay} to ${toBarangay}`,
           public: false,
-          total_distance: 3, // path.weight.toFixed(2),
-          total_duration: 15, // Math.round((path.weight / 5).toFixed(2) * 60),
+          total_distance: 3,
+          total_duration: 15,
           total_transfers: 0,
           fare: toRoute.properties['route-fare'][0]['amount'],
-          // legs: [{
-          //   mode: 'walking',
-          //   from: { name: `${fromVertexCoords[0]}, ${fromVertexCoords[1]}`, coords: fromVertexCoords },
-          //   to: { name: `${toVertexCoords[0]}, ${toVertexCoords[1]}`, coords: toVertexCoords },
-          // }],
-        }])
+          layerIds,
+        })
+
+        i += 1
       }
 
+      const selectedRoute = routeCandidates[0]
+      if (!selectedRoute) {
+        console.error('No valid route candidates were found.')
+        setRoutes([])
+        return
+      }
+
+      routeCandidates.forEach((route) => {
+        route.layerIds.forEach((layerId) => {
+          MAP.setLayoutProperty(layerId, 'visibility', route.id === selectedRoute.id ? 'visible' : 'none')
+        })
+      })
+
+      setRoutes(routeCandidates)
+      setSelectedRouteId(selectedRoute.id)
       setDrawerToRoutes()
       openDrawer()
 
@@ -564,6 +649,7 @@ const App = () => {
       MAP.removeSource(WALKING_ROUTE_SOURCE_ID)
     }
     setRoutes([])
+    setSelectedRouteId(null)
   }
 
   useEffect(findRoute, [fromLocation, toLocation])
@@ -662,7 +748,7 @@ const App = () => {
         ${drawerMode === 'locations-action' 
           ? html`<${ActionButtons} buttons=${locationActions} direction="column" />` 
           : null}
-        ${drawerMode === 'routes' || drawerMode === 'routes-public' ? html`<${RouteCardList} map=${MAP} routes=${routes} />` : null}
+        ${drawerMode === 'routes' || drawerMode === 'routes-public' ? html`<${RouteCardList} map=${MAP} routes=${routes} selectedRouteId=${selectedRouteId} onRouteSelect=${selectRoute} />` : null}
       </${Drawer}>
     </main>
     `

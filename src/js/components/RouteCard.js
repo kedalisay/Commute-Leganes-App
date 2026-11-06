@@ -1,6 +1,6 @@
 import html from '../html.js'
 
-const RouteCard = ({route, onClick}) => {
+const RouteCard = ({route, selected, onClick}) => {
   const inputId = `route-${route.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
   const fare = route.fare !== undefined && route.fare !== null
     ? route.fare
@@ -10,7 +10,7 @@ const RouteCard = ({route, onClick}) => {
   const transfers = route.total_transfers
 
   return html`
-    <input class="sr-only" type="radio" name="route" id=${inputId} value=${route.name} checked=${route.name == 'Walking Route' ? 'checked' : ''} />
+    <input class="sr-only" type="radio" name="route" id=${inputId} value=${route.name} checked=${selected} />
     <label for=${inputId} class="flex flex-col gap-2 p-4 bg-white border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
       <div class="flex flex-row flex-nowrap gap-2 w-full">
         <h3 class="text-xl font-bold font-display text-left basis-1/2 sm:basis-4/6 inline}-block">${route.name}</h3>
