@@ -343,9 +343,13 @@ const App = () => {
       return distance < closest.distance ? { vertex, distance } : closest
     }, { vertex: null, distance: Infinity }).vertex
 
+    console.log(`Route ${routeId} - ${routeName}: Closest hop-on vertex:`, closestHopOnVertex)
+
     if (!closestHopOnVertex) return null
     const fromHopOnPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestHopOnVertex.vertex[0] } }
     const pathToHopOn = pathfinder.findPath(fromPoint, fromHopOnPoint)
+
+    console.log(`Route ${routeId} - ${routeName}: Path to hop-on point:`, pathToHopOn)
 
     if (!pathToHopOn) return null
     const geojsonPathToHopOn = pathToGeoJSON(pathToHopOn)
@@ -355,21 +359,29 @@ const App = () => {
       return distance < closest.distance ? { vertex, distance } : closest
     }, { vertex: null, distance: Infinity }).vertex
 
+    console.log
+
     if (!closestDropoffVertex) return null
 
     const toDropoffPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestDropoffVertex.vertex[0] } }
     const pathToDropoff = pathfinder.findPath(toDropoffPoint, toPoint)
+
+    console.log(`Route ${routeId} - ${routeName}: Path to drop-off point:`, pathToDropoff)
 
     if (!pathToDropoff) return null
     const geojsonPathToDropoff = pathToGeoJSON(pathToDropoff)
 
     const commutePath = pathfinder.findPath(fromHopOnPoint, toDropoffPoint)
 
+    console.log(`Route ${routeId} - ${routeName}: Commute path:`, commutePath)
+
     if (!commutePath) return null
     const geojsonCommutePath = pathToGeoJSON(commutePath)
 
     const walkingDistance = pathToHopOn.weight + pathToDropoff.weight
     const commuteDistance = commutePath.weight
+
+    console.log(`Route ${routeId} - ${routeName}: Walking distance: ${walkingDistance.toPrecision(2)} km, Commute distance: ${commuteDistance.toPrecision(2)} km`)
 
     return {
       id: routeId,
@@ -425,6 +437,9 @@ const App = () => {
       return []
     }
 
+    console.log('fromRoute:', fromRoute) 
+    console.log('toRoute:', toRoute)
+
     const fromTerminals = getTerminalPoints(fromRoute, terminals)
     const toTerminals = getTerminalPoints(toRoute, terminals)
     const terminalRoute = toTerminals.length > 0 ? toRoute : fromRoute
@@ -437,6 +452,9 @@ const App = () => {
     if (!terminalRoute || closestTerminals.length === 0) {
       return []
     }
+
+    console.log('closestTerminals:', closestTerminals)
+    console.log(fromTerminals, toTerminals, terminalRoute)
 
     return closestTerminals.map((_, index) =>
       buildRoute(
@@ -472,6 +490,8 @@ const App = () => {
 
     if (routeResults.length === 0) {
       setRoutes([])
+      setDrawerToRoutes()
+      openDrawer()
       return
     }
 
