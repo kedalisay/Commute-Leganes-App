@@ -18,7 +18,7 @@ import RouteCardList from './components/RouteCardList.js'
 import { removeMarkerFromMap, addRouteLayers, removeRouteLayers, setRouteLayerVisibility } from './utils/MapLibreGL.js';
 import { getCoordinates, areValidCoordinates } from './utils/Geolocation.js';
 import { getBarangay } from './utils/Barangay.js';
-import { getRouteForBarangay, getClosestVertex, getVertexCoordinates, getClosestTerminalVertices, getTerminalPoints } from './utils/Route.js';
+import { getRouteForBarangay, getClosestVertex, getVertexCoordinates, getClosestTerminalVertices, getTerminalPoints, getReachableVertex } from './utils/Route.js';
 
 setWorkerUrl(new URL(`/src/js/maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
 
@@ -28,7 +28,9 @@ const MAP = new Map({
 });
 
 const PATHFINDER = new PathFinder(leganes_road_network_geojson, { tolerance: 1e-5 });
-const PATH_EDGES = Object.values(PATHFINDER.graph.vertices).map(edge => Object.keys(edge).map(vertex => vertex.split(',').map(coord => parseFloat(coord))));
+const PATH_VERTICES = Object.keys(PATHFINDER.graph.vertices)
+  .map((vertex) => vertex.split(',').map((coordinate) => parseFloat(coordinate)))
+  .filter((coordinates) => coordinates.length === 2 && coordinates.every(Number.isFinite))
 
 const STATIC_LOCATIONS = {}
 const STATIC_TERMINALS = {}
@@ -197,13 +199,19 @@ const App = () => {
       setToLocationHandler(coords)
     }
 
-    stopMarkerCentering.current()    
+    if (stopMarkerCentering.current) {
+      stopMarkerCentering.current()
+      stopMarkerCentering.current = null
+    }
     setDrawerToDefault()
     closeDrawer()
   }
 
   const goBackToLocations = () => {
-    stopMarkerCentering.current()
+    if (stopMarkerCentering.current) {
+      stopMarkerCentering.current()
+      stopMarkerCentering.current = null
+    }
     isFromLocationFocused ? removeMarkerFromMap(fromMarker) : removeMarkerFromMap(toMarker)
     setDrawerToLocations()
   }
@@ -337,46 +345,73 @@ const App = () => {
     closeDrawer()
   }
 
+  const pathToGeoJSONSafe = (path) => {
+    if (!path || !Array.isArray(path.path) || path.path.length === 0) {
+      return null
+    }
+
+    if (path.path.length === 1) {
+      return {
+        type: 'Feature',
+        properties: {
+          weight: path.weight,
+          edgeDatas: path.edgeDatas,
+        },
+        geometry: {
+          type: 'LineString',
+          coordinates: [path.path[0], path.path[0]],
+        },
+      }
+    }
+
+    return pathToGeoJSON(path)
+  }
+
   const buildRoute = (routeId, routeName, fromPoint, toPoint, route, pathfinder, pathEdges) => {
-    const closestHopOnVertex = route.geometry.coordinates.map(coord => getClosestVertex(coord, pathEdges)).reduce((closest, vertex) => {
-      const distance = Math.sqrt(Math.pow(vertex.vertex[0][0] - fromPoint.geometry.coordinates[0], 2) + Math.pow(vertex.vertex[0][1] - fromPoint.geometry.coordinates[1], 2))
-      return distance < closest.distance ? { vertex, distance } : closest
-    }, { vertex: null, distance: Infinity }).vertex
+    const hopOn = getReachableVertex(
+      route.geometry.coordinates,
+      fromPoint,
+      pathEdges,
+      pathfinder
+    )
 
-    console.log(`Route ${routeId} - ${routeName}: Closest hop-on vertex:`, closestHopOnVertex)
+    console.log(`Route ${routeId} - ${routeName}: Reachable hop-on vertex:`, hopOn)
 
-    if (!closestHopOnVertex) return null
-    const fromHopOnPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestHopOnVertex.vertex[0] } }
-    const pathToHopOn = pathfinder.findPath(fromPoint, fromHopOnPoint)
+    if (!hopOn) return null
+    const fromHopOnPoint = {
+      type: 'Point',
+      geometry: { type: 'Point', coordinates: hopOn.vertex },
+    }
+    const pathToHopOn = hopOn.path
+    const geojsonPathToHopOn = pathToGeoJSONSafe(pathToHopOn)
+    if (!geojsonPathToHopOn) return null
 
-    console.log(`Route ${routeId} - ${routeName}: Path to hop-on point:`, pathToHopOn)
+    const dropoff = getReachableVertex(
+      route.geometry.coordinates,
+      toPoint,
+      pathEdges,
+      pathfinder,
+      'from'
+    )
 
-    if (!pathToHopOn) return null
-    const geojsonPathToHopOn = pathToGeoJSON(pathToHopOn)
+    console.log(`Route ${routeId} - ${routeName}: Reachable drop-off vertex:`, dropoff)
 
-    const closestDropoffVertex = route.geometry.coordinates.map(coord => getClosestVertex(coord, pathEdges)).reduce((closest, vertex) => {
-      const distance = Math.sqrt(Math.pow(vertex.vertex[0][0] - toPoint.geometry.coordinates[0], 2) + Math.pow(vertex.vertex[0][1] - toPoint.geometry.coordinates[1], 2))
-      return distance < closest.distance ? { vertex, distance } : closest
-    }, { vertex: null, distance: Infinity }).vertex
-
-    console.log
-
-    if (!closestDropoffVertex) return null
-
-    const toDropoffPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestDropoffVertex.vertex[0] } }
-    const pathToDropoff = pathfinder.findPath(toDropoffPoint, toPoint)
-
-    console.log(`Route ${routeId} - ${routeName}: Path to drop-off point:`, pathToDropoff)
-
-    if (!pathToDropoff) return null
-    const geojsonPathToDropoff = pathToGeoJSON(pathToDropoff)
+    if (!dropoff) return null
+    const toDropoffPoint = {
+      type: 'Point',
+      geometry: { type: 'Point', coordinates: dropoff.vertex },
+    }
+    const pathToDropoff = dropoff.path
+    const geojsonPathToDropoff = pathToGeoJSONSafe(pathToDropoff)
+    if (!geojsonPathToDropoff) return null
 
     const commutePath = pathfinder.findPath(fromHopOnPoint, toDropoffPoint)
 
     console.log(`Route ${routeId} - ${routeName}: Commute path:`, commutePath)
 
     if (!commutePath) return null
-    const geojsonCommutePath = pathToGeoJSON(commutePath)
+    const geojsonCommutePath = pathToGeoJSONSafe(commutePath)
+    if (!geojsonCommutePath) return null
 
     const walkingDistance = pathToHopOn.weight + pathToDropoff.weight
     const commuteDistance = commutePath.weight
@@ -481,7 +516,7 @@ const App = () => {
     const routeResults = findRoutes(
       fromLocation,
       toLocation,
-      PATH_EDGES,
+      PATH_VERTICES,
       PATHFINDER,
       STATIC_BARANGAYS.features,
       PUBLIC_ROUTES.features,
@@ -544,7 +579,7 @@ const App = () => {
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
         map=${MAP}
-        edges=${PATH_EDGES}
+        edges=${PATH_VERTICES}
         stopMarkerCentering=${stopMarkerCentering.current}
         fromMarker=${fromMarker} 
         setFromMarker=${setFromMarker}

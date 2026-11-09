@@ -11,7 +11,9 @@ const addMarkerToMap = (map, coords, isFromLocationFocused) => {
 }
 
 const removeMarkerFromMap = (marker) => {
-  marker.remove();
+  if (marker) {
+    marker.remove();
+  }
 }
 
 const centerMarkerOnMap = (map, marker) => {
@@ -87,12 +89,13 @@ const addRouteLayers = (map, routeId, layers) => {
 
   map.addLayer({
     id: layerIds.hopOnPoint,
-    type: 'fill',
+    type: 'circle',
     source: sourceIds.hopOnPoint,
     paint: {
-      'fill-color': '#0b37a844',
-      'fill-outline-color': '#0b38a8',
-      'fill-antialias': true,
+      'circle-color': '#0b38a8',
+      'circle-radius': 6,
+      'circle-stroke-color': '#ffffff',
+      'circle-stroke-width': 2,
     }
   })
 
