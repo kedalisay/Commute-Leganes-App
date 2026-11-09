@@ -453,14 +453,21 @@ const App = () => {
 
       console.log('Finding route from', fromCoords, 'in', fromBarangay, 'to', toCoords, 'in', toBarangay, 'via', fromRoute, 'and', toRoute)
 
-      const terminals = toRoute?.properties.terminals
+      let terminals = toRoute?.properties.terminals
+      const terminalPoints = []
+
+      let closestHopOnVertex = null
+      let closestDropoffVertex = null
+
       if (!terminals) {
-        console.error('No terminals found for the destination route:', toRoute)
-        setRoutes([])
-        return
+        closestHopOnVertex = fromRoute.geometry.coordinates.map(coord => getClosestVertex(coord)).reduce((closest, vertex) => {
+          const distance = Math.sqrt(Math.pow(vertex.vertex[0][0] - toVertexCoords[0], 2) + Math.pow(vertex.vertex[0][1] - toVertexCoords[1], 2))
+          return distance < closest.distance ? { vertex, distance } : closest
+        }, { vertex: null, distance: Infinity }).vertex
+
+        terminals = fromRoute?.properties.terminals
       }
 
-      const terminalPoints = []
       for (const terminal of terminals) {
         const terminalGeometry = STATIC_TERMINALS.features.find(t => t.name === terminal)
         if (terminalGeometry) {
@@ -492,148 +499,296 @@ const App = () => {
         let walkingDistance = 0
         let commuteDistance = 0
 
-        const { properties, closestVertex: terminalVertex } = closestTerminal
-        const fromTerminalPoint = { type: 'Point', geometry: { type: 'Point', coordinates: terminalVertex.vertex[0] } }
-        const pathToTerminal = PATHFINDER.findPath(fromPoint, fromTerminalPoint)
-        if (!pathToTerminal) continue
-
-        walkingDistance += pathToTerminal.weight
-
-        const geojsonPathToTerminal = pathToGeoJSON(pathToTerminal)
-        const terminalGeometry = STATIC_TERMINALS.features.find((terminal) => terminal.name === properties.name)
-        if (!terminalGeometry) continue
-
         const routeId = `${SUGGESTED_ROUTE_PREFIX}-${i+1}`
-        const sourceIds = {
+        
+        if (!closestHopOnVertex) {
+          const { properties, closestVertex: terminalVertex } = closestTerminal
+          const fromTerminalPoint = { type: 'Point', geometry: { type: 'Point', coordinates: terminalVertex.vertex[0] } }
+          const pathToTerminal = PATHFINDER.findPath(fromPoint, fromTerminalPoint)
+          if (!pathToTerminal) continue
+
+          walkingDistance += pathToTerminal.weight
+
+          const geojsonPathToTerminal = pathToGeoJSON(pathToTerminal)
+          const terminalGeometry = STATIC_TERMINALS.features.find((terminal) => terminal.name === properties.name)
+          if (!terminalGeometry) continue
+
+          const sourceIds = {
           pathToTerminal: `${routeId}-path-to-terminal-source`,
           terminalPoint: `${routeId}-terminal-point-source`,
           publicRoute: `${routeId}-public-route-source`,
           pathFromDropoff: `${routeId}-path-from-dropoff-source`,
-        }
-        const layerIds = [
-          `${routeId}-path-to-terminal`,
-          `${routeId}-terminal-point`,
-          `${routeId}-public-route`,
-          `${routeId}-path-from-dropoff`,
-        ]
-
-        MAP.addSource(sourceIds.pathToTerminal, {
-          type: 'geojson',
-          data: geojsonPathToTerminal,
-        })
-        MAP.addSource(sourceIds.terminalPoint, {
-          type: 'geojson',
-          data: {
-            type: 'Feature',
-            properties: { name: properties.name },
-            geometry: terminalGeometry.geometry,
-          },
-        })
-        MAP.addSource(sourceIds.publicRoute, {
-          type: 'geojson',
-          data: toRoute,
-        })
-
-        MAP.addLayer({
-          id: layerIds[0],
-          type: 'line',
-          source: sourceIds.pathToTerminal,
-          layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-          },
-          paint: {
-            'line-color': '#0b38a8',
-            'line-width': 4,
-            'line-dasharray': [2, 4],
-          },
-        })
-
-        MAP.addLayer({
-          id: layerIds[1],
-          type: 'fill',
-          source: sourceIds.terminalPoint,
-          paint: {
-            'fill-color': '#0b37a844',
-            'fill-outline-color': '#0b38a8',
-            'fill-antialias': true,
           }
-        })
+          const layerIds = [
+            `${routeId}-path-to-terminal`,
+            `${routeId}-terminal-point`,
+            `${routeId}-public-route`,
+            `${routeId}-path-from-dropoff`,
+          ]
 
-        MAP.addLayer({
-          id: layerIds[2],
-          type: 'line',
-          source: sourceIds.publicRoute,
-          layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-          },
-          paint: {
-            'line-color': toRoute.properties.stroke,
-            'line-width': 4,
-            'line-opacity': 0.5,
-          },
-        })
+          MAP.addSource(sourceIds.pathToTerminal, {
+            type: 'geojson',
+            data: geojsonPathToTerminal,
+          })
+          MAP.addSource(sourceIds.terminalPoint, {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: { name: properties.name },
+              geometry: terminalGeometry.geometry,
+            },
+          })
+          MAP.addSource(sourceIds.publicRoute, {
+            type: 'geojson',
+            data: toRoute,
+          })
 
-        console.log("To route: ", toRoute)
-        
-        const closestDropoffVertex = toRoute.geometry.coordinates.map(coord => getClosestVertex(coord)).reduce((closest, vertex) => {
-          const distance = Math.sqrt(Math.pow(vertex.vertex[0][0] - toVertexCoords[0], 2) + Math.pow(vertex.vertex[0][1] - toVertexCoords[1], 2))
-          return distance < closest.distance ? { vertex, distance } : closest
-        }, { vertex: null, distance: Infinity }).vertex
+          MAP.addLayer({
+            id: layerIds[0],
+            type: 'line',
+            source: sourceIds.pathToTerminal,
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round',
+            },
+            paint: {
+              'line-color': '#0b38a8',
+              'line-width': 4,
+              'line-dasharray': [2, 4],
+            },
+          })
 
-        if (!closestDropoffVertex) continue
+          MAP.addLayer({
+            id: layerIds[1],
+            type: 'fill',
+            source: sourceIds.terminalPoint,
+            paint: {
+              'fill-color': '#0b37a844',
+              'fill-outline-color': '#0b38a8',
+              'fill-antialias': true,
+            }
+          })
 
-        const toDropoffPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestDropoffVertex.vertex[0] } }
-        const pathFromDropoff = PATHFINDER.findPath(toDropoffPoint, toPoint)
+          MAP.addLayer({
+            id: layerIds[2],
+            type: 'line',
+            source: sourceIds.publicRoute,
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round',
+            },
+            paint: {
+              'line-color': toRoute.properties.stroke,
+              'line-width': 4,
+              'line-opacity': 0.5,
+            },
+          })
 
-        if (!pathFromDropoff) continue
+          console.log("To route: ", toRoute)
 
-        walkingDistance += pathFromDropoff.weight
+          closestDropoffVertex = toRoute.geometry.coordinates.map(coord => getClosestVertex(coord)).reduce((closest, vertex) => {
+            const distance = Math.sqrt(Math.pow(vertex.vertex[0][0] - toVertexCoords[0], 2) + Math.pow(vertex.vertex[0][1] - toVertexCoords[1], 2))
+            return distance < closest.distance ? { vertex, distance } : closest
+          }, { vertex: null, distance: Infinity }).vertex
 
-        const pathFromTerminal = PATHFINDER.findPath(fromTerminalPoint, toDropoffPoint)
+          if (!closestDropoffVertex) continue
 
-        if (!pathFromTerminal) continue
+          const toDropoffPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestDropoffVertex.vertex[0] } }
+          const pathFromDropoff = PATHFINDER.findPath(toDropoffPoint, toPoint)
 
-        commuteDistance += pathFromTerminal.weight
-        
-        console.log("To dropoff point: ", toDropoffPoint)
-        console.log("Path from dropoff: ", pathFromDropoff)
+          if (!pathFromDropoff) continue
 
-        const geojsonPathFromDropoff = pathToGeoJSON(pathFromDropoff)
+          walkingDistance += pathFromDropoff.weight
 
-        MAP.addSource(sourceIds.pathFromDropoff, {
-          type: 'geojson',
-          data: geojsonPathFromDropoff,
-        })
+          const pathFromTerminal = PATHFINDER.findPath(fromTerminalPoint, toDropoffPoint)
 
-        MAP.addLayer({
-          id: layerIds[3],
-          type: 'line',
-          source: sourceIds.pathFromDropoff,
-          layout: {
-            'line-join': 'round',
-            'line-cap': 'round',
-          },
-          paint: {
-            'line-color': '#0b38a8',
-            'line-width': 4,
-            'line-dasharray': [2, 4],
-          },
-        })
+          if (!pathFromTerminal) continue
 
-        routeCandidates.push({
-          id: routeId,
-          name: `Route ${i + 1} from ${fromBarangay} to ${toBarangay}`,
-          public: false,
-          total_distance: (walkingDistance + commuteDistance).toPrecision(2),
-          total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60), // calculate duration minutes based on distance and average speed (e.g., 5 km/h for walking, 40 km/h for commuting)
-          total_transfers: 1,
-          fare: toRoute.properties['route-fare'][0]['amount'],
-          layerIds,
-        })
+          commuteDistance += pathFromTerminal.weight
+          
+          console.log("To dropoff point: ", toDropoffPoint)
+          console.log("Path from dropoff: ", pathFromDropoff)
 
-        i += 1
+          const geojsonPathFromDropoff = pathToGeoJSON(pathFromDropoff)
+
+          MAP.addSource(sourceIds.pathFromDropoff, {
+            type: 'geojson',
+            data: geojsonPathFromDropoff,
+          })
+
+          MAP.addLayer({
+            id: layerIds[3],
+            type: 'line',
+            source: sourceIds.pathFromDropoff,
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round',
+            },
+            paint: {
+              'line-color': '#0b38a8',
+              'line-width': 4,
+              'line-dasharray': [2, 4],
+            },
+          })
+
+          routeCandidates.push({
+            id: routeId,
+            name: `Route ${i + 1} from ${fromBarangay} to ${toBarangay}`,
+            public: false,
+            total_distance: (walkingDistance + commuteDistance).toPrecision(2),
+            total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60), // calculate duration minutes based on distance and average speed (e.g., 5 km/h for walking, 40 km/h for commuting)
+            total_transfers: 1,
+            fare: toRoute.properties['route-fare'][0]['amount'],
+            layerIds,
+          })
+
+          i += 1
+        } else {
+          const { properties, closestVertex: terminalVertex } = closestTerminal
+
+          closestHopOnVertex = fromRoute.geometry.coordinates.map(coord => getClosestVertex(coord)).reduce((closest, vertex) => {
+            const distance = Math.sqrt(Math.pow(vertex.vertex[0][0] - fromVertexCoords[0], 2) + Math.pow(vertex.vertex[0][1] - fromVertexCoords[1], 2))
+            return distance < closest.distance ? { vertex, distance } : closest
+          }, { vertex: null, distance: Infinity }).vertex
+          
+          if (!closestHopOnVertex) continue
+
+          const toHopOnPoint = { type: 'Point', geometry: { type: 'Point', coordinates: closestHopOnVertex.vertex[0] } }
+          const pathToHopOn = PATHFINDER.findPath(fromPoint, toHopOnPoint)
+
+          walkingDistance += pathToHopOn.weight
+
+          if (!pathToHopOn) continue
+
+          const fromDropOffPoint = { type: 'Point', geometry: { type: 'Point', coordinates: terminalVertex.vertex[0] } }
+          const pathFromDropOff = PATHFINDER.findPath(fromDropOffPoint, toPoint)
+          if (!pathFromDropOff) continue
+
+          walkingDistance += pathFromDropOff.weight
+
+          const geojsonPathToHopOnPoint = pathToGeoJSON(pathToHopOn)
+          const terminalGeometry = STATIC_TERMINALS.features.find((terminal) => terminal.name === properties.name)
+          if (!terminalGeometry) continue
+
+          const sourceIds = {
+          pathToHopOn: `${routeId}-path-to-hop-on-source`,
+          hopOffPoint: `${routeId}-hop-off-point-source`,
+          publicRoute: `${routeId}-public-route-source`,
+          pathFromDropOff: `${routeId}-path-from-hop-on-source`,
+          }
+          const layerIds = [
+            `${routeId}-path-to-hop-on`,
+            `${routeId}-hop-off-point`,
+            `${routeId}-public-route`,
+            `${routeId}-path-from-hop-on`,
+          ]
+
+          MAP.addSource(sourceIds.pathToHopOn, {
+            type: 'geojson',
+            data: geojsonPathToHopOnPoint,
+          })
+
+          MAP.addSource(sourceIds.publicRoute, {
+            type: 'geojson',
+            data: fromRoute,
+          })
+
+          MAP.addLayer({
+            id: layerIds[0],
+            type: 'line',
+            source: sourceIds.pathToHopOn,
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round',
+            },
+            paint: {
+              'line-color': '#0b38a8',
+              'line-width': 4,
+              'line-dasharray': [2, 4],
+            },
+          })
+
+          MAP.addLayer({
+            id: layerIds[2],
+            type: 'line',
+            source: sourceIds.publicRoute,
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round',
+            },
+            paint: {
+              'line-color': fromRoute.properties.stroke,
+              'line-width': 4,
+              'line-opacity': 0.5,
+            },
+          })
+
+          MAP.addSource(sourceIds.hopOffPoint, {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: { name: properties.name },
+              geometry: terminalGeometry.geometry,
+            },
+          })
+
+           MAP.addLayer({
+            id: layerIds[1],
+            type: 'fill',
+            source: sourceIds.hopOffPoint,
+            paint: {
+              'fill-color': '#0b37a844',
+              'fill-outline-color': '#0b38a8',
+              'fill-antialias': true,
+            }
+          })
+
+          console.log("To route: ", toRoute)
+
+          const pathToTerminal = PATHFINDER.findPath(toHopOnPoint, fromDropOffPoint)
+
+          if (!pathToTerminal) continue
+
+          commuteDistance += pathToTerminal.weight
+          
+          console.log("To hop on point: ", toHopOnPoint)
+          console.log("Path to hop on: ", pathToHopOn)
+
+          const geojsonPathFromDropOff = pathToGeoJSON(pathFromDropOff)
+
+          MAP.addSource(sourceIds.pathFromDropOff, {
+            type: 'geojson',
+            data: geojsonPathFromDropOff,
+          })
+
+          MAP.addLayer({
+            id: layerIds[3],
+            type: 'line',
+            source: sourceIds.pathFromDropOff,
+            layout: {
+              'line-join': 'round',
+              'line-cap': 'round',
+            },
+            paint: {
+              'line-color': '#0b38a8',
+              'line-width': 4,
+              'line-dasharray': [2, 4],
+            },
+          })
+
+          routeCandidates.push({
+            id: routeId,
+            name: `Route ${i + 1} from ${fromBarangay} to ${toBarangay}`,
+            public: false,
+            total_distance: (walkingDistance + commuteDistance).toPrecision(2),
+            total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60), // calculate duration minutes based on distance and average speed (e.g., 5 km/h for walking, 40 km/h for commuting)
+            total_transfers: 1,
+            fare: fromRoute.properties['route-fare'][0]['amount'],
+            layerIds,
+          })
+
+          i += 1
+        }
       }
 
       const selectedRoute = routeCandidates[0]
