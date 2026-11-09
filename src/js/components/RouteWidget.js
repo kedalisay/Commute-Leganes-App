@@ -8,6 +8,7 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
 
   const handleFromInput = (event) => {
     setDrawerToLocations();
+
     if (event.target.value === '') {
       setFromLocation('');
       if (stopMarkerCentering) {
@@ -15,6 +16,7 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
         setFromMarker(null)
         removeMarkerFromMap(fromMarker)
       } 
+
       setIsFromLocationFocused(false);
       setDrawerToDefault();
       closeDrawer();
@@ -82,10 +84,16 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
     if (!isDrawerOpen) {
       openDrawer();
     }
+
+    if (fromMarker) {
+      setFromMarker(null)
+      removeMarkerFromMap(fromMarker)
+    }
   }
 
   const handleToInput = (event) => {
     setDrawerToLocations();
+
     if (event.target.value === '') {
       setToLocation('');
       if (stopMarkerCentering) {
@@ -157,6 +165,11 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
     setLocations(filteredLocations);
     if (!isDrawerOpen) {
       openDrawer();
+    }
+
+    if (toMarker) {
+      setToMarker(null)
+      removeMarkerFromMap(toMarker)
     }
   }
 
