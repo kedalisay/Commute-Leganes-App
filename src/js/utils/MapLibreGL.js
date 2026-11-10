@@ -41,6 +41,7 @@ const addRouteLayers = (map, routeId, layers) => {
   console.log(layers)
   const sourceIds = {
     pathToHopOn: `${routeId}_path_to_hop_on_source`,
+    commutePath: `${routeId}_commute_path_source`,
     startPoint: `${routeId}_start_point_source`,
     endPoint: `${routeId}_end_point_source`,
     hopOnPoint: `${routeId}_hop_on_point_source`,
@@ -52,6 +53,7 @@ const addRouteLayers = (map, routeId, layers) => {
 
   const layerIds = {
     pathToHopOn: `${routeId}_path_to_hop_on`,
+    commutePath: `${routeId}_commute_path`,
     startPoint: `${routeId}_start_point`,
     endPoint: `${routeId}_end_point`,
     hopOnPoint: `${routeId}_hop_on_point`,
@@ -76,9 +78,9 @@ const addRouteLayers = (map, routeId, layers) => {
     data: layers.endPoint,
   })
 
-  map.addSource(sourceIds.publicRoute, {
+  map.addSource(sourceIds.commutePath, {
     type: 'geojson',
-    data: layers.publicRoute,
+    data: layers.commutePath,
   })
 
   map.addSource(sourceIds.hopOnPoint, {
@@ -132,9 +134,9 @@ const addRouteLayers = (map, routeId, layers) => {
   })
 
   map.addLayer({
-    id: layerIds.publicRoute,
+    id: layerIds.commutePath,
     type: 'line',
-    source: sourceIds.publicRoute,
+    source: sourceIds.commutePath,
     layout: {
       'line-join': 'round',
       'line-cap': 'round',
