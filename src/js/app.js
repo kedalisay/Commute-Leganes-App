@@ -367,7 +367,7 @@ const App = () => {
     return pathToGeoJSON(path)
   }
 
-  const buildRoute = (routeId, routeName, fromPoint, toPoint, route, terminal, terminalIsHopOn, pathfinder, pathEdges) => {
+  const buildRoute = (index, routeId, routeName, fromPoint, toPoint, route, terminal, terminalIsHopOn, pathfinder, pathEdges) => {
     const terminalCoordinates = terminal?.geometry?.coordinates
     if (!Array.isArray(terminalCoordinates)) return null
 
@@ -437,7 +437,8 @@ const App = () => {
       total_distance: (walkingDistance + commuteDistance).toPrecision(2),
       total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60), // calculate duration minutes based on distance and average speed (e.g., 5 km/h for walking, 40 km/h for commuting)
       total_transfers: 1,
-      fare: route.properties['route-fare'][0]['amount'],
+      fare: route.properties['route-fare'][index]['amount'],
+      mode: route.properties['route-fare'][index]['mode'],
       layers: {
         pathToHopOn: geojsonPathToHopOn,
         startPoint: {
@@ -525,6 +526,7 @@ const App = () => {
 
     return closestTerminals.map((terminal, index) =>
       buildRoute(
+        index,
         `route-${index + 1}`,
         `Route ${index + 1} from ${fromBarangay} to ${toBarangay}`,
         { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } },

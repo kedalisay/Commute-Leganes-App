@@ -1,4 +1,5 @@
 import html from '../html.js'
+import RouteVisualization from './RouteVisualization.js'
 
 const RouteCard = ({route, selected, onClick}) => {
   const inputId = `route-${route.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
@@ -27,11 +28,7 @@ const RouteCard = ({route, selected, onClick}) => {
             : null}
         </div>
       </div>
-      <div>
-        ${route.legs
-          ? route.legs.map((leg) => html`<p class="text-left">${leg.mode}: ${leg.from} to ${leg.to}</p>`)
-          : null}
-      </div>
+      <${RouteVisualization} route=${route} selected=${selected} />
     </label>
   `
 }
