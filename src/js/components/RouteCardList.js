@@ -35,7 +35,7 @@ const RouteCardList = ({ map, routes, selectedRouteId, onRouteSelect }) => {
     <section aria-labelledby="routes-heading" class="pb-8 overflow-y-auto max-h-full h-full">
       <h2 id="routes-heading" class="sr-only">Choose a route</h2>
       <form id="routes-form" class="h-full">
-        <fieldset class="flex flex-col gap-3 w-full justify-center items-center h-full">
+        <fieldset class="flex flex-col gap-3 w-full ${routes.length > 0 ? 'justify-start' : 'justify-center'} items-center h-full">
         ${routes.length > 0 ? routes.map((route) => html`<${route.public ? PublicRouteCard : RouteCard} route=${route} selected=${route.id === selectedRouteId} onClick=${() => handleRouteClick(route)} />`) : html`<p class="text-(--color-red-700) font-bold text-xl text-center">No matching routes found. Try choosing a point on the map.</p>`}
         </fieldset>
       </form>
