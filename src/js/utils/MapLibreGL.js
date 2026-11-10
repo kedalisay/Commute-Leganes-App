@@ -38,8 +38,11 @@ const keepMarkerOnMapCentered = (map, marker) => {
 }
 
 const addRouteLayers = (map, routeId, layers) => {
+  console.log(layers)
   const sourceIds = {
     pathToHopOn: `${routeId}_path_to_hop_on_source`,
+    startPoint: `${routeId}_start_point_source`,
+    endPoint: `${routeId}_end_point_source`,
     hopOnPoint: `${routeId}_hop_on_point_source`,
     hopOffPoint: `${routeId}_hop_off_point_source`,
     terminalPoint: `${routeId}_terminal_point_source`,
@@ -49,6 +52,8 @@ const addRouteLayers = (map, routeId, layers) => {
 
   const layerIds = {
     pathToHopOn: `${routeId}_path_to_hop_on`,
+    startPoint: `${routeId}_start_point`,
+    endPoint: `${routeId}_end_point`,
     hopOnPoint: `${routeId}_hop_on_point`,
     hopOffPoint: `${routeId}_hop_off_point`,
     terminalPoint: `${routeId}_terminal_point`,
@@ -59,6 +64,16 @@ const addRouteLayers = (map, routeId, layers) => {
   map.addSource(sourceIds.pathToHopOn, {
     type: 'geojson',
     data: layers.pathToHopOn,
+  })
+
+  map.addSource(sourceIds.startPoint, {
+    type: 'geojson',
+    data: layers.startPoint,
+  })
+
+  map.addSource(sourceIds.endPoint, {
+    type: 'geojson',
+    data: layers.endPoint,
   })
 
   map.addSource(sourceIds.publicRoute, {
@@ -115,7 +130,7 @@ const addRouteLayers = (map, routeId, layers) => {
       'line-dasharray': [2, 4],
     },
   })
-  
+
   map.addLayer({
     id: layerIds.publicRoute,
     type: 'line',
@@ -129,6 +144,30 @@ const addRouteLayers = (map, routeId, layers) => {
       'line-width': 4,
       'line-opacity': 0.5,
     },
+  })
+
+  map.addLayer({
+    id: layerIds.startPoint,
+    type: 'circle',
+    source: sourceIds.startPoint,
+    paint: {
+      'circle-color': '#ffffff',
+      'circle-radius': 6,
+      'circle-stroke-color': '#0b38a8',
+      'circle-stroke-width': 4,
+    }
+  })
+
+  map.addLayer({
+    id: layerIds.endPoint,
+    type: 'circle',
+    source: sourceIds.endPoint,
+    paint: {
+      'circle-color': '#D50A0A',
+      'circle-radius': 6,
+      'circle-stroke-color': '#D50A0A',
+      'circle-stroke-width': 4,
+    }
   })
 
   map.addLayer({

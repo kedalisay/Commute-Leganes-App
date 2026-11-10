@@ -440,6 +440,16 @@ const App = () => {
       fare: route.properties['route-fare'][0]['amount'],
       layers: {
         pathToHopOn: geojsonPathToHopOn,
+        startPoint: {
+          type: 'Feature',
+          properties: {},
+          geometry: fromPoint.geometry,
+        },
+        endPoint: {
+          type: 'Feature',
+          properties: {},
+          geometry: toPoint.geometry,
+        },
         hopOnPoint: {
           type: 'Feature',
           properties: {},
