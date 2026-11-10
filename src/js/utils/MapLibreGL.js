@@ -41,6 +41,8 @@ const addRouteLayers = (map, routeId, layers) => {
   const sourceIds = {
     pathToHopOn: `${routeId}_path_to_hop_on_source`,
     hopOnPoint: `${routeId}_hop_on_point_source`,
+    hopOffPoint: `${routeId}_hop_off_point_source`,
+    terminalPoint: `${routeId}_terminal_point_source`,
     publicRoute: `${routeId}_public_route_source`,
     pathToDropoff: `${routeId}_path_to_dropoff_source`,
   }
@@ -48,6 +50,8 @@ const addRouteLayers = (map, routeId, layers) => {
   const layerIds = {
     pathToHopOn: `${routeId}_path_to_hop_on`,
     hopOnPoint: `${routeId}_hop_on_point`,
+    hopOffPoint: `${routeId}_hop_off_point`,
+    terminalPoint: `${routeId}_terminal_point`,
     publicRoute: `${routeId}_public_route`,
     pathToDropoff: `${routeId}_path_to_dropoff`,
   } 
@@ -65,6 +69,16 @@ const addRouteLayers = (map, routeId, layers) => {
   map.addSource(sourceIds.hopOnPoint, {
     type: 'geojson',
     data: layers.hopOnPoint,
+  })
+
+  map.addSource(sourceIds.hopOffPoint, {
+    type: 'geojson',
+    data: layers.hopOffPoint,
+  })
+
+  map.addSource(sourceIds.terminalPoint, {
+    type: 'geojson',
+    data: layers.terminalPoint,
   })
 
   map.addSource(sourceIds.pathToDropoff, {
@@ -88,17 +102,20 @@ const addRouteLayers = (map, routeId, layers) => {
   })
 
   map.addLayer({
-    id: layerIds.hopOnPoint,
-    type: 'circle',
-    source: sourceIds.hopOnPoint,
+    id: layerIds.pathToDropoff,
+    type: 'line',
+    source: sourceIds.pathToDropoff,
+    layout: {
+      'line-join': 'round',
+      'line-cap': 'round',
+    },
     paint: {
-      'circle-color': '#0b38a8',
-      'circle-radius': 6,
-      'circle-stroke-color': '#ffffff',
-      'circle-stroke-width': 2,
-    }
+      'line-color': '#0b38a8',
+      'line-width': 4,
+      'line-dasharray': [2, 4],
+    },
   })
-
+  
   map.addLayer({
     id: layerIds.publicRoute,
     type: 'line',
@@ -115,18 +132,43 @@ const addRouteLayers = (map, routeId, layers) => {
   })
 
   map.addLayer({
-    id: layerIds.pathToDropoff,
-    type: 'line',
-    source: sourceIds.pathToDropoff,
-    layout: {
-      'line-join': 'round',
-      'line-cap': 'round',
-    },
+    id: layerIds.hopOnPoint,
+    type: 'circle',
+    source: sourceIds.hopOnPoint,
     paint: {
-      'line-color': '#0b38a8',
-      'line-width': 4,
-      'line-dasharray': [2, 4],
-    },
+      'circle-color': '#f59e0b',
+      'circle-radius': 6,
+      'circle-stroke-color': '#ffffff',
+      'circle-stroke-width': 2,
+    }
+  })
+
+  map.addLayer({
+    id: layerIds.hopOffPoint,
+    type: 'circle',
+    source: sourceIds.hopOffPoint,
+    paint: {
+      'circle-color': '#f59e0b',
+      'circle-radius': 6,
+      'circle-stroke-color': '#ffffff',
+      'circle-stroke-width': 2,
+    }
+  })
+
+  map.addLayer({
+    id: layerIds.terminalPoint,
+    type: layers.terminalPoint.geometry.type === 'Polygon' ? 'fill' : 'circle',
+    source: sourceIds.terminalPoint,
+    paint: layers.terminalPoint.geometry.type === 'Polygon' ?{
+      'fill-color': '#f59e0b',
+      'fill-opacity': 0.5,
+      'fill-outline-color': '#ffffff',
+    } : {
+      'circle-color': '#f59e0b',
+      'circle-radius': 6,
+      'circle-stroke-color': '#ffffff',
+      'circle-stroke-width': 2,
+    }
   })
 
   return {

@@ -1,9 +1,11 @@
 const getClosestVertex = (coordinates, pathEdges) => {
   return pathEdges.reduce(
     (closest, vertex) => {
+      const coords = Array.isArray(coordinates[0]) ? coordinates[0][0] : coordinates
+
       const distance = Math.sqrt(
-        Math.pow(vertex[0] - coordinates[0], 2) +
-        Math.pow(vertex[1] - coordinates[1], 2)
+        Math.pow(vertex[0] - coords[0], 2) +
+        Math.pow(vertex[1] - coords[1], 2)
       )
 
       return distance < closest.distance
@@ -94,12 +96,9 @@ const getTerminalPoints = (route, terminals) => {
     if (!terminal) return []
 
     return [{
-      type: 'Point',
+      type: 'Feature',
       properties: { name: terminalName },
-      geometry: {
-        type: 'Point',
-        coordinates: terminal.geometry.coordinates[0][0],
-      },
+      geometry: terminal.geometry,
     }]
   })
 }

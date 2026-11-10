@@ -367,9 +367,21 @@ const App = () => {
     return pathToGeoJSON(path)
   }
 
-  const buildRoute = (routeId, routeName, fromPoint, toPoint, route, pathfinder, pathEdges) => {
+  const buildRoute = (routeId, routeName, fromPoint, toPoint, route, terminal, terminalIsHopOn, pathfinder, pathEdges) => {
+    const terminalCoordinates = terminal?.geometry?.coordinates
+    if (!Array.isArray(terminalCoordinates)) return null
+
+    console.log(terminal)
+
+    const hopOnCoordinates = terminalIsHopOn
+      ? [terminalCoordinates]
+      : route.geometry.coordinates
+    const hopOffCoordinates = terminalIsHopOn
+      ? route.geometry.coordinates
+      : [terminalCoordinates]
+
     const hopOn = getReachableVertex(
-      route.geometry.coordinates,
+      hopOnCoordinates,
       fromPoint,
       pathEdges,
       pathfinder
@@ -387,7 +399,7 @@ const App = () => {
     if (!geojsonPathToHopOn) return null
 
     const dropoff = getReachableVertex(
-      route.geometry.coordinates,
+      hopOffCoordinates,
       toPoint,
       pathEdges,
       pathfinder,
@@ -432,6 +444,16 @@ const App = () => {
           type: 'Feature',
           properties: {},
           geometry: fromHopOnPoint.geometry,
+        },
+        hopOffPoint: {
+          type: 'Feature',
+          properties: {},
+          geometry: toDropoffPoint.geometry,
+        },
+        terminalPoint: {
+          type: 'Feature',
+          properties: terminal.properties || {},
+          geometry: terminal.geometry,
         },
         commutePath: geojsonCommutePath,
         pathToDropoff: geojsonPathToDropoff,
@@ -489,15 +511,17 @@ const App = () => {
     }
 
     console.log('closestTerminals:', closestTerminals)
-    console.log(fromTerminals, toTerminals, terminalRoute)
+    console.log('fromTermials: ', fromTerminals, '\n\ntoTerminals:', toTerminals, '\n\nterminalRoute:', terminalRoute)
 
-    return closestTerminals.map((_, index) =>
+    return closestTerminals.map((terminal, index) =>
       buildRoute(
         `route-${index + 1}`,
         `Route ${index + 1} from ${fromBarangay} to ${toBarangay}`,
         { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } },
         { type: 'Point', geometry: { type: 'Point', coordinates: toVertexCoords } },
         terminalRoute,
+        terminal,
+        toTerminals.length > 0,
         pathfinder,
         pathEdges
       )
