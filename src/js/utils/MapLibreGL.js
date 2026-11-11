@@ -3,9 +3,10 @@ import { Marker } from 'maplibre-gl';
 const addMarkerToMap = (map, coords, isFromLocationFocused) => {
   const markerElement = document.createElement('div')
   markerElement.classList.add('marker')
-  markerElement.style.backgroundImage = `url(${isFromLocationFocused ? './assets/icons/custom_from_marker.png' : './assets/icons/custom_to_marker.png'})`
+  markerElement.style.backgroundImage = `url(${isFromLocationFocused ? './assets/icons/custom_from_marker.svg' : './assets/icons/custom_to_marker.svg'})`
   markerElement.style.width = '55px'
   markerElement.style.height = '55px'
+  markerElement.style.backgroundSize = 'cover'
 
   return new Marker({ element: markerElement }).setLngLat([coords[0], coords[1]]).setOffset([0, -27.5]).addTo(map)
 }
@@ -143,8 +144,8 @@ const addRouteLayers = (map, routeId, layers) => {
     },
     paint: {
       'line-color': layers.publicRoute.properties.stroke,
-      'line-width': 4,
-      'line-opacity': 0.5,
+      'line-width': layers.publicRoute.properties['stroke-width'],
+      'line-opacity': layers.publicRoute.properties['stroke-opacity'],
     },
   })
 
