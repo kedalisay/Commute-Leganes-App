@@ -86,6 +86,11 @@ MAP.on('load', async () => {
   'data': publicRoutesData,
   });
 
+  MAP.addSource('terminals', {
+    'type': 'geojson',
+    'data': terminalsData,
+  })
+
   PUBLIC_ROUTES.features.forEach((route) => {
     MAP.addLayer({
       'id': `public-route-${route.properties['route-name']}`,
@@ -98,6 +103,43 @@ MAP.on('load', async () => {
         'line-opacity': route.properties['stroke-opacity'],
       },
       'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
+    })
+
+    MAP.addLayer({
+      'id': `public-route-label-${route.properties['route-name']}`,
+      'type': 'symbol',
+      'source': 'public-routes',
+      'layout': {
+        'symbol-placement': 'line',
+        'text-field': route.properties['route-name'],
+        'text-size': 12,
+        'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+        'text-anchor': 'top',
+        'visibility': 'none',
+      },
+      'paint': {
+        'text-color': '#1A1D20',
+        'text-halo-color': '#ffffff',
+        'text-halo-width': 1,
+        'text-halo-blur': 1,
+      },
+      'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
+    })
+  })
+
+  STATIC_TERMINALS.features.forEach((terminal) => {
+    const terminalName = terminal.name.trim().toLowerCase().replace(/\s+/g, '-')
+
+    MAP.addLayer({
+      'id': `terminal-${terminalName}`,
+      'type': 'fill',
+      'source': 'terminals',
+      'layout': { 'visibility': 'none' },
+      'paint': {
+        'fill-color': '#f59e0b',
+        'fill-opacity': 0.5,
+        'fill-outline-color': '#ffffff',
+      }
     })
   })
 })
@@ -313,9 +355,11 @@ const App = () => {
       const routeModeOfTransport = feature.properties['mode-of-transport'].split(',').map(mode => mode.trim())
       const routePoints = feature.properties['route-points'].split(',').map(point => point.trim())
 
-      const isVisible = MAP.getLayoutProperty(`public-route-${routeName}`, 'visibility') === 'visible'
+      const isPublicRouteVisible = MAP.getLayoutProperty(`public-route-${routeName}`, 'visibility') === 'visible'
+      const isPublicRouteLabelVisible = MAP.getLayoutProperty(`public-route-label-${routeName}`, 'visibility') === 'visible'
 
-      MAP.setLayoutProperty(`public-route-${routeName}`, 'visibility', isVisible ? 'none' : 'visible')
+      MAP.setLayoutProperty(`public-route-${routeName}`, 'visibility', isPublicRouteVisible ? 'none' : 'visible')
+      MAP.setLayoutProperty(`public-route-label-${routeName}`, 'visibility', isPublicRouteLabelVisible ? 'none' : 'visible')
 
       routeData.push({
         name: routeName,
@@ -329,6 +373,13 @@ const App = () => {
       })
     });
 
+    STATIC_TERMINALS.features.forEach((terminal) => {
+      const terminalName = terminal.name.trim().toLowerCase().replace(/\s+/g, '-')
+      const isVisible = MAP.getLayoutProperty(`terminal-${terminalName}`, 'visibility') === 'visible'
+
+      MAP.setLayoutProperty(`terminal-${terminalName}`, 'visibility', isVisible ? 'none' : 'visible')
+    });
+
     setRoutes(routeData)
     setDrawerToPublicRoutes()
     openDrawer()
@@ -338,6 +389,12 @@ const App = () => {
     PUBLIC_ROUTES.features.forEach((feature) => {
       const routeName = feature.properties['route-name']
       MAP.setLayoutProperty(`public-route-${routeName}`, 'visibility', 'none')
+      MAP.setLayoutProperty(`public-route-label-${routeName}`, 'visibility', 'none')
+    });
+
+    STATIC_TERMINALS.features.forEach((terminal) => {
+      const terminalName = terminal.name.trim().toLowerCase().replace(/\s+/g, '-')
+      MAP.setLayoutProperty(`terminal-${terminalName}`, 'visibility', 'none')
     });
 
     setRoutes([])
