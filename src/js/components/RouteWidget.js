@@ -189,7 +189,7 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
           </label>
           <label class="relative inline-block w-full max-w-[calc(100%-45px)] h-[35px]">
             <svg class="fill-(--brand-secondary) absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
-              <circle r="12.5" cx="12.5" cy="12.5"/>
+              <circle r="12" cx="12.5" cy="12.5"/>
             </svg>
             <input onInput=${handleToInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, false)} type="text" name="to" placeholder="Where to?" value=${getLocationName(toLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full h-full" />
           </label>
