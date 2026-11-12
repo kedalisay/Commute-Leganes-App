@@ -444,87 +444,86 @@ const App = () => {
     return pathToGeoJSON(path)
   }
 
-  const getRouteVertices = (routeCoordinates, pathEdges) => (
-    routeCoordinates
-      .map((coordinate) => getClosestVertex(coordinate, pathEdges).vertex)
-      .filter(Boolean)
-      .filter((vertex, index, vertices) => (
-        vertices.findIndex((candidate) => (
-          candidate[0] === vertex[0] && candidate[1] === vertex[1]
-        )) === index
-      ))
-  )
+  const getCoordinateDistance = (from, to) => {
+    const latitude = (to[1] - from[1]) * Math.PI / 180
+    const longitude = (to[0] - from[0]) * Math.PI / 180
+    const fromLatitude = from[1] * Math.PI / 180
+    const toLatitude = to[1] * Math.PI / 180
+    const haversine = Math.sin(latitude / 2) ** 2
+      + Math.sin(longitude / 2) ** 2 * Math.cos(fromLatitude) * Math.cos(toLatitude)
 
-  const getRoutePath = (fromVertex, toVertex, routeCoordinates, pathEdges, pathfinder) => {
-    const routeVertices = getRouteVertices(routeCoordinates, pathEdges)
-    if (routeVertices.length < 2) return null
+    return 6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))
+  }
 
-    const getVertexIndex = (vertex) => {
-      const exactIndex = routeVertices.findIndex((candidate) => (
-        candidate[0] === vertex[0] && candidate[1] === vertex[1]
-      ))
-      if (exactIndex !== -1) return exactIndex
+  const getRoutePath = (fromVertex, toVertex, routeCoordinates) => {
+    if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) {
+      return null
+    }
 
-      return routeVertices.reduce((closestIndex, candidate, index) => (
+    const getClosestRouteIndex = (vertex) => routeCoordinates.reduce(
+      (closestIndex, coordinate, index) => (
         Math.hypot(
-          candidate[0] - vertex[0],
-          candidate[1] - vertex[1]
+          coordinate[0] - vertex[0],
+          coordinate[1] - vertex[1]
         ) < Math.hypot(
-          routeVertices[closestIndex][0] - vertex[0],
-          routeVertices[closestIndex][1] - vertex[1]
+          routeCoordinates[closestIndex][0] - vertex[0],
+          routeCoordinates[closestIndex][1] - vertex[1]
         )
           ? index
           : closestIndex
-      ), 0)
-    }
-    const fromIndex = getVertexIndex(fromVertex)
-    const toIndex = getVertexIndex(toVertex)
+      ),
+      0
+    )
 
-    if (fromIndex === -1 || toIndex === -1) return null
+    const fromIndex = getClosestRouteIndex(fromVertex)
+    const toIndex = getClosestRouteIndex(toVertex)
+    const routePath = routeCoordinates
+      .slice(Math.min(fromIndex, toIndex), Math.max(fromIndex, toIndex) + 1)
 
-    const vertices = fromIndex === toIndex
-      ? [fromVertex, toVertex]
-      : routeVertices.slice(
-        Math.min(fromIndex, toIndex),
-        Math.max(fromIndex, toIndex) + 1
-      )
+    if (fromIndex > toIndex) routePath.reverse()
 
-    if (fromIndex > toIndex) vertices.reverse()
-    if (fromIndex !== toIndex) {
-      vertices[0] = fromVertex
-      vertices[vertices.length - 1] = toVertex
-    }
-
-    const paths = []
-    for (let index = 0; index < vertices.length - 1; index += 1) {
-      const path = pathfinder.findPath(
-        { type: 'Point', geometry: { type: 'Point', coordinates: vertices[index] } },
-        { type: 'Point', geometry: { type: 'Point', coordinates: vertices[index + 1] } }
-      )
-
-      if (!path) return null
-      paths.push(path)
-    }
-
-    if (paths.length === 0) return null
+    routePath.unshift(fromVertex)
+    routePath.push(toVertex)
 
     return {
-      path: paths.reduce(
-        (coordinates, path, index) => (
-          index === 0
-            ? path.path
-            : coordinates.concat(path.path.slice(1))
-        ),
-        []
+      path: routePath,
+      weight: routePath.reduce(
+        (total, coordinate, index) => index === 0
+          ? total
+          : total + getCoordinateDistance(routePath[index - 1], coordinate),
+        0
       ),
-      weight: paths.reduce((total, path) => total + path.weight, 0),
-      edgeDatas: paths.flatMap((path) => path.edgeDatas || []),
+      edgeDatas: [],
     }
+  }
+
+  const getNearestReachableVertex = (coordinates, targetPoint, pathEdges, pathfinder, direction = 'to') => {
+    const targetCoordinates = targetPoint.geometry.coordinates
+
+    return getReachableVertices(
+      coordinates,
+      targetPoint,
+      pathEdges,
+      pathfinder,
+      direction
+    ).sort((a, b) => (
+      Math.hypot(
+        a.vertex[0] - targetCoordinates[0],
+        a.vertex[1] - targetCoordinates[1]
+      ) - Math.hypot(
+        b.vertex[0] - targetCoordinates[0],
+        b.vertex[1] - targetCoordinates[1]
+      )
+    ))[0] || null
   }
 
   const buildRoute = (index, routeId, routeName, fromPoint, toPoint, route, terminal, terminalIsHopOn, pathfinder, pathEdges) => {
     const terminalCoordinates = terminal?.geometry?.coordinates
     if (!Array.isArray(terminalCoordinates)) return null
+
+    if (Array.isArray(route.properties['route-fare']) && route.properties['route-fare'][index] && route.properties['route-fare'][index].mode === 'jeepney' && route.properties['route-fare'][index].type === 'per succeeding kilometer') {
+      return null
+    }
 
     console.log(terminal)
 
@@ -535,14 +534,14 @@ const App = () => {
       ? route.geometry.coordinates
       : [terminalCoordinates]
 
-    const hopOnCandidates = getReachableVertices(
+    const hopOn = getNearestReachableVertex(
       hopOnCoordinates,
       fromPoint,
       pathEdges,
       pathfinder
     )
 
-    const dropoffCandidates = getReachableVertices(
+    const dropoff = getNearestReachableVertex(
       hopOffCoordinates,
       toPoint,
       pathEdges,
@@ -553,48 +552,26 @@ const App = () => {
     const routeCoordinates = route.geometry?.coordinates
     if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) return null
 
-    let selectedRoute = null
-    for (const hopOn of hopOnCandidates) {
-      const fromHopOnPoint = {
-        type: 'Point',
-        geometry: { type: 'Point', coordinates: hopOn.vertex },
-      }
+    if (!hopOn || !dropoff) return null
 
-      for (const dropoff of dropoffCandidates) {
-        const toDropoffPoint = {
-          type: 'Point',
-          geometry: { type: 'Point', coordinates: dropoff.vertex },
-        }
-        const commutePath = getRoutePath(
-          hopOn.vertex,
-          dropoff.vertex,
-          routeCoordinates,
-          pathEdges,
-          pathfinder
-        )
-
-        const geojsonPathToHopOn = pathToGeoJSONSafe(hopOn.path)
-        const geojsonPathToDropoff = pathToGeoJSONSafe(dropoff.path)
-        const geojsonCommutePath = pathToGeoJSONSafe(commutePath)
-        if (!geojsonPathToHopOn || !geojsonPathToDropoff || !geojsonCommutePath) continue
-
-        selectedRoute = {
-          hopOn,
-          dropoff,
-          fromHopOnPoint,
-          toDropoffPoint,
-          commutePath,
-          geojsonPathToHopOn,
-          geojsonPathToDropoff,
-          geojsonCommutePath,
-        }
-        break
-      }
-
-      if (selectedRoute) break
+    const fromHopOnPoint = {
+      type: 'Point',
+      geometry: { type: 'Point', coordinates: hopOn.vertex },
     }
+    const toDropoffPoint = {
+      type: 'Point',
+      geometry: { type: 'Point', coordinates: dropoff.vertex },
+    }
+    const commutePath = getRoutePath(
+      hopOn.vertex,
+      dropoff.vertex,
+      routeCoordinates
+    )
 
-    if (!selectedRoute) return null
+    const geojsonPathToHopOn = pathToGeoJSONSafe(hopOn.path)
+    const geojsonPathToDropoff = pathToGeoJSONSafe(dropoff.path)
+    const geojsonCommutePath = pathToGeoJSONSafe(commutePath)
+    if (!geojsonPathToHopOn || !geojsonPathToDropoff || !geojsonCommutePath) return null
 
     const fares = Array.isArray(route.properties['route-fare'])
       ? route.properties['route-fare']
@@ -602,19 +579,15 @@ const App = () => {
     const fare = fares[index] || fares[0]
     if (!fare) return null
 
-    const {
-      hopOn,
-      dropoff,
-      fromHopOnPoint,
-      toDropoffPoint,
-      commutePath,
-      geojsonPathToHopOn,
-      geojsonPathToDropoff,
-      geojsonCommutePath,
-    } = selectedRoute
-
     const walkingDistance = hopOn.path.weight + dropoff.path.weight
     const commuteDistance = commutePath.weight
+
+    if (fare.mode === 'jeepney' && commuteDistance > 4) {
+      if (fare.type === 'first 4 kilometers' && fares[index + 1]?.type === 'per succeeding kilometer') {
+        const extraFare = Math.ceil(commuteDistance - 4) * fares[index + 1]['amount']
+        fare.amount += extraFare
+      }
+    }
 
     console.log(`Route ${routeId} - ${routeName}: Walking distance: ${walkingDistance.toPrecision(2)} km, Commute distance: ${commuteDistance.toPrecision(2)} km`)
 
@@ -704,9 +677,10 @@ const App = () => {
       const terminalPoints = getTerminalPoints(route, terminals)
       return terminalPoints.map((terminal) => ({ route, terminal, terminalIsHopOn: false }))
     })
-    const routeCandidates = destinationRoutes.length > 0
-      ? destinationRoutes
-      : originRoutes
+    const routeCandidates = [
+      ...destinationRoutes,
+      ...originRoutes,
+    ]
 
     if (routeCandidates.length === 0) {
       return []
@@ -732,7 +706,7 @@ const App = () => {
         pathfinder,
         pathEdges
       )
-    ).filter(Boolean)
+    ).filter(Boolean).sort((a, b) => a.total_duration - b.total_duration)
   }
 
   const findRoute = () => {
