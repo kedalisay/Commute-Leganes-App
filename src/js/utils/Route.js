@@ -37,7 +37,7 @@ const getClosestTerminalVertices = (
     .filter(({ closestVertex }) => closestVertex?.vertex)
 }
 
-const getReachableVertex = (coordinates, targetPoint, pathEdges, pathfinder, direction = 'to') => {
+const getReachableVertices = (coordinates, targetPoint, pathEdges, pathfinder, direction = 'to') => {
   const candidates = coordinates
     .map((coordinate) => getClosestVertex(coordinate, pathEdges).vertex)
     .filter(Boolean)
@@ -56,7 +56,7 @@ const getReachableVertex = (coordinates, targetPoint, pathEdges, pathfinder, dir
       )
     ))
 
-  for (const vertex of candidates) {
+  return candidates.flatMap((vertex) => {
     const vertexPoint = {
       type: 'Point',
       geometry: { type: 'Point', coordinates: vertex },
@@ -65,20 +65,26 @@ const getReachableVertex = (coordinates, targetPoint, pathEdges, pathfinder, dir
       ? pathfinder.findPath(vertexPoint, targetPoint)
       : pathfinder.findPath(targetPoint, vertexPoint)
 
-    if (path) {
-      return { vertex, path }
-    }
-  }
+    return path ? [{ vertex, path }] : []
+  }).sort((a, b) => a.path.weight - b.path.weight)
+}
 
-  return null
+const getReachableVertex = (coordinates, targetPoint, pathEdges, pathfinder, direction = 'to') => {
+  return getReachableVertices(
+    coordinates,
+    targetPoint,
+    pathEdges,
+    pathfinder,
+    direction
+  )[0] || null
 }
 
 const getRouteForBarangay = (barangayName, publicRoutes) => {
-  if (!barangayName) return null
+  if (!barangayName) return []
 
-  return publicRoutes.find((route) =>
+  return publicRoutes.filter((route) =>
     route.properties['route-name'].includes(barangayName)
-  ) || null
+  )
 }
 
 const getTerminalPoints = (route, terminals) => {
@@ -106,6 +112,7 @@ const getTerminalPoints = (route, terminals) => {
 export {
   getClosestVertex,
   getClosestTerminalVertices,
+  getReachableVertices,
   getReachableVertex,
   getVertexCoordinates,
   getTerminalPoints,

@@ -18,7 +18,7 @@ import RouteCardList from './components/RouteCardList.js'
 import { removeMarkerFromMap, addRouteLayers, removeRouteLayers, setRouteLayerVisibility } from './utils/MapLibreGL.js';
 import { getCoordinates, areValidCoordinates } from './utils/Geolocation.js';
 import { getBarangay } from './utils/Barangay.js';
-import { getRouteForBarangay, getClosestVertex, getVertexCoordinates, getClosestTerminalVertices, getTerminalPoints, getReachableVertex } from './utils/Route.js';
+import { getRouteForBarangay, getClosestVertex, getVertexCoordinates, getTerminalPoints, getReachableVertices } from './utils/Route.js';
 
 setWorkerUrl(new URL(`/src/js/maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
 
@@ -444,6 +444,84 @@ const App = () => {
     return pathToGeoJSON(path)
   }
 
+  const getRouteVertices = (routeCoordinates, pathEdges) => (
+    routeCoordinates
+      .map((coordinate) => getClosestVertex(coordinate, pathEdges).vertex)
+      .filter(Boolean)
+      .filter((vertex, index, vertices) => (
+        vertices.findIndex((candidate) => (
+          candidate[0] === vertex[0] && candidate[1] === vertex[1]
+        )) === index
+      ))
+  )
+
+  const getRoutePath = (fromVertex, toVertex, routeCoordinates, pathEdges, pathfinder) => {
+    const routeVertices = getRouteVertices(routeCoordinates, pathEdges)
+    if (routeVertices.length < 2) return null
+
+    const getVertexIndex = (vertex) => {
+      const exactIndex = routeVertices.findIndex((candidate) => (
+        candidate[0] === vertex[0] && candidate[1] === vertex[1]
+      ))
+      if (exactIndex !== -1) return exactIndex
+
+      return routeVertices.reduce((closestIndex, candidate, index) => (
+        Math.hypot(
+          candidate[0] - vertex[0],
+          candidate[1] - vertex[1]
+        ) < Math.hypot(
+          routeVertices[closestIndex][0] - vertex[0],
+          routeVertices[closestIndex][1] - vertex[1]
+        )
+          ? index
+          : closestIndex
+      ), 0)
+    }
+    const fromIndex = getVertexIndex(fromVertex)
+    const toIndex = getVertexIndex(toVertex)
+
+    if (fromIndex === -1 || toIndex === -1) return null
+
+    const vertices = fromIndex === toIndex
+      ? [fromVertex, toVertex]
+      : routeVertices.slice(
+        Math.min(fromIndex, toIndex),
+        Math.max(fromIndex, toIndex) + 1
+      )
+
+    if (fromIndex > toIndex) vertices.reverse()
+    if (fromIndex !== toIndex) {
+      vertices[0] = fromVertex
+      vertices[vertices.length - 1] = toVertex
+    }
+
+    const paths = []
+    for (let index = 0; index < vertices.length - 1; index += 1) {
+      const path = pathfinder.findPath(
+        { type: 'Point', geometry: { type: 'Point', coordinates: vertices[index] } },
+        { type: 'Point', geometry: { type: 'Point', coordinates: vertices[index + 1] } }
+      )
+
+      if (!path) return null
+      paths.push(path)
+    }
+
+    if (paths.length === 0) return null
+
+    return {
+      path: paths.reduce(
+        (coordinates, path, index) => (
+          index === 0
+            ? path.path
+            : coordinates.concat(path.path.slice(1))
+        ),
+        []
+      ),
+      weight: paths.reduce((total, path) => total + path.weight, 0),
+      edgeDatas: paths.flatMap((path) => path.edgeDatas || []),
+    }
+  }
+
   const buildRoute = (index, routeId, routeName, fromPoint, toPoint, route, terminal, terminalIsHopOn, pathfinder, pathEdges) => {
     const terminalCoordinates = terminal?.geometry?.coordinates
     if (!Array.isArray(terminalCoordinates)) return null
@@ -457,25 +535,14 @@ const App = () => {
       ? route.geometry.coordinates
       : [terminalCoordinates]
 
-    const hopOn = getReachableVertex(
+    const hopOnCandidates = getReachableVertices(
       hopOnCoordinates,
       fromPoint,
       pathEdges,
       pathfinder
     )
 
-    console.log(`Route ${routeId} - ${routeName}: Reachable hop-on vertex:`, hopOn)
-
-    if (!hopOn) return null
-    const fromHopOnPoint = {
-      type: 'Point',
-      geometry: { type: 'Point', coordinates: hopOn.vertex },
-    }
-    const pathToHopOn = hopOn.path
-    const geojsonPathToHopOn = pathToGeoJSONSafe(pathToHopOn)
-    if (!geojsonPathToHopOn) return null
-
-    const dropoff = getReachableVertex(
+    const dropoffCandidates = getReachableVertices(
       hopOffCoordinates,
       toPoint,
       pathEdges,
@@ -483,26 +550,70 @@ const App = () => {
       'from'
     )
 
-    console.log(`Route ${routeId} - ${routeName}: Reachable drop-off vertex:`, dropoff)
+    const routeCoordinates = route.geometry?.coordinates
+    if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) return null
 
-    if (!dropoff) return null
-    const toDropoffPoint = {
-      type: 'Point',
-      geometry: { type: 'Point', coordinates: dropoff.vertex },
+    let selectedRoute = null
+    for (const hopOn of hopOnCandidates) {
+      const fromHopOnPoint = {
+        type: 'Point',
+        geometry: { type: 'Point', coordinates: hopOn.vertex },
+      }
+
+      for (const dropoff of dropoffCandidates) {
+        const toDropoffPoint = {
+          type: 'Point',
+          geometry: { type: 'Point', coordinates: dropoff.vertex },
+        }
+        const commutePath = getRoutePath(
+          hopOn.vertex,
+          dropoff.vertex,
+          routeCoordinates,
+          pathEdges,
+          pathfinder
+        )
+
+        const geojsonPathToHopOn = pathToGeoJSONSafe(hopOn.path)
+        const geojsonPathToDropoff = pathToGeoJSONSafe(dropoff.path)
+        const geojsonCommutePath = pathToGeoJSONSafe(commutePath)
+        if (!geojsonPathToHopOn || !geojsonPathToDropoff || !geojsonCommutePath) continue
+
+        selectedRoute = {
+          hopOn,
+          dropoff,
+          fromHopOnPoint,
+          toDropoffPoint,
+          commutePath,
+          geojsonPathToHopOn,
+          geojsonPathToDropoff,
+          geojsonCommutePath,
+        }
+        break
+      }
+
+      if (selectedRoute) break
     }
-    const pathToDropoff = dropoff.path
-    const geojsonPathToDropoff = pathToGeoJSONSafe(pathToDropoff)
-    if (!geojsonPathToDropoff) return null
 
-    const commutePath = pathfinder.findPath(fromHopOnPoint, toDropoffPoint)
+    if (!selectedRoute) return null
 
-    console.log(`Route ${routeId} - ${routeName}: Commute path:`, commutePath)
+    const fares = Array.isArray(route.properties['route-fare'])
+      ? route.properties['route-fare']
+      : []
+    const fare = fares[index] || fares[0]
+    if (!fare) return null
 
-    if (!commutePath) return null
-    const geojsonCommutePath = pathToGeoJSONSafe(commutePath)
-    if (!geojsonCommutePath) return null
+    const {
+      hopOn,
+      dropoff,
+      fromHopOnPoint,
+      toDropoffPoint,
+      commutePath,
+      geojsonPathToHopOn,
+      geojsonPathToDropoff,
+      geojsonCommutePath,
+    } = selectedRoute
 
-    const walkingDistance = pathToHopOn.weight + pathToDropoff.weight
+    const walkingDistance = hopOn.path.weight + dropoff.path.weight
     const commuteDistance = commutePath.weight
 
     console.log(`Route ${routeId} - ${routeName}: Walking distance: ${walkingDistance.toPrecision(2)} km, Commute distance: ${commuteDistance.toPrecision(2)} km`)
@@ -514,8 +625,8 @@ const App = () => {
       total_distance: (walkingDistance + commuteDistance).toPrecision(2),
       total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60), // calculate duration minutes based on distance and average speed (e.g., 5 km/h for walking, 40 km/h for commuting)
       total_transfers: 1,
-      fare: route.properties['route-fare'][index]['amount'],
-      mode: route.properties['route-fare'][index]['mode'],
+      fare: fare.amount,
+      mode: fare.mode,
       layers: {
         pathToHopOn: geojsonPathToHopOn,
         startPoint: {
@@ -578,39 +689,46 @@ const App = () => {
     const fromRoute = getRouteForBarangay(fromBarangay, publicRoutes)
     const toRoute = getRouteForBarangay(toBarangay, publicRoutes)
 
-    if (!fromRoute && !toRoute) {
+    if (fromRoute.length === 0 && toRoute.length === 0) {
       return []
     }
 
     console.log('fromRoute:', fromRoute) 
     console.log('toRoute:', toRoute)
 
-    const fromTerminals = getTerminalPoints(fromRoute, terminals)
-    const toTerminals = getTerminalPoints(toRoute, terminals)
-    const terminalRoute = toTerminals.length > 0 ? toRoute : fromRoute
-    const terminalPoints = toTerminals.length > 0 ? toTerminals : fromTerminals
-    const closestTerminals = getClosestTerminalVertices(
-      terminalPoints,
-      pathEdges
-    )
+    const destinationRoutes = toRoute.flatMap((route) => {
+      const terminalPoints = getTerminalPoints(route, terminals)
+      return terminalPoints.map((terminal) => ({ route, terminal, terminalIsHopOn: true }))
+    })
+    const originRoutes = fromRoute.flatMap((route) => {
+      const terminalPoints = getTerminalPoints(route, terminals)
+      return terminalPoints.map((terminal) => ({ route, terminal, terminalIsHopOn: false }))
+    })
+    const routeCandidates = destinationRoutes.length > 0
+      ? destinationRoutes
+      : originRoutes
 
-    if (!terminalRoute || closestTerminals.length === 0) {
+    if (routeCandidates.length === 0) {
       return []
     }
 
-    console.log('closestTerminals:', closestTerminals)
-    console.log('fromTermials: ', fromTerminals, '\n\ntoTerminals:', toTerminals, '\n\nterminalRoute:', terminalRoute)
+    const closestTerminals = routeCandidates.flatMap(({ route, terminal, terminalIsHopOn }) => {
+      const closestVertex = getClosestVertex(terminal.geometry.coordinates, pathEdges)
+      return closestVertex.vertex
+        ? [{ route, terminal, terminalIsHopOn, closestVertex }]
+        : []
+    })
 
-    return closestTerminals.map((terminal, index) =>
+    return closestTerminals.map(({ route, terminal, terminalIsHopOn }, index) =>
       buildRoute(
         index,
         `route-${index + 1}`,
         `Route ${index + 1} from ${fromBarangay} to ${toBarangay}`,
         { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } },
         { type: 'Point', geometry: { type: 'Point', coordinates: toVertexCoords } },
-        terminalRoute,
+        route,
         terminal,
-        toTerminals.length > 0,
+        terminalIsHopOn,
         pathfinder,
         pathEdges
       )
