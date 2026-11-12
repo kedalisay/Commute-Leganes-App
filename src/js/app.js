@@ -35,6 +35,26 @@ const PATH_VERTICES = Object.keys(PATHFINDER.graph.vertices)
 const STATIC_LOCATIONS = {}
 const STATIC_TERMINALS = {}
 const STATIC_BARANGAYS = {}
+const BARANGAY_COLORS = {
+  'Poblacion': "#5bcf55",
+  'Cari Minor': "#445cd0",
+  'San Vicente': "#3c8fe7",
+  'Guinobatan': "#30bce2",
+  'Guihaman': "#e279b7",
+  'Buntatala': "#db5ace",
+  'Lapayon': "#86e7de",
+  'Calaboa': "#9a6ecc",
+  'Cagamutan Norte': "#e98651",
+  'Cari Mayor': "#72d2aa",
+  'Cagamutan Sur': "#e93868",
+  'Guintas': "#d7b97d",
+  'Camangay': "#caef73",
+  'Bigke': "#67de87",
+  'M.V. Hechanova': "#cac83d",
+  'Napnud': "#c578da",
+  'Gua-an': "#7161ca",
+  'Nabitasan': "#86ca5f",
+}
 
 const PUBLIC_ROUTES = {}
 
@@ -42,12 +62,12 @@ MAP.on('load', async () => {
   const publicRoutesData = await (await fetch('/data/leganes_public_routes.json')).json()
   PUBLIC_ROUTES.features = publicRoutesData.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
 
-  const barangaysData = await (await fetch('/data/leganes_barangays.json')).json()
+  const barangaysData = await (await fetch('/data/bgysubmuns-municity-603026000.0.01.json')).json()
   STATIC_BARANGAYS.features = barangaysData.features.map((feature) => {
-    const barangayName = feature.properties.tags.name
+    const barangayName = feature.properties.adm4_en
     const barangayGeometry = feature.geometry
-    const barangayFillColor = feature.properties.fill
-    const barangayStrokeColor = feature.properties.stroke
+    const barangayFillColor = BARANGAY_COLORS[barangayName] || "#9e9e9e"
+    const barangayStrokeColor = "#212121"
 
     return {
       name: barangayName,
