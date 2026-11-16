@@ -634,6 +634,244 @@ const App = () => {
     }
   }
 
+  const getRouteTransfer = (fromRoute, toRoute, pathEdges, pathfinder) => {
+    let closestTransfer = null
+
+    for (const fromCoordinate of fromRoute.geometry.coordinates) {
+      const fromVertex = getClosestVertex(fromCoordinate, pathEdges).vertex
+      if (!fromVertex) continue
+
+      for (const toCoordinate of toRoute.geometry.coordinates) {
+        const toVertex = getClosestVertex(toCoordinate, pathEdges).vertex
+        if (!toVertex) continue
+
+        const distance = Math.hypot(
+          fromVertex[0] - toVertex[0],
+          fromVertex[1] - toVertex[1]
+        )
+        if (distance > 0.01) continue
+
+        const path = pathfinder.findPath(
+          { type: 'Point', geometry: { type: 'Point', coordinates: fromVertex } },
+          { type: 'Point', geometry: { type: 'Point', coordinates: toVertex } }
+        )
+        if (!path || (closestTransfer && path.weight >= closestTransfer.path.weight)) continue
+
+        closestTransfer = {
+          fromVertex,
+          toVertex,
+          path,
+        }
+      }
+    }
+
+    return closestTransfer
+  }
+
+  const getRouteSequence = (fromRoutes, toRoutes, publicRoutes, pathEdges, pathfinder) => {
+    const sequences = []
+    const seen = new Set()
+
+    for (const fromRoute of fromRoutes) {
+      for (const toRoute of toRoutes) {
+        if (fromRoute === toRoute) continue
+
+        const transfer = getRouteTransfer(fromRoute, toRoute, pathEdges, pathfinder)
+        if (!transfer) continue
+
+        const key = `${publicRoutes.indexOf(fromRoute)}:${publicRoutes.indexOf(toRoute)}`
+        if (seen.has(key)) continue
+        seen.add(key)
+        sequences.push({ routes: [fromRoute, toRoute], transfer })
+      }
+    }
+
+    return sequences
+  }
+
+  const getRouteFare = (route, distance) => {
+    const fares = Array.isArray(route.properties['route-fare'])
+      ? route.properties['route-fare']
+      : []
+    const fare = fares.find((candidate) => candidate.type !== 'per succeeding kilometer') || fares[0]
+    if (!fare) return { amount: 0, mode: route.properties['mode-of-transport'] }
+
+    if (
+      fare.mode === 'jeepney' &&
+      fare.type === 'first 4 kilometers' &&
+      distance > 4
+    ) {
+      const succeedingFare = fares.find((candidate) => candidate.type === 'per succeeding kilometer')
+      return {
+        amount: fare.amount + (
+          succeedingFare
+            ? Math.ceil(distance - 4) * succeedingFare.amount
+            : 0
+        ),
+        mode: fare.mode,
+      }
+    }
+
+    return { amount: fare.amount, mode: fare.mode }
+  }
+
+  const toFeatureCollection = (features, weight) => ({
+    type: 'FeatureCollection',
+    properties: { weight },
+    features,
+  })
+
+  const buildRouteChain = (routeSequence, fromPoint, toPoint, pathfinder, pathEdges, getTransfer) => {
+    const transfers = routeSequence.slice(0, -1).map((route, index) => (
+      getTransfer(route, routeSequence[index + 1])
+    ))
+    if (transfers.some((transfer) => !transfer)) return null
+
+    const pathToHopOnFeatures = []
+    const commuteFeatures = []
+    let walkingDistance = 0
+    let commuteDistance = 0
+    let fare = 0
+    const modes = []
+    const segments = []
+    const inBetweenPoints = []
+
+    for (let index = 0; index < routeSequence.length; index += 1) {
+      const route = routeSequence[index]
+      const routeCoordinates = route.geometry?.coordinates
+      if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) return null
+
+      const hopOn = index === 0
+        ? getNearestReachableVertex(routeCoordinates, fromPoint, pathEdges, pathfinder)
+        : {
+            vertex: transfers[index - 1].toVertex,
+            path: transfers[index - 1].path,
+          }
+      const dropoff = index === routeSequence.length - 1
+        ? getNearestReachableVertex(routeCoordinates, toPoint, pathEdges, pathfinder, 'from')
+        : {
+            vertex: transfers[index].fromVertex,
+            path: null,
+          }
+
+      if (!hopOn || !dropoff) return null
+
+      if (hopOn.path) {
+        const walkingFeature = pathToGeoJSONSafe(hopOn.path)
+        if (!walkingFeature) return null
+        pathToHopOnFeatures.push(walkingFeature)
+        walkingDistance += hopOn.path.weight
+        segments.push({
+          mode: 'walk',
+          label: 'Walk',
+          weight: hopOn.path.weight,
+          color: '#0b38a8',
+        })
+      }
+
+      const commutePath = getRoutePath(hopOn.vertex, dropoff.vertex, routeCoordinates)
+      const commuteFeature = pathToGeoJSONSafe(commutePath)
+      if (!commutePath || !commuteFeature) return null
+
+      commuteFeature.properties = {
+        ...commuteFeature.properties,
+        stroke: route.properties.stroke,
+        strokeWidth: route.properties['stroke-width'],
+        strokeOpacity: route.properties['stroke-opacity'],
+      }
+      commuteFeatures.push(commuteFeature)
+      commuteDistance += commutePath.weight
+      const routeFare = getRouteFare(route, commutePath.weight)
+      fare += routeFare.amount
+      modes.push(routeFare.mode)
+      segments.push({
+        mode: routeFare.mode,
+        label: routeFare.mode,
+        weight: commutePath.weight,
+        color: route.properties.stroke,
+      })
+
+      inBetweenPoints.push(hopOn.vertex)
+      inBetweenPoints.push(dropoff.vertex)
+    }
+
+    const firstHopOnPoint = inBetweenPoints.shift()
+    const lastDropoffPoint = inBetweenPoints.pop()
+
+    console.log('In between points:', inBetweenPoints)
+
+    const finalWalkingPath = getNearestReachableVertex(
+      [lastDropoffPoint],
+      toPoint,
+      pathEdges,
+      pathfinder,
+      'from'
+    )
+    if (!finalWalkingPath) return null
+
+    const finalWalkingFeature = pathToGeoJSONSafe(finalWalkingPath.path)
+    if (!finalWalkingFeature) return null
+    walkingDistance += finalWalkingPath.path.weight
+    segments.push({
+      mode: 'walk',
+      label: 'Walk',
+      weight: finalWalkingPath.path.weight,
+      color: '#0b38a8',
+    })
+
+    return {
+      id: '',
+      name: '',
+      public: false,
+      total_distance: (walkingDistance + commuteDistance).toPrecision(2),
+      total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60),
+      total_transfers: routeSequence.length,
+      fare,
+      mode: modes.join(', '),
+      segments,
+      layers: {
+        pathToHopOn: toFeatureCollection(pathToHopOnFeatures, walkingDistance),
+        startPoint: {
+          type: 'Feature',
+          properties: {},
+          geometry: fromPoint.geometry,
+        },
+        endPoint: {
+          type: 'Feature',
+          properties: {},
+          geometry: toPoint.geometry,
+        },
+        hopOnPoint: {
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'Point', coordinates: firstHopOnPoint },
+        },
+        hopOffPoint: {
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'Point', coordinates: lastDropoffPoint },
+        },
+        inBetweenPoints: {
+          type: 'FeatureCollection',
+          properties: {},
+          features: inBetweenPoints.map((point) => ({
+            type: 'Feature',
+            properties: {},
+            geometry: { type: 'Point', coordinates: point },
+          })),
+        },
+        terminalPoint: {
+          type: 'Feature',
+          properties: {},
+          geometry: { type: 'Point', coordinates: lastDropoffPoint },
+        },
+        commutePath: toFeatureCollection(commuteFeatures, commuteDistance),
+        pathToDropoff: finalWalkingFeature,
+        publicRoute: routeSequence[0],
+      },
+    }
+  }
+
   const findRoutes = (fromLocation, toLocation, pathEdges, pathfinder, barangays, publicRoutes, terminals) => {
     const fromCoords = getCoordinates(fromLocation)
     const toCoords = getCoordinates(toLocation)
@@ -693,7 +931,7 @@ const App = () => {
         : []
     })
 
-    return closestTerminals.map(({ route, terminal, terminalIsHopOn }, index) =>
+    const directRoutes = closestTerminals.map(({ route, terminal, terminalIsHopOn }, index) =>
       buildRoute(
         index,
         `route-${index + 1}`,
@@ -707,6 +945,36 @@ const App = () => {
         pathEdges
       )
     ).filter(Boolean).sort((a, b) => a.total_duration - b.total_duration)
+
+    const transferCandidates = getRouteSequence(
+      fromRoute,
+      toRoute.length > 0 ? toRoute : publicRoutes,
+      publicRoutes,
+      pathEdges,
+      pathfinder
+    )
+    const transferRoutes = transferCandidates.map(({ routes, transfer }, index) => {
+      const route = buildRouteChain(
+        routes,
+        { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } },
+        { type: 'Point', geometry: { type: 'Point', coordinates: toVertexCoords } },
+        pathfinder,
+        pathEdges,
+        () => transfer
+      )
+      if (!route) return null
+
+      return {
+        ...route,
+        id: `route-transfer-${index + 1}`,
+        name: `Route ${index + 1} from ${fromBarangay} to ${toBarangay}`,
+      }
+    }).filter(Boolean)
+
+    console.log('Transfer Routes: ', transferRoutes)
+
+    return [...directRoutes, ...transferRoutes]
+      .sort((a, b) => a.total_duration - b.total_duration)
   }
 
   const findRoute = () => {
@@ -736,7 +1004,7 @@ const App = () => {
     }
 
     const routes = routeResults.map((route) => {
-      console.log(route)
+      console.log('Route: ', route)
       const mapLayerState = addRouteLayers(MAP, route.id, route.layers)
 
       return {

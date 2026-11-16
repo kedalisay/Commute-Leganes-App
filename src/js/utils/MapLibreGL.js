@@ -47,6 +47,7 @@ const addRouteLayers = (map, routeId, layers) => {
     endPoint: `${routeId}_end_point_source`,
     hopOnPoint: `${routeId}_hop_on_point_source`,
     hopOffPoint: `${routeId}_hop_off_point_source`,
+    inBetweenPoints: `${routeId}_in_between_points_source`,
     terminalPoint: `${routeId}_terminal_point_source`,
     publicRoute: `${routeId}_public_route_source`,
     pathToDropoff: `${routeId}_path_to_dropoff_source`,
@@ -59,6 +60,7 @@ const addRouteLayers = (map, routeId, layers) => {
     endPoint: `${routeId}_end_point`,
     hopOnPoint: `${routeId}_hop_on_point`,
     hopOffPoint: `${routeId}_hop_off_point`,
+    inBetweenPoints: `${routeId}_in_between_points`,
     terminalPoint: `${routeId}_terminal_point`,
     publicRoute: `${routeId}_public_route`,
     pathToDropoff: `${routeId}_path_to_dropoff`,
@@ -93,6 +95,13 @@ const addRouteLayers = (map, routeId, layers) => {
     type: 'geojson',
     data: layers.hopOffPoint,
   })
+
+  if (layers.inBetweenPoints) {
+    map.addSource(sourceIds.inBetweenPoints, {
+      type: 'geojson',
+      data: layers.inBetweenPoints,
+    })
+  }
 
   map.addSource(sourceIds.terminalPoint, {
     type: 'geojson',
@@ -143,9 +152,21 @@ const addRouteLayers = (map, routeId, layers) => {
       'line-cap': 'round',
     },
     paint: {
-      'line-color': layers.publicRoute.properties.stroke,
-      'line-width': layers.publicRoute.properties['stroke-width'],
-      'line-opacity': layers.publicRoute.properties['stroke-opacity'],
+      'line-color': [
+        'coalesce',
+        ['get', 'stroke'],
+        layers.publicRoute.properties.stroke,
+      ],
+      'line-width': [
+        'coalesce',
+        ['get', 'strokeWidth'],
+        layers.publicRoute.properties['stroke-width'],
+      ],
+      'line-opacity': [
+        'coalesce',
+        ['get', 'strokeOpacity'],
+        layers.publicRoute.properties['stroke-opacity'],
+      ],
     },
   })
 
@@ -196,6 +217,20 @@ const addRouteLayers = (map, routeId, layers) => {
       'circle-stroke-width': 2,
     }
   })
+
+  if (layers.inBetweenPoints) {
+    map.addLayer({
+      id: layerIds.inBetweenPoints,
+      type: 'circle',
+      source: sourceIds.inBetweenPoints,
+      paint: {
+        'circle-color': '#f59e0b',
+        'circle-radius': 6,
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 2,
+      }
+    })
+  }
 
   map.addLayer({
     id: layerIds.terminalPoint,
