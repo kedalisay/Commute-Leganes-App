@@ -7,6 +7,7 @@ import leganes_road_network_geojson from '../../data/leganes_road_network.json'
 
 import html from './html.js'
 
+import Loading from './views/Loading.js'
 import Settings from './views/Settings.js'
 
 import Drawer from './components/Drawer.js'
@@ -58,109 +59,117 @@ const BARANGAY_COLORS = {
 
 const PUBLIC_ROUTES = {}
 
-MAP.on('load', async () => {
-  const publicRoutesData = await (await fetch('/data/leganes_public_routes.json')).json()
-  PUBLIC_ROUTES.features = publicRoutesData.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
+const MAP_DATA_READY = new Promise((resolve, reject) => {
+  MAP.on('load', async () => {
+    try {
+      const publicRoutesData = await (await fetch('/data/leganes_public_routes.json')).json()
+      PUBLIC_ROUTES.features = publicRoutesData.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
 
-  const barangaysData = await (await fetch('/data/bgysubmuns-municity-603026000.0.01.json')).json()
-  STATIC_BARANGAYS.features = barangaysData.features.map((feature) => {
-    const barangayName = feature.properties.adm4_en
-    const barangayGeometry = feature.geometry
-    const barangayFillColor = BARANGAY_COLORS[barangayName] || "#9e9e9e"
-    const barangayStrokeColor = "#212121"
+      const barangaysData = await (await fetch('/data/bgysubmuns-municity-603026000.0.01.json')).json()
+      STATIC_BARANGAYS.features = barangaysData.features.map((feature) => {
+        const barangayName = feature.properties.adm4_en
+        const barangayGeometry = feature.geometry
+        const barangayFillColor = BARANGAY_COLORS[barangayName] || "#9e9e9e"
+        const barangayStrokeColor = "#212121"
 
-    return {
-      name: barangayName,
-      geometry: barangayGeometry,
-      fill: barangayFillColor,
-      stroke: barangayStrokeColor
+        return {
+          name: barangayName,
+          geometry: barangayGeometry,
+          fill: barangayFillColor,
+          stroke: barangayStrokeColor
+        }
+      })
+
+      const terminalsData = await (await fetch('/data/leganes_terminals.json')).json()
+      STATIC_TERMINALS.features = terminalsData.features.map((feature) => {
+        const terminalName = feature.properties['terminal-name']
+        const terminalGeometry = feature.geometry
+
+        return {
+          name: terminalName,
+          geometry: terminalGeometry,
+        }
+      })
+
+      const locationsData = await (await fetch('/data/leganes_locations.json')).json()
+      STATIC_LOCATIONS.features = locationsData.features.map((feature) => {
+        const locationName = feature.properties['location-name']
+        const locationCoordinates = feature.geometry.coordinates
+        const locationAliases = feature.properties['location-aliases']
+
+        return {
+          name: locationName,
+          coords: locationCoordinates,
+          aliases: locationAliases,
+        }
+      })
+
+      MAP.addSource('public-routes', {
+        'type': 'geojson',
+        'data': publicRoutesData,
+      });
+
+      MAP.addSource('terminals', {
+        'type': 'geojson',
+        'data': terminalsData,
+      })
+
+      PUBLIC_ROUTES.features.forEach((route) => {
+        MAP.addLayer({
+          'id': `public-route-${route.properties['route-name']}`,
+          'type': 'line',
+          'source': 'public-routes',
+          'layout': { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
+          'paint': {
+            'line-color': route.properties['stroke'],
+            'line-width': route.properties['stroke-width'],
+            'line-opacity': route.properties['stroke-opacity'],
+          },
+          'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
+        })
+
+        MAP.addLayer({
+          'id': `public-route-label-${route.properties['route-name']}`,
+          'type': 'symbol',
+          'source': 'public-routes',
+          'layout': {
+            'symbol-placement': 'line',
+            'text-field': route.properties['route-name'],
+            'text-size': 12,
+            'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+            'text-anchor': 'top',
+            'visibility': 'none',
+          },
+          'paint': {
+            'text-color': '#1A1D20',
+            'text-halo-color': '#ffffff',
+            'text-halo-width': 1,
+            'text-halo-blur': 1,
+          },
+          'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
+        })
+      })
+
+      STATIC_TERMINALS.features.forEach((terminal) => {
+        const terminalName = terminal.name.trim().toLowerCase().replace(/\s+/g, '-')
+
+        MAP.addLayer({
+          'id': `terminal-${terminalName}`,
+          'type': 'fill',
+          'source': 'terminals',
+          'layout': { 'visibility': 'none' },
+          'paint': {
+            'fill-color': '#f59e0b',
+            'fill-opacity': 0.5,
+            'fill-outline-color': '#ffffff',
+          }
+        })
+      })
+      MAP.once('idle', resolve)
+    } catch (error) {
+      console.error('Unable to load map data:', error)
+      reject(error)
     }
-  })
-
-  const terminalsData = await (await fetch('/data/leganes_terminals.json')).json()
-  STATIC_TERMINALS.features = terminalsData.features.map((feature) => {
-    const terminalName = feature.properties['terminal-name']
-    const terminalGeometry = feature.geometry
-
-    return {
-      name: terminalName,
-      geometry: terminalGeometry,
-    }
-  })
-
-  const locationsData = await (await fetch('/data/leganes_locations.json')).json()
-  STATIC_LOCATIONS.features = locationsData.features.map((feature) => {
-    const locationName = feature.properties['location-name']
-    const locationCoordinates = feature.geometry.coordinates
-    const locationAliases = feature.properties['location-aliases']
-
-    return { 
-      name: locationName, 
-      coords: locationCoordinates, 
-      aliases: locationAliases 
-    }
-  })
-
-  MAP.addSource('public-routes', {
-  'type': 'geojson',
-  'data': publicRoutesData,
-  });
-
-  MAP.addSource('terminals', {
-    'type': 'geojson',
-    'data': terminalsData,
-  })
-
-  PUBLIC_ROUTES.features.forEach((route) => {
-    MAP.addLayer({
-      'id': `public-route-${route.properties['route-name']}`,
-      'type': 'line',
-      'source': 'public-routes',
-      'layout': { 'line-join': 'round', 'line-cap': 'round', 'visibility': 'none' },
-      'paint': {
-        'line-color': route.properties['stroke'],
-        'line-width': route.properties['stroke-width'],
-        'line-opacity': route.properties['stroke-opacity'],
-      },
-      'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
-    })
-
-    MAP.addLayer({
-      'id': `public-route-label-${route.properties['route-name']}`,
-      'type': 'symbol',
-      'source': 'public-routes',
-      'layout': {
-        'symbol-placement': 'line',
-        'text-field': route.properties['route-name'],
-        'text-size': 12,
-        'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
-        'text-anchor': 'top',
-        'visibility': 'none',
-      },
-      'paint': {
-        'text-color': '#1A1D20',
-        'text-halo-color': '#ffffff',
-        'text-halo-width': 1,
-        'text-halo-blur': 1,
-      },
-      'filter': ['==', ['get', 'route-name'], route.properties['route-name']],
-    })
-  })
-
-  STATIC_TERMINALS.features.forEach((terminal) => {
-    const terminalName = terminal.name.trim().toLowerCase().replace(/\s+/g, '-')
-
-    MAP.addLayer({
-      'id': `terminal-${terminalName}`,
-      'type': 'fill',
-      'source': 'terminals',
-      'layout': { 'visibility': 'none' },
-      'paint': {
-        'fill-color': '#f59e0b',
-        'fill-opacity': 0.5,
-        'fill-outline-color': '#ffffff',
-      }
-    })
   })
 })
 
@@ -209,6 +218,25 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
 }
 
 const App = () => {
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    let isMounted = true
+    MAP_DATA_READY.then(() => {
+      if (isMounted) {
+        setIsLoading(false)
+      }
+    }).catch((error) => {
+      if (isMounted) {
+        console.error('Map initialization failed:', error)
+      }
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   // Marker state management
   const [fromMarker, setFromMarker] = useState(null)
   const [toMarker, setToMarker] = useState(null)
@@ -1047,7 +1075,7 @@ const App = () => {
     }
   }, [drawerMode])
 
-  return html`
+  return !isLoading ? html`
     <main class="relative z-1">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
@@ -1064,7 +1092,7 @@ const App = () => {
         isDrawerOpen=${isDrawerOpen} 
         openDrawer=${openDrawer} 
         closeDrawer=${closeDrawer}
-        locations=${STATIC_LOCATIONS.features}
+        allLocations=${STATIC_LOCATIONS.features || []}
         setLocations=${setLocations}
         fromLocation=${fromLocation}
         setFromLocation=${setFromLocationHandler}
@@ -1124,7 +1152,7 @@ const App = () => {
         ${drawerMode === 'routes' || drawerMode === 'routes-public' ? html`<${RouteCardList} map=${MAP} routes=${routes} selectedRouteId=${selectedRouteId} onRouteSelect=${selectRoute} />` : null}
       </${Drawer}>
     </main>
-    `
+    ` : html`<main class="relative z-1"> <${Loading} /> </main>`
 }
 
 export default App

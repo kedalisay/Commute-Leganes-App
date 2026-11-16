@@ -2,7 +2,7 @@ import html from '../html.js'
 
 import { addMarkerToMap, removeMarkerFromMap } from '../utils/MapLibreGL.js'
 
-const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer,  locations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer, allLocations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
   const locationHasMatchingName = (location, value) => location.toLocaleLowerCase().includes(value.toLocaleLowerCase())
   const getLocationName = (location) => typeof location === 'object' && location !== null ? location.name || '' : location || ''
 
@@ -57,6 +57,7 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
 
     if (event.target.value === '') {
       setFromLocation('');
+      setLocations(allLocations);
       if (stopMarkerCentering) {
         stopMarkerCentering()
         setFromMarker(null)
@@ -82,7 +83,7 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
 
     const filteredLocations = []
 
-    for (const location of locations) {
+    for (const location of allLocations) {
       if (locationHasMatchingName(location.name, fromValue)) {
         filteredLocations.push(location);
       } else {
@@ -113,6 +114,7 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
 
     if (event.target.value === '') {
       setToLocation('');
+      setLocations(allLocations);
       if (stopMarkerCentering) {
         stopMarkerCentering()
         setToMarker(null)
@@ -136,7 +138,7 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
 
     const filteredLocations = []
 
-    for (const location of locations) {
+    for (const location of allLocations) {
       if (locationHasMatchingName(location.name, toValue)) {
         filteredLocations.push(location);
       } else {
