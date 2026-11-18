@@ -5,32 +5,9 @@
     "description": "A collection of public tricycle, trisikad, e-trike, and jeepney routes in Leganes, Iloilo.",
     "last-updated": "2026-10-21T10:00:00Z"
   },
-  "features": [
+   "features": [
     {
       "type": "Feature",
-      "properties": {
-        "route-name": "Guinobatan",
-        "terminals": [
-          "Leganes Tricycle Terminal"
-        ],
-        "public": true,
-        "stroke-opacity": 1,
-        "stroke-width": 3,
-        "stroke": "rgba(171, 90, 90, 1)",
-        "mode-of-transport": "tricycle",
-        "direction": "inbound-outbound",
-        "total-distance": 2,
-        "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Iglesia ni Cristo - Leganes, Deca Homes Leganes, Stone Gate, Leganes National High School, La Maison, Guinobatan Elementary School, Guinobatan Multi-Purpose Hall",
-        "route-fare": [
-          {
-            "mode": "tricycle",
-            "amount": 20,
-            "type": "per person"
-          }
-        ],
-        "route-fare-currency": "PHP"
-      },
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -155,31 +132,34 @@
             10.785915
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
+      },
       "properties": {
-        "route-name": "Napnud, Gua-an",
+        "route-name": "Guinobatan",
         "terminals": [
           "Leganes Tricycle Terminal"
         ],
         "public": true,
         "stroke-opacity": 1,
-        "stroke-width": 3,
-        "stroke": "rgba(255, 180, 180, 1)",
+        "stroke-width": 4,
+        "stroke": "rgba(171, 90, 90, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
-        "total-distance": 4.6,
+        "total-distance": 2,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Whitehaven Gardens, Napnud Proper, Sitio Paho, Gua-an, Leganes Integrated Katunggan Ecopark",
-        "route-fare": [{
+        "route-points": "Leganes Tricycle Terminal, Iglesia ni Cristo - Leganes, Deca Homes Leganes, Stone Gate, Leganes National High School, La Maison, Guinobatan Elementary School, Guinobatan Multi-Purpose Hall",
+        "route-fare": [
+          {
             "mode": "tricycle",
-            "amount": 25,
+            "amount": 20,
             "type": "per person"
-          }],
-        "route-fare-currency": "PHP"
-      },
+          }
+        ],
+        "route-fare-currency": "PHP",
+        "visibility": false
+      }
+    },
+    {
+      "type": "Feature",
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -280,24 +260,21 @@
             10.7811103
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
+      },
       "properties": {
-        "route-name": "M.V. Hechanova",
+        "route-name": "Napnud, Gua-an",
         "terminals": [
           "Leganes Tricycle Terminal"
         ],
         "public": true,
         "stroke-opacity": 1,
-        "stroke-width": 3,
-        "stroke": "rgba(255, 37, 37, 1)",
+        "stroke-width": 4,
+        "stroke": "rgba(255, 180, 180, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
-        "total-distance": 2.5,
+        "total-distance": 4.6,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, KJ Fairmart, M.V. Hechanova Barangay Hall, Playa de Jaen Beach Resort",
+        "route-points": "Leganes Tricycle Terminal, Whitehaven Gardens, Napnud Proper, Sitio Paho, Gua-an, Leganes Integrated Katunggan Ecopark",
         "route-fare": [
           {
             "mode": "tricycle",
@@ -305,8 +282,12 @@
             "type": "per person"
           }
         ],
-        "route-fare-currency": "PHP"
-      },
+        "route-fare-currency": "PHP",
+        "visibility": false
+      }
+    },
+    {
+      "type": "Feature",
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -411,33 +392,34 @@
             10.7707199
           ]
         ]
+      },
+      "properties": {
+        "route-name": "M.V. Hechanova",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
+        "public": true,
+        "stroke-opacity": 1,
+        "stroke-width": 4,
+        "stroke": "rgba(255, 37, 37, 1)",
+        "mode-of-transport": "tricycle",
+        "direction": "inbound-outbound",
+        "total-distance": 2.5,
+        "unit-of-distance": "kilometer",
+        "route-points": "Leganes Tricycle Terminal, KJ Fairmart, M.V. Hechanova Barangay Hall, Playa de Jaen Beach Resort",
+        "route-fare": [
+          {
+            "mode": "tricycle",
+            "amount": 25,
+            "type": "per person"
+          }
+        ],
+        "route-fare-currency": "PHP",
+        "visibility": false
       }
     },
     {
       "type": "Feature",
-      "properties": {
-        "route-name": "San Vicente",
-        "terminals": [
-          "MAGSATODA Terminal"
-        ],
-        "public": true,
-        "stroke-width": 3,
-        "stroke-opacity": 1,
-        "stroke": "rgba(108, 108, 108, 1)",
-        "mode-of-transport": "tricycle",
-        "direction": "inbound-outbound",
-        "total-distance": 1.2,
-        "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, San Vicente Multi-Purpose Hall, San Vicente Dragon Fruit Farm, Coliseo de Leganes",
-        "route-fare": [
-          {
-            "mode": "tricycle",
-            "amount": 20,
-            "type": "per person"
-          }
-        ],
-        "route-fare-currency": "PHP"
-      },
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -494,33 +476,34 @@
             10.7921913
           ]
         ]
+      },
+      "properties": {
+        "route-name": "San Vicente",
+        "terminals": [
+          "MAGSATODA Terminal"
+        ],
+        "public": true,
+        "stroke-width": 4,
+        "stroke-opacity": 1,
+        "stroke": "rgba(108, 108, 108, 1)",
+        "mode-of-transport": "tricycle",
+        "direction": "inbound-outbound",
+        "total-distance": 1.2,
+        "unit-of-distance": "kilometer",
+        "route-points": "Leganes Commercial Complex, San Vicente Multi-Purpose Hall, San Vicente Dragon Fruit Farm, Coliseo de Leganes",
+        "route-fare": [
+          {
+            "mode": "tricycle",
+            "amount": 20,
+            "type": "per person"
+          }
+        ],
+        "route-fare-currency": "PHP",
+        "visibility": false
       }
     },
     {
       "type": "Feature",
-      "properties": {
-        "route-name": "Calaboa",
-        "terminals": [
-          "CATODA, CAMALETODA, CAMILETODA Terminal"
-        ],
-        "public": true,
-        "stroke-width": 3,
-        "stroke-opacity": 1,
-        "stroke": "rgba(0, 109, 0, 1)",
-        "mode-of-transport": "tricycle",
-        "direction": "inbound-outbound",
-        "total-distance": 4.3,
-        "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Uncommon Grounds Bistro, Calaboa Barangay Hall, Calaboa Elementary School",
-        "route-fare": [
-          {
-            "mode": "tricycle",
-            "amount": 30,
-            "type": "per person"
-          }
-        ],
-        "route-fare-currency": "PHP"
-      },
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -673,33 +656,34 @@
             10.8120653
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
+      },
       "properties": {
-        "route-name": "Cari Mayor",
+        "route-name": "Calaboa",
         "terminals": [
           "CATODA, CAMALETODA, CAMILETODA Terminal"
         ],
         "public": true,
-        "stroke-width": 3,
+        "stroke-width": 4,
         "stroke-opacity": 1,
-        "stroke": "rgba(244, 151, 0, 1)",
+        "stroke": "rgba(0, 109, 0, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
-        "total-distance": 3.6,
+        "total-distance": 4.3,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Cari Mayor Barangay Hall, Cari Mayor Elementary School",
+        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Uncommon Grounds Bistro, Calaboa Barangay Hall, Calaboa Elementary School",
         "route-fare": [
           {
             "mode": "tricycle",
-            "amount": 20,
+            "amount": 30,
             "type": "per person"
           }
         ],
-        "route-fare-currency": "PHP"
-      },
+        "route-fare-currency": "PHP",
+        "visibility": false
+      }
+    },
+    {
+      "type": "Feature",
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -912,24 +896,21 @@
             10.7965692
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
+      },
       "properties": {
-        "route-name": "Cari Minor",
+        "route-name": "Cari Mayor",
         "terminals": [
           "CATODA, CAMALETODA, CAMILETODA Terminal"
         ],
         "public": true,
-        "stroke-width": 3,
+        "stroke-width": 4,
         "stroke-opacity": 1,
-        "stroke": "rgba(137, 0, 222, 1)",
+        "stroke": "rgba(244, 151, 0, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
-        "total-distance": 3,
+        "total-distance": 3.6,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Cari Minor Multi-Purpose Hall, Cari Minor Chapel",
+        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Cari Mayor Barangay Hall, Cari Mayor Elementary School",
         "route-fare": [
           {
             "mode": "tricycle",
@@ -937,46 +918,322 @@
             "type": "per person"
           }
         ],
-        "route-fare-currency": "PHP"
-      },
+        "route-fare-currency": "PHP",
+        "visibility": false
+      }
+    },
+    {
+      "type": "Feature",
       "geometry": {
         "type": "LineString",
         "coordinates": [
           [
-            122.5891033,
-            10.78662
+            122.589059,
+            10.7865451
+          ],
+          [
+            122.589111,
+            10.7866498
+          ],
+          [
+            122.5891663,
+            10.7867476
+          ],
+          [
+            122.5892272,
+            10.7868522
+          ],
+          [
+            122.5892852,
+            10.7869486
+          ],
+          [
+            122.5893465,
+            10.787057
+          ],
+          [
+            122.5894095,
+            10.7871512
+          ],
+          [
+            122.5894737,
+            10.7872471
           ],
           [
             122.5895419,
             10.7873426
           ],
           [
+            122.589621,
+            10.7874681
+          ],
+          [
+            122.5897034,
+            10.7876016
+          ],
+          [
+            122.5897858,
+            10.7877311
+          ],
+          [
+            122.5898552,
+            10.7878477
+          ],
+          [
+            122.5899341,
+            10.7879659
+          ],
+          [
+            122.5900247,
+            10.7881076
+          ],
+          [
+            122.590103,
+            10.788233
+          ],
+          [
             122.5901726,
             10.7883557
+          ],
+          [
+            122.5902366,
+            10.788477
+          ],
+          [
+            122.5902943,
+            10.7885742
+          ],
+          [
+            122.5903479,
+            10.7886835
+          ],
+          [
+            122.5904015,
+            10.7887806
+          ],
+          [
+            122.590455,
+            10.7888818
+          ],
+          [
+            122.5905003,
+            10.7889951
+          ],
+          [
+            122.5905704,
+            10.7891004
           ],
           [
             122.5906209,
             10.7892231
           ],
           [
+            122.5906707,
+            10.789329
+          ],
+          [
+            122.5907198,
+            10.7894412
+          ],
+          [
+            122.5907718,
+            10.789543
+          ],
+          [
+            122.5908184,
+            10.7896606
+          ],
+          [
+            122.590864,
+            10.7897739
+          ],
+          [
+            122.5909171,
+            10.7898851
+          ],
+          [
+            122.5909781,
+            10.7900006
+          ],
+          [
+            122.5910366,
+            10.7901096
+          ],
+          [
+            122.5910948,
+            10.7902196
+          ],
+          [
+            122.5911456,
+            10.7903136
+          ],
+          [
+            122.5912063,
+            10.7904183
+          ],
+          [
+            122.5912599,
+            10.7905381
+          ],
+          [
+            122.5913154,
+            10.7906542
+          ],
+          [
+            122.5913793,
+            10.7907677
+          ],
+          [
+            122.5914263,
+            10.7908708
+          ],
+          [
             122.5914829,
             10.7909755
+          ],
+          [
+            122.591523,
+            10.7910626
+          ],
+          [
+            122.5915686,
+            10.7911521
+          ],
+          [
+            122.5916084,
+            10.7912415
+          ],
+          [
+            122.5916535,
+            10.7913233
+          ],
+          [
+            122.591735,
+            10.7915021
+          ],
+          [
+            122.591766,
+            10.7915828
+          ],
+          [
+            122.5918001,
+            10.7916661
+          ],
+          [
+            122.5918541,
+            10.7917471
+          ],
+          [
+            122.5918913,
+            10.7918421
+          ],
+          [
+            122.591932,
+            10.7919279
+          ],
+          [
+            122.5919886,
+            10.7920227
+          ],
+          [
+            122.5920229,
+            10.7921063
+          ],
+          [
+            122.5920662,
+            10.792191
+          ],
+          [
+            122.5921255,
+            10.7922729
+          ],
+          [
+            122.5921753,
+            10.792351
+          ],
+          [
+            122.5922523,
+            10.7925383
+          ],
+          [
+            122.5923499,
+            10.7927144
+          ],
+          [
+            122.5924275,
+            10.7928588
+          ],
+          [
+            122.5925174,
+            10.793023
+          ],
+          [
+            122.5926065,
+            10.7931864
+          ],
+          [
+            122.5926919,
+            10.7933522
+          ],
+          [
+            122.5927703,
+            10.7935191
           ],
           [
             122.5928476,
             10.7936964
           ],
           [
+            122.592908,
+            10.7938233
+          ],
+          [
+            122.5929738,
+            10.7939365
+          ],
+          [
+            122.5930324,
+            10.7940562
+          ],
+          [
+            122.5930956,
+            10.794192
+          ],
+          [
+            122.5931647,
+            10.7943367
+          ],
+          [
+            122.5932297,
+            10.794464
+          ],
+          [
+            122.5932838,
+            10.7945853
+          ],
+          [
             122.5933668,
             10.7947142
+          ],
+          [
+            122.5935183,
+            10.7946182
           ],
           [
             122.5936967,
             10.7945057
           ],
           [
+            122.593883,
+            10.7944208
+          ],
+          [
             122.5940508,
             10.7943362
+          ],
+          [
+            122.5941771,
+            10.7942782
           ],
           [
             122.5943086,
@@ -995,12 +1252,24 @@
             10.7941672
           ],
           [
+            122.5955654,
+            10.7941521
+          ],
+          [
             122.5957534,
             10.7941297
           ],
           [
+            122.5959674,
+            10.7940936
+          ],
+          [
             122.596187,
             10.7940225
+          ],
+          [
+            122.5964029,
+            10.7939692
           ],
           [
             122.5966225,
@@ -1011,16 +1280,32 @@
             10.7936848
           ],
           [
+            122.5973579,
+            10.793597
+          ],
+          [
             122.5975542,
             10.7935231
+          ],
+          [
+            122.5977785,
+            10.7934288
           ],
           [
             122.5980385,
             10.7933276
           ],
           [
+            122.5982165,
+            10.7932448
+          ],
+          [
             122.5983963,
             10.7931693
+          ],
+          [
+            122.5986409,
+            10.7930767
           ],
           [
             122.5988764,
@@ -1035,12 +1320,24 @@
             10.7928767
           ],
           [
+            122.5994672,
+            10.7928207
+          ],
+          [
             122.5997276,
             10.7927372
           ],
           [
+            122.5999695,
+            10.7926718
+          ],
+          [
             122.6001852,
             10.7926096
+          ],
+          [
+            122.6004125,
+            10.7925401
           ],
           [
             122.6006662,
@@ -1051,33 +1348,33 @@
             10.79244
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
+      },
       "properties": {
-        "route-name": "Nabitasan",
+        "route-name": "Cagamutan Sur, Cari Minor",
         "terminals": [
-          "Leganes Tricycle Terminal"
+          "CATODA, CAMALETODA, CAMILETODA Terminal"
         ],
         "public": true,
+        "stroke-width": 4,
         "stroke-opacity": 1,
-        "stroke-width": 3,
-        "stroke": "rgba(0, 48, 204, 1)",
+        "stroke": "rgba(137, 0, 222, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
-        "total-distance": 7,
+        "total-distance": 3,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Leganes Integrated Katunggan Ecopark, Bungso-an Elementary School, Camp Martin P. Jaen Sr., Nabitasan Multi-Purpose Hall",
+        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Cari Minor Multi-Purpose Hall, Cari Minor Chapel",
         "route-fare": [
           {
             "mode": "tricycle",
-            "amount": 25,
+            "amount": 20,
             "type": "per person"
           }
         ],
         "route-fare-currency": "PHP"
-      },
+      }
+    },
+    {
+      "type": "Feature",
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -1274,24 +1571,21 @@
             10.7894481
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
+      },
       "properties": {
-        "route-name": "Bigke",
+        "route-name": "Nabitasan",
         "terminals": [
           "Leganes Tricycle Terminal"
         ],
         "public": true,
         "stroke-opacity": 1,
-        "stroke-width": 3,
-        "stroke": "rgba(108, 108, 108, 1)",
+        "stroke-width": 4,
+        "stroke": "rgba(0, 48, 204, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
-        "total-distance": 3.2,
+        "total-distance": 7,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Coastal Hotel, Kingfields Trade, Vela Amanda, Bigke Proper",
+        "route-points": "Leganes Tricycle Terminal, Leganes Integrated Katunggan Ecopark, Bungso-an Elementary School, Camp Martin P. Jaen Sr., Nabitasan Multi-Purpose Hall",
         "route-fare": [
           {
             "mode": "tricycle",
@@ -1299,8 +1593,12 @@
             "type": "per person"
           }
         ],
-        "route-fare-currency": "PHP"
-      },
+        "route-fare-currency": "PHP",
+        "visibility": false
+      }
+    },
+    {
+      "type": "Feature",
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -1413,39 +1711,34 @@
             10.7652252
           ]
         ]
+      },
+      "properties": {
+        "route-name": "Bigke",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
+        "public": true,
+        "stroke-opacity": 1,
+        "stroke-width": 4,
+        "stroke": "rgba(108, 108, 108, 1)",
+        "mode-of-transport": "tricycle",
+        "direction": "inbound-outbound",
+        "total-distance": 3.2,
+        "unit-of-distance": "kilometer",
+        "route-points": "Leganes Tricycle Terminal, Coastal Hotel, Kingfields Trade, Vela Amanda, Bigke Proper",
+        "route-fare": [
+          {
+            "mode": "tricycle",
+            "amount": 25,
+            "type": "per person"
+          }
+        ],
+        "route-fare-currency": "PHP",
+        "visibility": false
       }
     },
     {
       "type": "Feature",
-      "properties": {
-        "route-name": "Guihaman, Buntatala",
-        "terminals": [
-          "Leganes Aquino Avenue Terminal",
-          "Leganes La Paz and Aquino Avenue Terminal"
-        ],
-        "public": true,
-        "stroke-width": 3,
-        "stroke-opacity": 1,
-        "stroke": "#505050",
-        "mode-of-transport": "jeepney",
-        "direction": "inbound-outbound",
-        "total-distance": 2,
-        "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Leganes Plaza, Jardeleza Arcade, Jolibee Leganes, San Vicente Village Subdivision, Glenville Subdivision, Guihaman-Buntatala Elementary School, Buntatala Barangay Hall, Villa Amelia Subdivision",
-        "route-fare": [
-          {
-            "mode": "jeepney",
-            "amount": 14,
-            "type": "first 4 kilometers"
-          },
-          {
-            "mode": "jeepney",
-            "amount": 2,
-            "type": "per succeeding kilometer"
-          }
-        ],
-        "route-fare-currency": "PHP"
-      },
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -1566,32 +1859,23 @@
             10.7850565
           ]
         ]
-      }
-    },
-    {
-      "type": "Feature",
+      },
       "properties": {
-        "route-name": "Cagamutan Norte, Cagamutan Sur",
+        "route-name": "Guihaman, Buntatala",
         "terminals": [
-          "POSAMATODA Terminal",
-          "Provincial Jeep and Bus Loading/Unloading Point 2",
-          "Provincial Jeep and Bus Loading/Unloading Point 1"
+          "Leganes Aquino Avenue Terminal",
+          "Leganes La Paz and Aquino Avenue Terminal"
         ],
         "public": true,
-        "stroke-width": 3,
+        "stroke-width": 4,
         "stroke-opacity": 1,
-        "stroke": "rgba(255, 160, 220, 1)",
-        "mode-of-transport": "tricycle, jeepney",
+        "stroke": "#505050",
+        "mode-of-transport": "jeepney",
         "direction": "inbound-outbound",
-        "total-distance": 3.3,
+        "total-distance": 2,
         "unit-of-distance": "kilometer",
-        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Villa Leganes Subdivision, Cagamutan Norte Elementary School",
+        "route-points": "Leganes Commercial Complex, Leganes Plaza, Jardeleza Arcade, Jolibee Leganes, San Vicente Village Subdivision, Glenville Subdivision, Guihaman-Buntatala Elementary School, Buntatala Barangay Hall, Villa Amelia Subdivision",
         "route-fare": [
-          {
-            "mode": "tricycle",
-            "amount": 25,
-            "type": "per person"
-          },
           {
             "mode": "jeepney",
             "amount": 14,
@@ -1603,8 +1887,12 @@
             "type": "per succeeding kilometer"
           }
         ],
-        "route-fare-currency": "PHP"
-      },
+        "route-fare-currency": "PHP",
+        "visibility": false
+      }
+    },
+    {
+      "type": "Feature",
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -1677,31 +1965,46 @@
             10.8140047
           ]
         ]
+      },
+      "properties": {
+        "route-name": "Cagamutan Sur, Cagamutan Norte",
+        "terminals": [
+          "POSAMATODA Terminal",
+          "Provincial Jeep and Bus Loading/Unloading Point 2",
+          "Provincial Jeep and Bus Loading/Unloading Point 1"
+        ],
+        "public": true,
+        "stroke-width": 4,
+        "stroke-opacity": 1,
+        "stroke": "rgba(255, 160, 220, 1)",
+        "mode-of-transport": "tricycle, jeepney",
+        "direction": "inbound-outbound",
+        "total-distance": 3.3,
+        "unit-of-distance": "kilometer",
+        "route-points": "Leganes Commercial Complex, Iloilo Centrale, Saint Vincent College of Science and Technology, Villa Leganes Subdivision, Cagamutan Norte Elementary School",
+        "route-fare": [
+          {
+            "mode": "tricycle",
+            "amount": 25,
+            "type": "per person"
+          },
+          {
+            "mode": "jeepney",
+            "amount": 14,
+            "type": "first 4 kilometers"
+          },
+          {
+            "mode": "jeepney",
+            "amount": 2,
+            "type": "per succeeding kilometer"
+          }
+        ],
+        "route-fare-currency": "PHP",
+        "visibility": false
       }
     },
     {
       "type": "Feature",
-      "properties": {
-        "route-name": "Guintas, Camangay",
-        "terminals": [
-          "Leganes Tricycle Terminal"
-        ],
-        "public": true,
-        "stroke-opacity": 1,
-        "stroke-width": 3,
-        "stroke": "rgba(54, 130, 47, 1)",
-        "mode-of-transport": "tricycle",
-        "direction": "inbound-outbound",
-        "total-distance": 4,
-        "unit-of-distance": "kilometer",
-        "route-points": "Leganes Tricycle Terminal, Whitehaven Gardens, Vela Amanda, Guintas Barangay Hall, Camangay Proper",
-        "route-fare": [{
-            "mode": "tricycle",
-            "amount": 25,
-            "type": "per person"
-          }],
-        "route-fare-currency": "PHP"
-      },
       "geometry": {
         "type": "LineString",
         "coordinates": [
@@ -1866,18 +2169,1303 @@
             10.7623282
           ]
         ]
+      },
+      "properties": {
+        "route-name": "Guintas, Camangay",
+        "terminals": [
+          "Leganes Tricycle Terminal"
+        ],
+        "public": true,
+        "stroke-opacity": 1,
+        "stroke-width": 4,
+        "stroke": "rgba(54, 130, 47, 1)",
+        "mode-of-transport": "tricycle",
+        "direction": "inbound-outbound",
+        "total-distance": 4,
+        "unit-of-distance": "kilometer",
+        "route-points": "Leganes Tricycle Terminal, Whitehaven Gardens, Vela Amanda, Guintas Barangay Hall, Camangay Proper",
+        "route-fare": [
+          {
+            "mode": "tricycle",
+            "amount": 25,
+            "type": "per person"
+          }
+        ],
+        "route-fare-currency": "PHP",
+        "visibility": false
       }
     },
     {
       "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            122.5891114,
+            10.7859058
+          ],
+          [
+            122.5890882,
+            10.7859195
+          ],
+          [
+            122.5890612,
+            10.7859355
+          ],
+          [
+            122.5890148,
+            10.7859727
+          ],
+          [
+            122.5889693,
+            10.7860081
+          ],
+          [
+            122.5889206,
+            10.786042
+          ],
+          [
+            122.5888952,
+            10.7860604
+          ],
+          [
+            122.5888685,
+            10.7860789
+          ],
+          [
+            122.5888421,
+            10.786099
+          ],
+          [
+            122.5887802,
+            10.7860979
+          ],
+          [
+            122.5887487,
+            10.7860943
+          ],
+          [
+            122.5887174,
+            10.7860928
+          ],
+          [
+            122.5886694,
+            10.7861039
+          ],
+          [
+            122.5886194,
+            10.7861167
+          ],
+          [
+            122.588574,
+            10.7861316
+          ],
+          [
+            122.5885255,
+            10.7861464
+          ],
+          [
+            122.5884807,
+            10.7861697
+          ],
+          [
+            122.5884395,
+            10.7861902
+          ],
+          [
+            122.5883967,
+            10.7862079
+          ],
+          [
+            122.5883495,
+            10.7862246
+          ],
+          [
+            122.5883052,
+            10.7862412
+          ],
+          [
+            122.5882601,
+            10.7862572
+          ],
+          [
+            122.5881738,
+            10.7862924
+          ],
+          [
+            122.5881298,
+            10.7863126
+          ],
+          [
+            122.5880856,
+            10.7863298
+          ],
+          [
+            122.587995,
+            10.7863633
+          ],
+          [
+            122.5879454,
+            10.786388
+          ],
+          [
+            122.5878994,
+            10.7864103
+          ],
+          [
+            122.5878193,
+            10.7864434
+          ],
+          [
+            122.5877312,
+            10.7864877
+          ],
+          [
+            122.587683,
+            10.7865084
+          ],
+          [
+            122.5876404,
+            10.7865328
+          ],
+          [
+            122.5875439,
+            10.7865744
+          ],
+          [
+            122.5874931,
+            10.7865927
+          ],
+          [
+            122.5874459,
+            10.7866099
+          ],
+          [
+            122.5873565,
+            10.7866539
+          ],
+          [
+            122.5872821,
+            10.7866882
+          ],
+          [
+            122.5871968,
+            10.786723
+          ],
+          [
+            122.5871029,
+            10.7867613
+          ],
+          [
+            122.5870541,
+            10.7867789
+          ],
+          [
+            122.5870111,
+            10.786799
+          ],
+          [
+            122.5869662,
+            10.7868137
+          ],
+          [
+            122.5869218,
+            10.7868333
+          ],
+          [
+            122.5868753,
+            10.7868484
+          ],
+          [
+            122.586828,
+            10.7868729
+          ],
+          [
+            122.58674,
+            10.7869078
+          ],
+          [
+            122.5866432,
+            10.7869406
+          ],
+          [
+            122.5865496,
+            10.7869782
+          ],
+          [
+            122.5864579,
+            10.7870079
+          ],
+          [
+            122.5863652,
+            10.7870415
+          ],
+          [
+            122.5862651,
+            10.7870773
+          ],
+          [
+            122.5861696,
+            10.7871115
+          ],
+          [
+            122.5860769,
+            10.7871454
+          ],
+          [
+            122.5859898,
+            10.7871831
+          ],
+          [
+            122.5858944,
+            10.7872163
+          ],
+          [
+            122.5858014,
+            10.787249
+          ],
+          [
+            122.5857086,
+            10.7872885
+          ],
+          [
+            122.5856202,
+            10.7873253
+          ],
+          [
+            122.5855132,
+            10.7873637
+          ],
+          [
+            122.5854124,
+            10.7873977
+          ],
+          [
+            122.5853204,
+            10.7874333
+          ],
+          [
+            122.5852291,
+            10.787472
+          ],
+          [
+            122.5851319,
+            10.787514
+          ],
+          [
+            122.5850439,
+            10.7875518
+          ],
+          [
+            122.5849598,
+            10.7875849
+          ],
+          [
+            122.5848713,
+            10.7876222
+          ],
+          [
+            122.584782,
+            10.7876591
+          ],
+          [
+            122.5846923,
+            10.7876955
+          ],
+          [
+            122.5845986,
+            10.7877342
+          ],
+          [
+            122.584515,
+            10.7877638
+          ],
+          [
+            122.5844168,
+            10.7878044
+          ],
+          [
+            122.5843255,
+            10.7878404
+          ],
+          [
+            122.5842383,
+            10.7878766
+          ],
+          [
+            122.5841543,
+            10.7879144
+          ],
+          [
+            122.584045,
+            10.7879661
+          ],
+          [
+            122.5839303,
+            10.7880073
+          ],
+          [
+            122.5838654,
+            10.7880305
+          ],
+          [
+            122.5838008,
+            10.7880585
+          ],
+          [
+            122.583689,
+            10.7881029
+          ],
+          [
+            122.5835815,
+            10.7881442
+          ],
+          [
+            122.5834823,
+            10.7881851
+          ],
+          [
+            122.5833875,
+            10.7882231
+          ],
+          [
+            122.5832973,
+            10.7882559
+          ],
+          [
+            122.5831988,
+            10.7882985
+          ],
+          [
+            122.5830732,
+            10.7883479
+          ],
+          [
+            122.5829686,
+            10.7883937
+          ],
+          [
+            122.5828578,
+            10.7884377
+          ],
+          [
+            122.5827615,
+            10.7884796
+          ],
+          [
+            122.5826623,
+            10.7885139
+          ],
+          [
+            122.5825682,
+            10.7885488
+          ],
+          [
+            122.5824684,
+            10.7885863
+          ],
+          [
+            122.5823542,
+            10.7886345
+          ],
+          [
+            122.5822449,
+            10.7886872
+          ],
+          [
+            122.5821314,
+            10.7887295
+          ],
+          [
+            122.5820172,
+            10.7887732
+          ],
+          [
+            122.5818147,
+            10.7888586
+          ],
+          [
+            122.5817098,
+            10.7889048
+          ],
+          [
+            122.5816057,
+            10.7889452
+          ],
+          [
+            122.5814941,
+            10.7889904
+          ],
+          [
+            122.5813916,
+            10.7890361
+          ],
+          [
+            122.5812887,
+            10.7890778
+          ],
+          [
+            122.5811854,
+            10.7891258
+          ],
+          [
+            122.5810766,
+            10.7891656
+          ],
+          [
+            122.5809743,
+            10.7892052
+          ],
+          [
+            122.5808834,
+            10.7892458
+          ],
+          [
+            122.5807876,
+            10.7892826
+          ],
+          [
+            122.580674,
+            10.7893249
+          ],
+          [
+            122.5805648,
+            10.7893635
+          ],
+          [
+            122.580447,
+            10.7894046
+          ],
+          [
+            122.5803372,
+            10.7894483
+          ],
+          [
+            122.580236,
+            10.7894889
+          ],
+          [
+            122.5801367,
+            10.7895293
+          ],
+          [
+            122.580046,
+            10.7895711
+          ],
+          [
+            122.5799509,
+            10.7896109
+          ],
+          [
+            122.5798497,
+            10.7896526
+          ],
+          [
+            122.5797425,
+            10.7896901
+          ],
+          [
+            122.5796562,
+            10.789725
+          ],
+          [
+            122.5795658,
+            10.7897642
+          ],
+          [
+            122.5794511,
+            10.7898063
+          ],
+          [
+            122.5793946,
+            10.7898296
+          ],
+          [
+            122.5793382,
+            10.7898504
+          ],
+          [
+            122.5792872,
+            10.7898739
+          ],
+          [
+            122.579238,
+            10.7898936
+          ],
+          [
+            122.5791861,
+            10.7899178
+          ],
+          [
+            122.5791309,
+            10.7899378
+          ],
+          [
+            122.5790767,
+            10.7899608
+          ],
+          [
+            122.5790276,
+            10.78998
+          ],
+          [
+            122.5789224,
+            10.7900163
+          ],
+          [
+            122.5787288,
+            10.7900949
+          ],
+          [
+            122.578537,
+            10.7901752
+          ],
+          [
+            122.5784358,
+            10.7902125
+          ],
+          [
+            122.5783296,
+            10.7902569
+          ],
+          [
+            122.5782308,
+            10.7902979
+          ],
+          [
+            122.5781304,
+            10.7903302
+          ],
+          [
+            122.5780367,
+            10.7903722
+          ],
+          [
+            122.5779295,
+            10.790414
+          ],
+          [
+            122.5778436,
+            10.7904538
+          ],
+          [
+            122.5777466,
+            10.7904962
+          ],
+          [
+            122.5776432,
+            10.7905406
+          ],
+          [
+            122.5775491,
+            10.7905749
+          ],
+          [
+            122.5774181,
+            10.7906261
+          ],
+          [
+            122.5772974,
+            10.7906832
+          ],
+          [
+            122.5771703,
+            10.7907298
+          ],
+          [
+            122.57704,
+            10.7907831
+          ],
+          [
+            122.5769159,
+            10.7908359
+          ],
+          [
+            122.5767898,
+            10.7908881
+          ],
+          [
+            122.5766725,
+            10.790929
+          ],
+          [
+            122.5765477,
+            10.7909835
+          ],
+          [
+            122.5763955,
+            10.7910468
+          ],
+          [
+            122.5762533,
+            10.7910955
+          ],
+          [
+            122.5761467,
+            10.791133
+          ],
+          [
+            122.5760476,
+            10.7911782
+          ],
+          [
+            122.5759288,
+            10.7912276
+          ],
+          [
+            122.5757995,
+            10.7912742
+          ],
+          [
+            122.5756724,
+            10.7913228
+          ],
+          [
+            122.5755521,
+            10.791375
+          ],
+          [
+            122.5754305,
+            10.7914146
+          ],
+          [
+            122.575312,
+            10.7914632
+          ],
+          [
+            122.5751935,
+            10.7914992
+          ],
+          [
+            122.575079,
+            10.7915341
+          ],
+          [
+            122.5749565,
+            10.7915691
+          ],
+          [
+            122.5748423,
+            10.7916114
+          ],
+          [
+            122.5747273,
+            10.7916601
+          ],
+          [
+            122.5746205,
+            10.7916983
+          ],
+          [
+            122.5745429,
+            10.7917361
+          ],
+          [
+            122.5744649,
+            10.7917692
+          ],
+          [
+            122.5743098,
+            10.791839
+          ],
+          [
+            122.5741547,
+            10.7919089
+          ],
+          [
+            122.5740021,
+            10.7919768
+          ],
+          [
+            122.5738673,
+            10.7920393
+          ],
+          [
+            122.5737228,
+            10.7920994
+          ],
+          [
+            122.5735408,
+            10.7921858
+          ],
+          [
+            122.5733906,
+            10.7922437
+          ],
+          [
+            122.5732372,
+            10.7923089
+          ],
+          [
+            122.5730782,
+            10.792366
+          ],
+          [
+            122.5729226,
+            10.7924316
+          ],
+          [
+            122.5727617,
+            10.7924898
+          ],
+          [
+            122.572607,
+            10.7925555
+          ],
+          [
+            122.5725284,
+            10.7925807
+          ],
+          [
+            122.5724498,
+            10.7926227
+          ],
+          [
+            122.5722788,
+            10.7926898
+          ],
+          [
+            122.572108,
+            10.7927613
+          ],
+          [
+            122.5719439,
+            10.7928167
+          ],
+          [
+            122.5717833,
+            10.7928792
+          ],
+          [
+            122.571629,
+            10.7929455
+          ],
+          [
+            122.5714782,
+            10.7929991
+          ],
+          [
+            122.5713163,
+            10.7930674
+          ],
+          [
+            122.5711526,
+            10.7931291
+          ],
+          [
+            122.571009,
+            10.7931968
+          ],
+          [
+            122.5708606,
+            10.7932517
+          ],
+          [
+            122.5706194,
+            10.7933549
+          ],
+          [
+            122.570486,
+            10.793405
+          ],
+          [
+            122.5703666,
+            10.7934498
+          ],
+          [
+            122.5702254,
+            10.7935108
+          ],
+          [
+            122.5700854,
+            10.7935753
+          ],
+          [
+            122.5699383,
+            10.7936317
+          ],
+          [
+            122.5697975,
+            10.7936934
+          ],
+          [
+            122.5696597,
+            10.7937424
+          ],
+          [
+            122.5695433,
+            10.7937953
+          ],
+          [
+            122.5693021,
+            10.7938922
+          ],
+          [
+            122.5691749,
+            10.7939349
+          ],
+          [
+            122.5690472,
+            10.7939831
+          ],
+          [
+            122.5688039,
+            10.7940738
+          ],
+          [
+            122.5686851,
+            10.7941313
+          ],
+          [
+            122.5685694,
+            10.7941831
+          ],
+          [
+            122.5684303,
+            10.7942367
+          ],
+          [
+            122.5682978,
+            10.7942982
+          ],
+          [
+            122.5681768,
+            10.7943467
+          ],
+          [
+            122.568036,
+            10.794406
+          ],
+          [
+            122.5677941,
+            10.7944977
+          ],
+          [
+            122.5675467,
+            10.7945913
+          ],
+          [
+            122.5672856,
+            10.7947064
+          ],
+          [
+            122.567014,
+            10.794811
+          ],
+          [
+            122.5667613,
+            10.7949125
+          ],
+          [
+            122.5668222,
+            10.7950205
+          ],
+          [
+            122.5668795,
+            10.795119
+          ],
+          [
+            122.5669368,
+            10.7952386
+          ],
+          [
+            122.5669971,
+            10.7953251
+          ],
+          [
+            122.5670572,
+            10.7954285
+          ],
+          [
+            122.5671194,
+            10.7955305
+          ],
+          [
+            122.567191,
+            10.795636
+          ],
+          [
+            122.5672424,
+            10.7957321
+          ],
+          [
+            122.5672981,
+            10.7958465
+          ],
+          [
+            122.5673589,
+            10.7959485
+          ],
+          [
+            122.5673891,
+            10.7960035
+          ],
+          [
+            122.5674124,
+            10.7960682
+          ],
+          [
+            122.5674419,
+            10.7961163
+          ],
+          [
+            122.5674735,
+            10.7961771
+          ],
+          [
+            122.5675272,
+            10.7962791
+          ],
+          [
+            122.5675773,
+            10.7963846
+          ],
+          [
+            122.5676453,
+            10.7964971
+          ],
+          [
+            122.5676953,
+            10.7966112
+          ],
+          [
+            122.5677227,
+            10.7966768
+          ],
+          [
+            122.5677373,
+            10.7967376
+          ],
+          [
+            122.5677628,
+            10.7968003
+          ],
+          [
+            122.5677881,
+            10.7968613
+          ],
+          [
+            122.5678054,
+            10.7969732
+          ],
+          [
+            122.5678193,
+            10.7970838
+          ],
+          [
+            122.5678499,
+            10.7971981
+          ],
+          [
+            122.5678651,
+            10.7973035
+          ],
+          [
+            122.567884,
+            10.7974198
+          ],
+          [
+            122.5678892,
+            10.7975397
+          ],
+          [
+            122.5679098,
+            10.7976281
+          ],
+          [
+            122.5679285,
+            10.797722
+          ],
+          [
+            122.5679557,
+            10.7978222
+          ],
+          [
+            122.5679749,
+            10.7979138
+          ],
+          [
+            122.5680038,
+            10.7979956
+          ],
+          [
+            122.5680383,
+            10.7980724
+          ],
+          [
+            122.5680635,
+            10.7981423
+          ],
+          [
+            122.5681118,
+            10.7982145
+          ],
+          [
+            122.5681417,
+            10.7982935
+          ],
+          [
+            122.5681807,
+            10.7983748
+          ],
+          [
+            122.5682244,
+            10.7984492
+          ],
+          [
+            122.5682629,
+            10.7985189
+          ],
+          [
+            122.5682903,
+            10.7985737
+          ],
+          [
+            122.5683156,
+            10.7986256
+          ],
+          [
+            122.5683455,
+            10.798682
+          ],
+          [
+            122.5683658,
+            10.7987297
+          ],
+          [
+            122.5684122,
+            10.7988086
+          ],
+          [
+            122.5684581,
+            10.7988944
+          ],
+          [
+            122.5685041,
+            10.7989643
+          ],
+          [
+            122.5685631,
+            10.7990464
+          ],
+          [
+            122.5686201,
+            10.79913
+          ],
+          [
+            122.5686798,
+            10.7992089
+          ],
+          [
+            122.5687281,
+            10.7992924
+          ],
+          [
+            122.5687939,
+            10.7993705
+          ],
+          [
+            122.5688551,
+            10.7994697
+          ],
+          [
+            122.5689194,
+            10.7995622
+          ],
+          [
+            122.5689769,
+            10.7996592
+          ],
+          [
+            122.5690527,
+            10.7997563
+          ],
+          [
+            122.5691172,
+            10.7998506
+          ],
+          [
+            122.5691744,
+            10.7999504
+          ],
+          [
+            122.5692436,
+            10.8000514
+          ],
+          [
+            122.5693053,
+            10.8001418
+          ],
+          [
+            122.569371,
+            10.8002632
+          ],
+          [
+            122.5694445,
+            10.8003693
+          ],
+          [
+            122.5695134,
+            10.8004911
+          ],
+          [
+            122.5695714,
+            10.8006066
+          ],
+          [
+            122.5696351,
+            10.8007027
+          ],
+          [
+            122.5697046,
+            10.8008137
+          ],
+          [
+            122.5697423,
+            10.8008649
+          ],
+          [
+            122.5697799,
+            10.8009275
+          ],
+          [
+            122.5698176,
+            10.8009815
+          ],
+          [
+            122.5698405,
+            10.8010427
+          ],
+          [
+            122.5698699,
+            10.8011185
+          ],
+          [
+            122.5699046,
+            10.8011982
+          ],
+          [
+            122.5699394,
+            10.8012693
+          ],
+          [
+            122.5699685,
+            10.8013509
+          ],
+          [
+            122.5699857,
+            10.8013945
+          ],
+          [
+            122.5700024,
+            10.8014376
+          ],
+          [
+            122.5700179,
+            10.8014861
+          ],
+          [
+            122.5700445,
+            10.8015417
+          ],
+          [
+            122.5700742,
+            10.8015791
+          ],
+          [
+            122.5701143,
+            10.80162
+          ],
+          [
+            122.5701421,
+            10.8016504
+          ],
+          [
+            122.5701798,
+            10.8016762
+          ],
+          [
+            122.5702494,
+            10.8016937
+          ],
+          [
+            122.5703328,
+            10.8017103
+          ],
+          [
+            122.5704007,
+            10.8017285
+          ],
+          [
+            122.5704847,
+            10.8017372
+          ],
+          [
+            122.570522,
+            10.8017627
+          ],
+          [
+            122.5705684,
+            10.8017869
+          ],
+          [
+            122.5705948,
+            10.8018386
+          ],
+          [
+            122.570621,
+            10.8018849
+          ],
+          [
+            122.5706442,
+            10.8019334
+          ],
+          [
+            122.5706746,
+            10.8019888
+          ],
+          [
+            122.5707041,
+            10.802065
+          ],
+          [
+            122.5707322,
+            10.8021427
+          ],
+          [
+            122.5707606,
+            10.8022201
+          ],
+          [
+            122.5707882,
+            10.8022985
+          ],
+          [
+            122.5708148,
+            10.8023403
+          ],
+          [
+            122.5708495,
+            10.8023851
+          ],
+          [
+            122.5708745,
+            10.8024268
+          ],
+          [
+            122.570907,
+            10.8024677
+          ]
+        ]
+      },
       "properties": {
-        "route-name": "Lapayon",
+        "route-name": "San Vicente, Guihaman, Lapayon",
         "terminals": [
           "Lapayon Terminal"
         ],
         "public": true,
         "stroke-opacity": 1,
-        "stroke-width": 3,
+        "stroke-width": 4,
         "stroke": "rgba(237, 233, 0, 1)",
         "mode-of-transport": "tricycle",
         "direction": "inbound-outbound",
@@ -1892,143 +3480,6 @@
           }
         ],
         "route-fare-currency": "PHP"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [
-            122.5889454,
-            10.786021
-          ],
-          [
-            122.5888421,
-            10.786099
-          ],
-          [
-            122.5887174,
-            10.7860928
-          ],
-          [
-            122.5885255,
-            10.7861464
-          ],
-          [
-            122.5871029,
-            10.7867613
-          ],
-          [
-            122.5841389,
-            10.7879124
-          ],
-          [
-            122.5807876,
-            10.7892826
-          ],
-          [
-            122.5775491,
-            10.7905749
-          ],
-          [
-            122.5755521,
-            10.791375
-          ],
-          [
-            122.5746205,
-            10.7916983
-          ],
-          [
-            122.5733906,
-            10.7922437
-          ],
-          [
-            122.5708606,
-            10.7932517
-          ],
-          [
-            122.5667613,
-            10.7949125
-          ],
-          [
-            122.5672424,
-            10.7957321
-          ],
-          [
-            122.5676953,
-            10.7966112
-          ],
-          [
-            122.5677881,
-            10.7968613
-          ],
-          [
-            122.5678651,
-            10.7973035
-          ],
-          [
-            122.5678892,
-            10.7975397
-          ],
-          [
-            122.5679749,
-            10.7979138
-          ],
-          [
-            122.5682629,
-            10.7985189
-          ],
-          [
-            122.5683658,
-            10.7987297
-          ],
-          [
-            122.5685631,
-            10.7990464
-          ],
-          [
-            122.5687939,
-            10.7993705
-          ],
-          [
-            122.5693053,
-            10.8001418
-          ],
-          [
-            122.5698405,
-            10.8010427
-          ],
-          [
-            122.5699685,
-            10.8013509
-          ],
-          [
-            122.5700445,
-            10.8015417
-          ],
-          [
-            122.5701798,
-            10.8016762
-          ],
-          [
-            122.5704847,
-            10.8017372
-          ],
-          [
-            122.5705684,
-            10.8017869
-          ],
-          [
-            122.5706746,
-            10.8019888
-          ],
-          [
-            122.5707882,
-            10.8022985
-          ],
-          [
-            122.570907,
-            10.8024677
-          ]
-        ]
       }
     }
   ]
