@@ -1,8 +1,10 @@
 import html from '../html.js'
+import { getTranslation } from '../i18n.js'
 
-const UseCurrentLocationButton = ({onClick, foregroundFill = 'var(--text-primary)'}) => {
+const UseCurrentLocationButton = ({onClick, language = 'English', foregroundFill = 'var(--text-primary)'}) => {
+  const label = getTranslation(language, 'useCurrentLocation')
   return html`
-    <button type="button" class="flex flex-row items-center p-4 bg-(--bg-surface) text-(--text-primary) w-full cursor-pointer" onClick=${onClick} aria-label="Use your current location">
+    <button type="button" class="flex flex-row items-center p-4 bg-(--bg-surface) text-(--text-primary) w-full cursor-pointer" onClick=${onClick} aria-label="${label}">
       <svg class="w-full max-w-[40px] h-full max-h-[40px] mr-4" width="40" xmlns="http://www.w3.org/2000/svg" height="40" id="screenshot-3a1341ad-8328-80f0-8008-c1e03ef5ae4b" viewBox="995 709 40 40" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
         <g id="shape-3a1341ad-8328-80f0-8008-c1e03ef5ae4b" style="fill:#000000" width="24" height="24" rx="0" ry="0">
           <g id="shape-3a1341ad-8328-80f0-8008-c1e03ef5ae4c" style="display:none">
@@ -20,7 +22,7 @@ const UseCurrentLocationButton = ({onClick, foregroundFill = 'var(--text-primary
         </g>
       </svg>
       <div class="flex flex-col gap-1">
-        <p class="text-xl font-bold font-display text-left">Use your current location</p>
+        <p class="text-xl font-bold font-display text-left">${label}</p>
       </div>
     </button>
     <hr class="border border-(--border-default)" />

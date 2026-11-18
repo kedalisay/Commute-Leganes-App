@@ -20,6 +20,7 @@ import { removeMarkerFromMap, addRouteLayers, removeRouteLayers, setRouteLayerVi
 import { getCoordinates, areValidCoordinates } from './utils/Geolocation.js';
 import { getBarangay } from './utils/Barangay.js';
 import { getRouteForBarangay, getClosestVertex, getVertexCoordinates, getTerminalPoints, getReachableVertices } from './utils/Route.js';
+import { getLanguageCode, getTranslation } from './i18n.js';
 
 setWorkerUrl(new URL(`/src/js/maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
 
@@ -188,11 +189,12 @@ const MAP_DATA_READY = new Promise((resolve, reject) => {
   })
 })
 
-const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick, foregroundFill = 'var(--text-primary)' }) => {
+const AppButtons = ({ drawerMode, language, onSettingsClick, onRoutesClick, foregroundFill = 'var(--text-primary)' }) => {
+  const t = (key) => getTranslation(language, key)
   return html`
     <section aria-hidden=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} inert=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} id="app-buttons" class="absolute top-30 z-1 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
       <h2 class="sr-only">App Buttons</h2>
-      <button aria-label="Open settings" onClick=${onSettingsClick} class="${drawerMode === 'settings' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
+      <button aria-label=${t('openSettings')} onClick=${onSettingsClick} class="${drawerMode === 'settings' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
         <svg width="22" xmlns="http://www.w3.org/2000/svg" height="22" id="screenshot-53f07293-9876-8096-8008-ad032f479751" viewBox="-1564.2 -1177.5 30 32" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
           <g id="shape-53f07293-9876-8096-8008-ad032f479751" style="fill:#000000" width="22" height="22" rx="0" ry="0">
             <g id="shape-53f07293-9876-8096-8008-ad032f479752" style="display:none">
@@ -210,7 +212,7 @@ const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick, foregroundFill
           </g>
         </svg>
       </button>
-      <button aria-label="Show public routes" onClick=${onRoutesClick} class="${drawerMode === 'routes-public' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
+      <button aria-label=${t('showPublicRoutes')} onClick=${onRoutesClick} class="${drawerMode === 'routes-public' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
         <svg width="18" xmlns="http://www.w3.org/2000/svg" height="18" id="screenshot-53f07293-9876-8096-8008-ad032f47974c" viewBox="-1565.854 -1132 30 30" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
           <g id="shape-53f07293-9876-8096-8008-ad032f47974c" style="fill:#000000" width="18" height="18" rx="0" ry="0">
             <g id="shape-53f07293-9876-8096-8008-ad032f47974d" style="display:none">
@@ -321,11 +323,6 @@ const App = () => {
     setDrawerToLocations()
   }
 
-  const locationActions = [
-    { label: 'Confirm location', onClick: confirmLocation, variant: 'primary' },
-    { label: 'Go back to list of locations', onClick: goBackToLocations, variant: 'secondary' },
-  ]
-
   // Drawer state management
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
   const openDrawer = () => setIsDrawerOpen(true)
@@ -381,8 +378,13 @@ const App = () => {
   }
 
   const settingsActions = [
-    { label: 'Save', onClick: saveSettings, variant: 'primary' },
-    { label: 'Cancel', onClick: cancelSettings, variant: 'secondary' },
+    { label: getTranslation(draftSettings.language, 'save'), onClick: saveSettings, variant: 'primary' },
+    { label: getTranslation(draftSettings.language, 'cancel'), onClick: cancelSettings, variant: 'secondary' },
+  ]
+
+  const locationActions = [
+    { label: getTranslation(draftSettings.language, 'confirmLocation'), onClick: confirmLocation, variant: 'primary' },
+    { label: getTranslation(draftSettings.language, 'goBackToLocations'), onClick: goBackToLocations, variant: 'secondary' },
   ]
 
   // Routes state management
@@ -1110,25 +1112,31 @@ const App = () => {
     }
   }, [draftSettings.theme])
 
+   useEffect(() => {
+    const language = draftSettings.language
+    document.documentElement.lang = getLanguageCode(language)
+  }, [draftSettings.language])
+
   // Update document title based on drawer mode
   useEffect(() => {
+    const t = (key) => getTranslation(draftSettings.language, key)
     switch (drawerMode) {
       case 'settings':
-        document.title = 'Settings - Commute Leganes'
+        document.title = `${t('settings')} - ${t('appName')}`
         break
       case 'locations':
-        document.title = 'Choose a Location - Commute Leganes'
+        document.title = `${t('chooseLocationTitle')} - ${t('appName')}`
         break
       case 'routes':
-        document.title = 'Choose a Route - Commute Leganes'
+        document.title = `${t('chooseRouteTitle')} - ${t('appName')}`
         break
       case 'routes-public':
-        document.title = 'Public Routes - Commute Leganes'
+        document.title = `${t('publicRoutes')} - ${t('appName')}`
         break
       default:
-        document.title = 'Commute Leganes'
+        document.title = t('appName')
     }
-  }, [drawerMode])
+  }, [drawerMode, draftSettings.language])
 
   // Manage map accessibility based on drawer mode
   useEffect(() => {
@@ -1170,6 +1178,7 @@ const App = () => {
       <${RouteWidget} 
         map=${MAP}
         edges=${PATH_VERTICES}
+        language=${draftSettings.language}
         stopMarkerCentering=${stopMarkerCentering}
         fromMarker=${fromMarker} 
         setFromMarker=${setFromMarker}
@@ -1194,6 +1203,7 @@ const App = () => {
       ${drawerMode !== 'locations-action'
         ? html`<${AppButtons} 
             drawerMode=${drawerMode} 
+            language=${draftSettings.language}
             onSettingsClick=${showSettings}
             onRoutesClick=${drawerMode === 'routes-public' ? hidePublicRoutes : showPublicRoutes}
           />`
@@ -1219,6 +1229,7 @@ const App = () => {
         ${drawerMode === 'locations' 
           ? html`<${LocationCardList} 
             map=${MAP}
+            language=${draftSettings.language}
             fromMarker=${fromMarker}
             setFromMarker=${setFromMarker}
             toMarker=${toMarker}
@@ -1239,10 +1250,10 @@ const App = () => {
         ${drawerMode === 'locations-action' 
           ? html`<${ActionButtons} buttons=${locationActions} direction="column" />` 
           : null}
-        ${drawerMode === 'routes' || drawerMode === 'routes-public' ? html`<${RouteCardList} map=${MAP} routes=${routes} selectedRouteId=${selectedRouteId} onRouteSelect=${selectRoute} />` : null}
+        ${drawerMode === 'routes' || drawerMode === 'routes-public' ? html`<${RouteCardList} map=${MAP} routes=${routes} selectedRouteId=${selectedRouteId} onRouteSelect=${selectRoute} language=${draftSettings.language} />` : null}
       </${Drawer}>
     </main>
-    ` : html`<main class="relative z-1 h-dvh overflow-hidden"> <${Loading} /> </main>`
+    ` : html`<main class="relative z-1 h-dvh overflow-hidden"> <${Loading} language=${draftSettings.language} /> </main>`
 }
 
 export default App

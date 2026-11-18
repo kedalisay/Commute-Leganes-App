@@ -2,8 +2,9 @@ import html from '../html.js'
 
 import RouteCard from './RouteCard.js'
 import PublicRouteCard from './PublicRouteCard.js'
+import { getTranslation } from '../i18n.js'
 
-const RouteCardList = ({ map, routes, selectedRouteId, onRouteSelect }) => {
+const RouteCardList = ({ map, routes, selectedRouteId, onRouteSelect, language = 'English' }) => {
   const focusRoute = (route) => {
     const features = map.getSource('public-routes')._data.geojson.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
 
@@ -33,7 +34,7 @@ const RouteCardList = ({ map, routes, selectedRouteId, onRouteSelect }) => {
 
   return html`
     <section aria-labelledby="routes-heading" class="pb-8 overflow-y-auto max-h-full h-full">
-      <h2 id="routes-heading" class="sr-only">Choose a route</h2>
+      <h2 id="routes-heading" class="sr-only">${getTranslation(language, 'chooseRoute')}</h2>
       <form id="routes-form" class="h-full">
         <fieldset class="flex flex-col gap-3 w-full ${routes.length > 0 ? 'justify-start' : 'justify-center'} items-center h-full">
         ${routes.length > 0 ? routes.map((route) => html`<${route.public ? PublicRouteCard : RouteCard} route=${route} selected=${route.id === selectedRouteId} onClick=${() => handleRouteClick(route)} />`) : html`<p class="text-(--color-red-700) font-bold text-xl text-center">No matching routes found. Try choosing a different point on the map.</p>`}

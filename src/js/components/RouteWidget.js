@@ -1,8 +1,10 @@
 import html from '../html.js'
 
 import { addMarkerToMap, removeMarkerFromMap, chooseLocationOnMap } from '../utils/MapLibreGL.js'
+import { getTranslation } from '../i18n.js'
 
-const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLocations, setDrawerToLocationActions, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer, allLocations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ map, edges, drawerMode, language, setDrawerToDefault, setDrawerToLocations, setDrawerToLocationActions, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer, allLocations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+  const t = (key) => getTranslation(language, key)
   const locationHasMatchingName = (location, value) => location.toLocaleLowerCase().includes(value.toLocaleLowerCase())
   const getLocationName = (location) => typeof location === 'object' && location !== null ? location.name || '' : location || ''
 
@@ -213,14 +215,14 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
 
   return html`<section aria-hidden=${drawerMode !== 'settings' ? false : true} inert=${drawerMode !== 'settings' ? false : true} id="plot-route-widget" class="relative ${drawerMode !== 'settings' ? 'z-2' : ''} px-4 pt-4 bg-transparent">
       <form id="plot-route-form"> 
-        <h2 class="sr-only">Plot a route</h2>
+        <h2 class="sr-only">${t('chooseRoute')}</h2>
         <fieldset class="bg-transparent relative">
           <label class="relative inline-block w-full max-w-[calc(100%-45px)] h-[35px] mb-4">
             <svg class="stroke-(--brand-primary) stroke-4  absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="10" cx="12.5" cy="12.5" fill="none"/>
             </svg>
-            <input id="fromLocationInput" onInput=${handleFromInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, true)} type="text" name="from" placeholder="Where from?" value=${getLocationName(fromLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 pr-8 w-full h-full" />
-            <button onClick=${chooseFromLocationOnMap} aria-label="Choose starting location on the map" class="absolute top-[50%] right-2 -translate-y-[50%]" type="button">
+            <input id="fromLocationInput" onInput=${handleFromInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, true)} type="text" name="from" placeholder=${t('whereFrom')} value=${getLocationName(fromLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 pr-8 w-full h-full" />
+            <button onClick=${chooseFromLocationOnMap} aria-label=${t('chooseStartingLocation')} class="absolute top-[50%] right-2 -translate-y-[50%]" type="button">
               <svg class="fill-(--brand-secondary)" width="20" xmlns="http://www.w3.org/2000/svg" height="20" id="screenshot-f2a02e6b-c442-80ce-8008-f65e49d9b426" viewBox="-2324.782 -1538.234 20 20" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
                 <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b426" style="fill:#000000" width="24" height="24" rx="0" ry="0">
                   <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b427" style="display:none">
@@ -243,8 +245,8 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
             <svg class="fill-(--brand-secondary) absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="12" cx="12.5" cy="12.5"/>
             </svg>
-            <input id="toLocationInput" onInput=${handleToInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, false)} type="text" name="to" placeholder="Where to?" value=${getLocationName(toLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 pr-8 w-full h-full" />
-            <button onClick=${chooseToLocationOnMap} aria-label="Choose destination location on the map" class="absolute top-[50%] right-2 -translate-y-[50%]" type="button">
+            <input id="toLocationInput" onInput=${handleToInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, false)} type="text" name="to" placeholder=${t('whereTo')} value=${getLocationName(toLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 pr-8 w-full h-full" />
+            <button onClick=${chooseToLocationOnMap} aria-label=${t('chooseDestinationLocation')} class="absolute top-[50%] right-2 -translate-y-[50%]" type="button">
               <svg class="fill-(--brand-secondary)" width="20" xmlns="http://www.w3.org/2000/svg" height="20" id="screenshot-f2a02e6b-c442-80ce-8008-f65e49d9b426" viewBox="-2324.782 -1538.234 20 20" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
                 <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b426" style="fill:#000000" width="24" height="24" rx="0" ry="0">
                   <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b427" style="display:none">
@@ -268,7 +270,7 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
               <path stroke-dasharray="10,2" d="M 5 27 L 5 60" />
             </g>
           </svg>
-          <button aria-label="Swap from and to" onClick=${handleSwapLocations} type="button" class="absolute top-1/2 right-0 translate-y-[-50%] bg-(--bg-surface) border border-(--border-default) rounded-full p-2 mb-2 max-w-[35px] max-h-[35px]">
+          <button aria-label=${t('swapLocations')} onClick=${handleSwapLocations} type="button" class="absolute top-1/2 right-0 translate-y-[-50%] bg-(--bg-surface) border border-(--border-default) rounded-full p-2 mb-2 max-w-[35px] max-h-[35px]">
             <svg width="25" xmlns="http://www.w3.org/2000/svg" height="25" viewBox="-2286.5 -1519 25 25" style="-webkit-print-color-adjust::exact" fill="none" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
               <g id="shape-34a2cc8f-b94b-80f6-8008-b877a2503443" style="fill:#000000" rx="0" ry="0">
                 <g id="shape-34a2cc8f-b94b-80f6-8008-b877a2530ff9" style="display:none">

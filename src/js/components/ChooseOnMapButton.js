@@ -1,8 +1,10 @@
 import html from '../html.js'
+import { getTranslation } from '../i18n.js'
 
-const ChooseOnMapButton = ({onClick, foregroundFill = 'var(--text-primary)'}) => {
+const ChooseOnMapButton = ({onClick, language = 'English', foregroundFill = 'var(--text-primary)'}) => {
+  const label = getTranslation(language, 'chooseOnMap')
   return html`
-    <button type="button" class="flex flex-row items-center p-4 bg-(--bg-surface) text-(--text-primary) w-full cursor-pointer" onClick=${onClick} aria-label="Choose a location on the map">
+    <button type="button" class="flex flex-row items-center p-4 bg-(--bg-surface) text-(--text-primary) w-full cursor-pointer" onClick=${onClick} aria-label="${label}">
       <svg class="w-full max-w-[40px] h-full max-h-[40px] mr-4" width="40" xmlns="http://www.w3.org/2000/svg" height="40" id="screenshot-3a1341ad-8328-80f0-8008-c1e06950c7c6" viewBox="995 781 40 40" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
         <g id="shape-3a1341ad-8328-80f0-8008-c1e06950c7c6" style="fill:#000000" width="24" height="24" rx="0" ry="0">
           <g id="shape-3a1341ad-8328-80f0-8008-c1e06950c7c7" style="display:none">
@@ -19,7 +21,7 @@ const ChooseOnMapButton = ({onClick, foregroundFill = 'var(--text-primary)'}) =>
           </g>
         </g>
       </svg>
-      <p class="text-xl font-bold font-display text-left">Choose on map</p>
+      <p class="text-xl font-bold font-display text-left">${label}</p>
     </button>
     <hr class="border border-(--border-default)" />
   `

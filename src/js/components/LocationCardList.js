@@ -6,8 +6,9 @@ import LocationCard from './LocationCard.js'
 
 import { getGeolocation } from '../utils/Geolocation.js'
 import { addMarkerToMap, removeMarkerFromMap, chooseLocationOnMap } from '../utils/MapLibreGL.js'
+import { getTranslation } from '../i18n.js'
 
-const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
+const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation, language }) => {  
   const useCurrentLocation = async () => {
     const coords = await getGeolocation()
     if (!coords) {
@@ -79,11 +80,11 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
 
   return html`
     <section aria-labelledby="locations-heading" class="pb-8 overflow-y-auto max-h-full">
-      <h2 id="locations-heading" class="sr-only">Choose a location</h2>
+      <h2 id="locations-heading" class="sr-only">${getTranslation(language, 'chooseLocation')}</h2>
       <form id="locations-form">
         <fieldset class="flex flex-col gap-1 w-full">
-        <${UseCurrentLocationButton} onClick=${() => useCurrentLocation()} />
-        <${ChooseOnMapButton} onClick=${chooseOnMap}/>
+        <${UseCurrentLocationButton} language=${language} onClick=${() => useCurrentLocation()} />
+        <${ChooseOnMapButton} language=${language} onClick=${chooseOnMap}/>
         ${locations.map((location) => 
           html`<${LocationCard} 
           location=${location} 

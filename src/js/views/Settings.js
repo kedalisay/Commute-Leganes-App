@@ -10,6 +10,7 @@ import GiveFeedback from './GiveFeedback.js'
 import ContactUs from './ContactUs.js'
 
 import BackButton from '../components/BackButton.js'
+import { getTranslation } from '../i18n.js'
 
 const NavButton = ({ label, onClick, variant = 'primary', foregroundFill = 'var(--text-primary)'}) => {
   const buttonStyles = {
@@ -56,6 +57,7 @@ const Settings = ({
   onLanguageChange,
   onThemeChange,
 }) => {
+  const t = (key) => getTranslation(language, key)
   const handleLanguageChange = (e) => {
     onLanguageChange(e.currentTarget.value)
     if (!isDrawerOpen) {
@@ -81,11 +83,11 @@ const Settings = ({
 
   return html`
     <section aria-hidden=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} inert=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} id="settings" class="z-3 absolute top-0 ${drawerMode !== 'settings' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-full max-h-dvh overflow-y-auto p-4 transition-all duration-300 ease-in-out">
-      <h2 class="mt-15 mb-4 text-2xl font-bold font-display">Settings</h2>
-      <${BackButton} onClick=${hideSettings} label="Close settings" />
+      <h2 class="mt-15 mb-4 text-2xl font-bold font-display">${t('settings')}</h2>
+      <${BackButton} onClick=${hideSettings} label=${t('closeSettings')} />
       <form class="mt-4">
         <fieldset class="flex flex-row flex-wrap gap-2 mb-4">
-          <legend class="text-lg font-semibold mb-2">Language</legend>
+          <legend class="text-lg font-semibold mb-2">${t('language')}</legend>
           <input class="w-0 h-0 visibility-hidden" type="radio" name="language" value="English" id="language-en" onChange=${handleLanguageChange} checked=${language === 'English'} />
           <label for="language-en" class="inline-block bg-(--bg-surface) text-(--text-primary) border-[3px] border-(--border-default) rounded-xl px-4 py-2 text-center font-bold">
             English
@@ -100,28 +102,28 @@ const Settings = ({
           </label>
         </fieldset>
         <fieldset class="flex flex-row flex-wrap gap-2 mb-4">
-          <legend class="text-lg font-semibold mb-2">Theme</legend>
+          <legend class="text-lg font-semibold mb-2">${t('theme')}</legend>
           <input class="w-0 h-0 visibility-hidden" type="radio" name="theme" value="light" id="theme-light" onChange=${handleThemeChange} checked=${theme === 'light'} />
           <label for="theme-light" class="inline-block bg-(--bg-surface) text-(--text-primary) border-[3px] border-(--border-default) rounded-xl px-4 py-2 text-center font-bold">
-            Light
+            ${t('light')}
           </label>
           <input class="w-0 h-0 visibility-hidden" type="radio" name="theme" value="dark" id="theme-dark" onChange=${handleThemeChange} checked=${theme === 'dark'} />
           <label for="theme-dark" class="inline-block bg-(--bg-surface) text-(--text-primary) border-[3px] border-(--border-default) rounded-xl px-4 py-2 text-center font-bold">
-            Dark
+            ${t('dark')}
           </label>
         </fieldset>
       </form>
       <section class="mb-2">
-        <h3 class="text-lg font-semibold mb-2">Information</h3>
-        <${NavButton} label="About" onClick=${setToAboutView} variant="secondary" />
-        <${NavButton} label="Terms of Service" onClick=${setToTermsOfServiceView} variant="secondary" />
-        <${NavButton} label="Privacy Policy" onClick=${setToPrivacyPolicyView} variant="secondary" />
+        <h3 class="text-lg font-semibold mb-2">${t('information')}</h3>
+        <${NavButton} label=${t('about')} onClick=${setToAboutView} variant="secondary" />
+        <${NavButton} label=${t('termsOfService')} onClick=${setToTermsOfServiceView} variant="secondary" />
+        <${NavButton} label=${t('privacyPolicy')} onClick=${setToPrivacyPolicyView} variant="secondary" />
       </section>
       <section class="mb-8">
-        <h3 class="text-lg font-semibold mb-2">Support</h3>
-        <${NavButton} label="Report Issue" onClick=${setToReportIssueView} variant="secondary" />
-        <${NavButton} label="Give Feedback" onClick=${setToGiveFeedbackView} variant="secondary" />
-        <${NavButton} label="Contact Us" onClick=${setToContactUsView} variant="secondary" />
+        <h3 class="text-lg font-semibold mb-2">${t('support')}</h3>
+        <${NavButton} label=${t('reportIssue')} onClick=${setToReportIssueView} variant="secondary" />
+        <${NavButton} label=${t('giveFeedback')} onClick=${setToGiveFeedbackView} variant="secondary" />
+        <${NavButton} label=${t('contactUs')} onClick=${setToContactUsView} variant="secondary" />
       </section>
       <div class="mt-auto flex flex-col gap-1 text-center text-xs text-(--text-secondary)">
         <small>Commute Leganes Version 0.1.0-beta</small>
