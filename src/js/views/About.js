@@ -4,7 +4,7 @@ import BackButton from '../components/BackButton.js'
 
 const About = ({ viewMode, setToSettingsView }) => html`
   <section aria-hidden=${viewMode !== 'about' ? true : false} inert=${viewMode !== 'about' ? true : false} class="z-3 absolute top-0 ${ viewMode !== 'about' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-full max-h-dvh overflow-y-auto p-4 transition-all duration-300 ease-in-out">
-    <${BackButton} onClick=${setToSettingsView} label="Close about" foregroundFill="#333942" />
+    <${BackButton} onClick=${setToSettingsView} label="Close about" />
     <div>
       <h2 class="mt-15 text-2xl font-bold font-display">About Commute Leganes</h2>
       <p class="mt-2 text-(--text-secondary)">

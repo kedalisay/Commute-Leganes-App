@@ -1,13 +1,13 @@
 import html from '../html.js'
 
-const BackButton = ({ onClick, label = 'Back', foregroundFill =  '#333942'}) => {
+const BackButton = ({ onClick, label = 'Back', foregroundFill = 'var(--text-primary)'}) => {
   return html`
-  <button aria-label="${label}" class="absolute top-4 left-4 rounded-full p-2 w-[40px] h-[40px] flex justify-center items-center bg-white border border-(--border-default)" onClick=${onClick}>
+  <button aria-label="${label}" class="absolute top-4 left-4 rounded-full p-2 w-[40px] h-[40px] flex justify-center items-center bg-(--bg-surface) border border-(--border-default)" onClick=${onClick}>
     <svg width="20" xmlns="http://www.w3.org/2000/svg" height="20" id="screenshot-4298d4e8-a9bb-8040-8008-eda2bb7c6195" viewBox="0 0 20 20" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
       <g id="shape-4298d4e8-a9bb-8040-8008-eda2bb7c6195" xml:space="preserve" rx="0" ry="0" style="fill: rgb(0, 0, 0);">
         <g id="shape-4298d4e8-a9bb-8040-8008-eda2bb8568c0" style="display: none;">
           <g class="fills" id="fills-4298d4e8-a9bb-8040-8008-eda2bb8568c0">
-            <rect width="20.000000000000455" height="20" x="0" transform="matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)" style="fill: ${foregroundFill}; fill-opacity: 1;" ry="0" fill="none" rx="0" y="0"/>
+            <rect width="20.000000000000455" height="20" x="0" transform="matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)" style="fill: ${foregroundFill}; fill-opacity: 1;" ry="0" rx="0" y="0"/>
           </g>
         </g>
         <g id="shape-4298d4e8-a9bb-8040-8008-eda2bb86394f" rx="0" ry="0" style="fill: rgb(0, 0, 0);">

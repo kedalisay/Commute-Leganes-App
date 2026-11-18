@@ -2,7 +2,7 @@ import html from '../html.js'
 
 const buttonStyles = {
   primary: 'bg-(--brand-primary) text-(--text-on-brand)',
-  secondary: 'bg-white border-[3px] border-(--border-default) text-(--text-primary)',
+  secondary: 'bg-(--bg-surface) border-[3px] border-(--border-default) text-(--text-primary)',
 }
 
 const ActionButtons = ({ buttons, direction = 'row' }) => {

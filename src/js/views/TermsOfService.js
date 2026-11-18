@@ -4,7 +4,7 @@ import BackButton from '../components/BackButton.js'
 
 const TermsOfService = ({ viewMode, setToSettingsView }) => html`
   <section aria-hidden=${viewMode !== 'terms-of-service' ? true : false} inert=${viewMode !== 'terms-of-service' ? true : false} class="z-3 absolute top-0 ${ viewMode !== 'terms-of-service' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-full max-h-dvh overflow-y-auto p-4 transition-all duration-300 ease-in-out">
-    <${BackButton} onClick=${setToSettingsView} label="Close terms of service" foregroundFill="#333942" />
+    <${BackButton} onClick=${setToSettingsView} label="Close terms of service" />
     <div>
       <h2 class="mt-15 mb-4 text-2xl font-bold font-display">Terms of Service</h2>
       <p class="mb-2 text-(--text-secondary)"><strong>Effective Date:</strong> November 18, 2026</p>

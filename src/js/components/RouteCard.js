@@ -12,7 +12,7 @@ const RouteCard = ({route, selected, onClick}) => {
 
   return html`
     <input class="sr-only" type="radio" name="route" id=${inputId} value=${route.name} checked=${selected} />
-    <label for=${inputId} class="flex flex-col gap-2 p-4 bg-white border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
+    <label for=${inputId} class="flex flex-col gap-2 p-4 bg-(--bg-surface) border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
       <div class="flex flex-row flex-nowrap gap-2 w-full">
         <h3 class="text-xl font-bold font-display text-left basis-1/2 sm:basis-4/6 inline}-block">${route.name}</h3>
         <div class="basis-1/2 sm:basis-2/6 flex flex-col gap-1 items-end justify-center">

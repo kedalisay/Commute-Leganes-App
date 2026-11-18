@@ -4,7 +4,7 @@ const LocationCard = ({location, onClick}) => {
   const coordsString = `${location.coords[1]}, ${location.coords[0]}`
 
   return html`
-    <button type="button" class="flex flex-col p-4 bg-white text-(--text-primary) w-full cursor-pointer" onClick=${onClick}>
+    <button type="button" class="flex flex-col p-4 bg-(--bg-surface) text-(--text-primary) w-full cursor-pointer" onClick=${onClick}>
       <h3 class="text-xl font-bold font-display text-left basis-1/2 sm:basis-5/6 inline-block">${location.name}</h3>
       <p class="text-md text-left text-(--text-secondary)">${coordsString}</p>
     </button>

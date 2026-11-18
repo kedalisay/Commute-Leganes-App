@@ -188,6 +188,23 @@
   --typography-data-grid:  var(--font-weight-medium) var(--font-size-sm)/var(--line-height-snug) var(--font-family-body);
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-canvas: var(--color-gray-950);
+  --bg-surface: var(--color-gray-850);
+  --bg-subtle: var(--color-gray-700);
+  --text-primary: var(--color-gray-100);
+  --text-secondary: var(--color-gray-400);
+  --brand-primary: var(--color-blue-400);
+  --brand-secondary: var(--color-red-400);
+  --border-default: var(--color-gray-700);
+  --border-focus: var(--color-blue-400);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
 html, 
 body {
   height: 100dvh;

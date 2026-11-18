@@ -4,7 +4,7 @@ import BackButton from '../components/BackButton.js'
 
 const ContactUs = ({ viewMode, setToSettingsView }) => html`
   <section aria-hidden=${viewMode !== 'contact-us' ? true : false} inert=${viewMode !== 'contact-us' ? true : false} class="z-3 absolute top-0 ${ viewMode !== 'contact-us' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-full max-h-dvh overflow-y-auto p-4 transition-all duration-300 ease-in-out">
-    <${BackButton} onClick=${setToSettingsView} label="Close contact us" foregroundFill="#333942" />
+    <${BackButton} onClick=${setToSettingsView} label="Close contact us" />
     <div>
       <h2 class="mt-15 text-2xl font-bold font-display">Contact Us</h2>
       <p class="mt-2 text-(--text-secondary)">
