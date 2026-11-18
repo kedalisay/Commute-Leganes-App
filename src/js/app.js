@@ -1075,14 +1075,15 @@ const App = () => {
     }
   }, [drawerMode])
 
+  // Manage map accessibility based on drawer mode
   useEffect(() => {
     const mapContainer = document.getElementById('map')
     if (!mapContainer) return
 
-    const isViewOpen = drawerMode !== 'default'
-    mapContainer.toggleAttribute('inert', isViewOpen)
+    const isSettingsOpen = drawerMode === 'settings'
+    mapContainer.toggleAttribute('inert', isSettingsOpen)
 
-    if (isViewOpen) {
+    if (isSettingsOpen) {
       mapContainer.setAttribute('aria-hidden', 'true')
     } else {
       mapContainer.removeAttribute('aria-hidden')
@@ -1090,7 +1091,7 @@ const App = () => {
   }, [drawerMode])
 
   return !isLoading ? html`
-    <main class="relative ${drawerMode !== 'default' ? 'z-1' : ''}">
+    <main class="relative ${drawerMode === 'settings' ? 'z-1' : ''}">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
         map=${MAP}
