@@ -5,6 +5,9 @@ import html from '../html.js'
 import About from './About.js'
 import TermsOfService from './TermsOfService.js'
 import PrivacyPolicy from './PrivacyPolicy.js'
+import ReportIssue from './ReportIssue.js'
+import GiveFeedback from './GiveFeedback.js'
+import ContactUs from './ContactUs.js'
 
 import BackButton from '../components/BackButton.js'
 
@@ -72,9 +75,12 @@ const Settings = ({
   const setToSettingsView = () => setViewMode('settings')
   const setToTermsOfServiceView = () => setViewMode('terms-of-service')
   const setToPrivacyPolicyView = () => setViewMode('privacy-policy')
+  const setToReportIssueView = () => setViewMode('report-issue')
+  const setToGiveFeedbackView = () => setViewMode('give-feedback')
+  const setToContactUsView = () => setViewMode('contact-us')
 
   return html`
-    <section aria-hidden=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} inert=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} id="settings" class="z-3 absolute top-0 ${drawerMode !== 'settings' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-screen p-4 transition-all duration-300 ease-in-out">
+    <section aria-hidden=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} inert=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} id="settings" class="z-3 absolute top-0 ${drawerMode !== 'settings' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full min-h-screen h-fit p-4 transition-all duration-300 ease-in-out">
       <h2 class="mt-15 mb-4 text-2xl font-bold font-display">Settings</h2>
       <${BackButton} onClick=${hideSettings} label="Close settings" foregroundFill="#333942" />
       <form class="mt-4">
@@ -105,11 +111,17 @@ const Settings = ({
           </label>
         </fieldset>
       </form>
-      <section>
+      <section class="mb-2">
         <h3 class="text-lg font-semibold mb-2">Information</h3>
         <${NavButton} label="About" onClick=${setToAboutView} variant="secondary" />
         <${NavButton} label="Terms of Service" onClick=${setToTermsOfServiceView} variant="secondary" />
         <${NavButton} label="Privacy Policy" onClick=${setToPrivacyPolicyView} variant="secondary" />
+      </section>
+      <section class="mb-8">
+        <h3 class="text-lg font-semibold mb-2">Support</h3>
+        <${NavButton} label="Report Issue" onClick=${setToReportIssueView} variant="secondary" />
+        <${NavButton} label="Give Feedback" onClick=${setToGiveFeedbackView} variant="secondary" />
+        <${NavButton} label="Contact Us" onClick=${setToContactUsView} variant="secondary" />
       </section>
       <div class="mt-auto flex flex-col gap-1 text-center text-xs text-(--text-secondary)">
         <small>Commute Leganes Version 0.1.0-beta</small>
@@ -119,6 +131,9 @@ const Settings = ({
     <${About} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
     <${TermsOfService} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
     <${PrivacyPolicy} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
+    <${ReportIssue} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
+    <${GiveFeedback} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
+    <${ContactUs} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
   `
 }
 
