@@ -60,7 +60,7 @@ const RouteWidget = ({ map, edges, drawerMode, language, setDrawerToDefault, set
     if (event.target.value === '') {
       setFromLocation('');
       setLocations(allLocations);
-      if (stopMarkerCentering) {
+      if (Object.prototype.toString.call(stopMarkerCentering) === "[object Function]") {
         stopMarkerCentering()
         setFromMarker(null)
         removeMarkerFromMap(fromMarker)
@@ -117,7 +117,7 @@ const RouteWidget = ({ map, edges, drawerMode, language, setDrawerToDefault, set
     if (event.target.value === '') {
       setToLocation('');
       setLocations(allLocations);
-      if (stopMarkerCentering) {
+      if (Object.prototype.toString.call(stopMarkerCentering) === "[object Function]") {
         stopMarkerCentering()
         setToMarker(null)
         removeMarkerFromMap(toMarker);
