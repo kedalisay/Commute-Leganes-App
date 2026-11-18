@@ -80,7 +80,7 @@ const Settings = ({
   const setToContactUsView = () => setViewMode('contact-us')
 
   return html`
-    <section aria-hidden=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} inert=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} id="settings" class="z-3 absolute top-0 ${drawerMode !== 'settings' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full min-h-screen h-fit p-4 transition-all duration-300 ease-in-out">
+    <section aria-hidden=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} inert=${drawerMode !== 'settings' || viewMode !== 'settings' ? true : false} id="settings" class="z-3 absolute top-0 ${drawerMode !== 'settings' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-full max-h-dvh overflow-y-auto p-4 transition-all duration-300 ease-in-out">
       <h2 class="mt-15 mb-4 text-2xl font-bold font-display">Settings</h2>
       <${BackButton} onClick=${hideSettings} label="Close settings" foregroundFill="#333942" />
       <form class="mt-4">

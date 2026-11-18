@@ -3,7 +3,7 @@ import html from '../html.js'
 import BackButton from '../components/BackButton.js'
 
 const PrivacyPolicy = ({ viewMode, setToSettingsView }) => html`
-  <section aria-hidden=${viewMode !== 'privacy-policy' ? true : false} inert=${viewMode !== 'privacy-policy' ? true : false} class="z-3 absolute top-0 ${ viewMode !== 'privacy-policy' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-screen p-4 transition-all duration-300 ease-in-out">
+  <section aria-hidden=${viewMode !== 'privacy-policy' ? true : false} inert=${viewMode !== 'privacy-policy' ? true : false} class="z-3 absolute top-0 ${ viewMode !== 'privacy-policy' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-full max-h-dvh overflow-y-auto p-4 transition-all duration-300 ease-in-out">
     <${BackButton} onClick=${setToSettingsView} label="Close privacy policy" foregroundFill="#333942" />
     <div>
       <h2 class="mt-15 mb-4 text-2xl font-bold font-display">Privacy Policy</h2>

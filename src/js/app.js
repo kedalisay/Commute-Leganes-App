@@ -175,7 +175,7 @@ const MAP_DATA_READY = new Promise((resolve, reject) => {
 
 const AppButtons = ({ drawerMode, onSettingsClick, onRoutesClick }) => {
   return html`
-    <section aria-hidden=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} inert=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} id="app-buttons" class="absolute top-30 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
+    <section aria-hidden=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} inert=${drawerMode === 'settings' || drawerMode === 'locations' || drawerMode === 'locations-action' ? true : false} id="app-buttons" class="absolute top-30 z-1 right-4 flex flex-col gap-3 w-[35px] bg-transparent">
       <h2 class="sr-only">App Buttons</h2>
       <button aria-label="Open settings" onClick=${onSettingsClick} class="${drawerMode === 'settings' ? 'bg-(--bg-subtle)' : 'bg-(--bg-surface)'} border border-(--border-default) p-2 w-full max-w-[35px] max-h-[35px] rounded-full transition-all">
         <svg width="22" xmlns="http://www.w3.org/2000/svg" height="22" id="screenshot-53f07293-9876-8096-8008-ad032f479751" viewBox="-1564.2 -1177.5 30 32" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
@@ -1076,7 +1076,7 @@ const App = () => {
   }, [drawerMode])
 
   return !isLoading ? html`
-    <main class="relative z-1">
+    <main class="relative ${drawerMode !== 'default' ? 'z-1' : ''}">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
         map=${MAP}
@@ -1152,7 +1152,7 @@ const App = () => {
         ${drawerMode === 'routes' || drawerMode === 'routes-public' ? html`<${RouteCardList} map=${MAP} routes=${routes} selectedRouteId=${selectedRouteId} onRouteSelect=${selectRoute} />` : null}
       </${Drawer}>
     </main>
-    ` : html`<main class="relative z-1"> <${Loading} /> </main>`
+    ` : html`<main class="relative z-1 h-dvh overflow-hidden"> <${Loading} /> </main>`
 }
 
 export default App
