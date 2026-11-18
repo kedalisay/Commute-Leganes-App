@@ -5,7 +5,7 @@ import ChooseOnMapButton from './ChooseOnMapButton.js'
 import LocationCard from './LocationCard.js'
 
 import { getGeolocation } from '../utils/Geolocation.js'
-import { addMarkerToMap, removeMarkerFromMap, keepMarkerOnMapCentered } from '../utils/MapLibreGL.js'
+import { addMarkerToMap, removeMarkerFromMap, chooseLocationOnMap } from '../utils/MapLibreGL.js'
 
 const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
   const useCurrentLocation = async () => {
@@ -44,20 +44,17 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
   }
 
   const chooseOnMap = () => {
-    const coords = map.getCenter().toArray()
-    const marker = addMarkerToMap(map, coords, isFromLocationFocused)
-    setDrawerToLocationActions()
-
-    if (isFromLocationFocused) {
-      if (fromMarker) removeMarkerFromMap(fromMarker)
-      setFromMarker(marker)
-      stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
-      return
-    } 
-
-    if (toMarker) removeMarkerFromMap(toMarker)
-    setToMarker(marker)
-    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
+    chooseLocationOnMap({
+      map,
+      isFromLocation: isFromLocationFocused,
+      fromMarker,
+      setFromMarker,
+      toMarker,
+      setToMarker,
+      stopMarkerCentering,
+      setDrawerToLocationActions,
+      openDrawer: null,
+    })
   }
 
   const handleLocationClick = (location) => {

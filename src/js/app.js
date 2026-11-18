@@ -1009,7 +1009,7 @@ const App = () => {
     removeRouteLayers(MAP, 'route')
     setSelectedRouteId(null)
 
-    if (!fromMarker || !toMarker) {
+    if (!fromMarker || !toMarker || fromLocation === '' || toLocation === '') {
       setRoutes([])
       return
     }
@@ -1090,13 +1090,32 @@ const App = () => {
     }
   }, [drawerMode])
 
+  // Manage input focus styles based on focus state
+  useEffect(() => {
+    const fromLocationInput = document.getElementById('fromLocationInput')
+    const toLocationInput = document.getElementById('toLocationInput')
+
+    if (!fromLocationInput || !toLocationInput) return
+
+    fromLocationInput.style.outline = 'none'
+    toLocationInput.style.outline = 'none'
+
+    if (drawerMode === 'default') return
+
+    if (isFromLocationFocused) {
+      fromLocationInput.style.outline = '3px solid #0b38a8'
+      return
+    }
+    toLocationInput.style.outline = '3px solid #0b38a8'
+  }, [isFromLocationFocused, drawerMode])
+
   return !isLoading ? html`
     <main class="relative ${drawerMode === 'settings' ? 'z-1' : ''}">
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
         map=${MAP}
         edges=${PATH_VERTICES}
-        stopMarkerCentering=${stopMarkerCentering.current}
+        stopMarkerCentering=${stopMarkerCentering}
         fromMarker=${fromMarker} 
         setFromMarker=${setFromMarker}
         toMarker=${toMarker}
@@ -1104,6 +1123,7 @@ const App = () => {
         drawerMode=${drawerMode}
         setDrawerToDefault=${setDrawerToDefault}
         setDrawerToLocations=${setDrawerToLocations}
+        setDrawerToLocationActions=${setDrawerToLocationActions}
         isDrawerOpen=${isDrawerOpen} 
         openDrawer=${openDrawer} 
         closeDrawer=${closeDrawer}

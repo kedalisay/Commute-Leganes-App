@@ -213,6 +213,14 @@ main {
   height: 100dvh;
 }
 
+#fromLocationInput {
+  outline-offset: 3px;
+}
+
+#toLocationInput {
+  outline-offset: 3px;
+}
+
 #settings fieldset > input[type="radio"]:checked + label {
   background-color: var(--color-gray-700);
   color: var(--text-on-brand);

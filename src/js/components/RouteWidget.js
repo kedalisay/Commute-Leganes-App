@@ -1,8 +1,8 @@
 import html from '../html.js'
 
-import { addMarkerToMap, removeMarkerFromMap } from '../utils/MapLibreGL.js'
+import { addMarkerToMap, removeMarkerFromMap, chooseLocationOnMap } from '../utils/MapLibreGL.js'
 
-const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLocations, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer, allLocations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
+const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLocations, setDrawerToLocationActions, stopMarkerCentering, fromMarker, setFromMarker, toMarker, setToMarker, isDrawerOpen, openDrawer, closeDrawer, allLocations, setLocations, fromLocation, setFromLocation, setIsFromLocationFocused, toLocation, setToLocation, setIsToLocationFocused }) => {
   const locationHasMatchingName = (location, value) => location.toLocaleLowerCase().includes(value.toLocaleLowerCase())
   const getLocationName = (location) => typeof location === 'object' && location !== null ? location.name || '' : location || ''
 
@@ -179,6 +179,38 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
     setToMarker(newToMarker);
   }
 
+  const chooseFromLocationOnMap = () => {
+    setIsFromLocationFocused(true)
+    setIsToLocationFocused(false)
+    chooseLocationOnMap({
+      map,
+      isFromLocation: true,
+      fromMarker,
+      setFromMarker,
+      toMarker,
+      setToMarker,
+      stopMarkerCentering,
+      setDrawerToLocationActions,
+      openDrawer,
+    })
+  }
+
+  const chooseToLocationOnMap = () => {
+    setIsFromLocationFocused(false)
+    setIsToLocationFocused(true)
+    chooseLocationOnMap({
+      map,
+      isFromLocation: false,
+      fromMarker,
+      setFromMarker,
+      toMarker,
+      setToMarker,
+      stopMarkerCentering,
+      setDrawerToLocationActions,
+      openDrawer,
+    })
+  }
+
   return html`<section aria-hidden=${drawerMode !== 'settings' ? false : true} inert=${drawerMode !== 'settings' ? false : true} id="plot-route-widget" class="relative ${drawerMode !== 'settings' ? 'z-2' : ''} px-4 pt-4 bg-transparent">
       <form id="plot-route-form"> 
         <h2 class="sr-only">Plot a route</h2>
@@ -187,13 +219,49 @@ const RouteWidget = ({ map, edges, drawerMode, setDrawerToDefault, setDrawerToLo
             <svg class="stroke-(--brand-primary) stroke-4  absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="10" cx="12.5" cy="12.5" fill="none"/>
             </svg>
-            <input onInput=${handleFromInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, true)} type="text" name="from" placeholder="Where from?" value=${getLocationName(fromLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full h-full" />
+            <input id="fromLocationInput" onInput=${handleFromInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, true)} type="text" name="from" placeholder="Where from?" value=${getLocationName(fromLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 pr-8 w-full h-full" />
+            <button onClick=${chooseFromLocationOnMap} aria-label="Choose starting location on the map" class="absolute top-[50%] right-2 -translate-y-[50%]" type="button">
+              <svg class="fill-(--brand-secondary)" width="20" xmlns="http://www.w3.org/2000/svg" height="20" id="screenshot-f2a02e6b-c442-80ce-8008-f65e49d9b426" viewBox="-2324.782 -1538.234 20 20" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
+                <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b426" style="fill:#000000" width="24" height="24" rx="0" ry="0">
+                  <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b427" style="display:none">
+                    <g class="fills" id="fills-f2a02e6b-c442-80ce-8008-f65e49d9b427">
+                      <rect rx="0" ry="0" x="-2324.7824239398756" y="-1538.2339421823856" transform="matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)" width="20" height="20" fill="none" style="fill:none">
+                      </rect>
+                    </g>
+                  </g>
+                  <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b428">
+                    <g class="fills" id="fills-f2a02e6b-c442-80ce-8008-f65e49d9b428">
+                      <path d="M-2314.782470703125,-1537.4007568359375C-2317.405517578125,-1537.4007568359375,-2319.782470703125,-1535.2730712890625,-2319.782470703125,-1532.64892578125C-2319.782470703125,-1530.0255126953125,-2317.61376953125,-1526.89306640625,-2314.782470703125,-1522.4007568359375C-2311.951171875,-1526.89306640625,-2309.782470703125,-1530.0255126953125,-2309.782470703125,-1532.64892578125C-2309.782470703125,-1535.2730712890625,-2312.158203125,-1537.4007568359375,-2314.782470703125,-1537.4007568359375ZM-2314.782470703125,-1530.73388671875C-2315.703369140625,-1530.73388671875,-2316.44921875,-1531.4798583984375,-2316.44921875,-1532.4007568359375C-2316.44921875,-1533.3214111328125,-2315.703369140625,-1534.0670166015625,-2314.782470703125,-1534.0670166015625C-2313.861572265625,-1534.0670166015625,-2313.11572265625,-1533.3214111328125,-2313.11572265625,-1532.4007568359375C-2313.11572265625,-1531.4798583984375,-2313.861572265625,-1530.73388671875,-2314.782470703125,-1530.73388671875ZM-2308.11572265625,-1525.73388671875L-2310.728515625,-1525.73388671875C-2311.049072265625,-1525.19970703125,-2311.392822265625,-1524.64306640625,-2311.7548828125,-1524.0670166015625L-2309.145751953125,-1524.0670166015625L-2308.728759765625,-1523.23388671875L-2312.282470703125,-1523.23388671875L-2312.5693359375,-1522.7803955078125L-2312.809814453125,-1522.4007568359375L-2312.344970703125,-1522.4007568359375L-2311.6298828125,-1520.73388671875L-2317.86962890625,-1520.73388671875L-2317.15478515625,-1522.4007568359375L-2316.755859375,-1522.4007568359375L-2316.99658203125,-1522.7803955078125L-2317.2822265625,-1523.23388671875L-2318.98388671875,-1523.23388671875L-2319.826416015625,-1524.0670166015625L-2317.81005859375,-1524.0670166015625C-2318.172119140625,-1524.64306640625,-2318.5166015625,-1525.19970703125,-2318.836181640625,-1525.73388671875L-2321.44873046875,-1525.73388671875L-2324.782470703125,-1519.0670166015625L-2304.782470703125,-1519.0670166015625L-2308.11572265625,-1525.73388671875ZM-2318.77734375,-1520.73388671875L-2322.0859375,-1520.73388671875L-2320.61572265625,-1523.673828125L-2319.35205078125,-1522.4007568359375L-2318.0615234375,-1522.4007568359375L-2318.77734375,-1520.73388671875ZM-2311.4375,-1522.4007568359375L-2308.31201171875,-1522.4007568359375L-2307.478759765625,-1520.73388671875L-2310.72216796875,-1520.73388671875L-2311.4375,-1522.4007568359375Z" style="fill:#333942;fill-opacity:1">
+                      </path>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </button>
           </label>
           <label class="relative inline-block w-full max-w-[calc(100%-45px)] h-[35px]">
             <svg class="fill-(--brand-secondary) absolute top-[50%] left-1 -translate-y-[50%]" width="25" height="25" xmlns="http://www.w3.org/2000/svg">
               <circle r="12" cx="12.5" cy="12.5"/>
             </svg>
-            <input onInput=${handleToInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, false)} type="text" name="to" placeholder="Where to?" value=${getLocationName(toLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 w-full h-full" />
+            <input id="toLocationInput" onInput=${handleToInput} onKeyDown=${(event) => handleCoordinateKeyDown(event, false)} type="text" name="to" placeholder="Where to?" value=${getLocationName(toLocation)} class="bg-(--bg-surface) border border-(--border-default) rounded-lg p-2 pl-8 pr-8 w-full h-full" />
+            <button onClick=${chooseToLocationOnMap} aria-label="Choose destination location on the map" class="absolute top-[50%] right-2 -translate-y-[50%]" type="button">
+              <svg class="fill-(--brand-secondary)" width="20" xmlns="http://www.w3.org/2000/svg" height="20" id="screenshot-f2a02e6b-c442-80ce-8008-f65e49d9b426" viewBox="-2324.782 -1538.234 20 20" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
+                <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b426" style="fill:#000000" width="24" height="24" rx="0" ry="0">
+                  <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b427" style="display:none">
+                    <g class="fills" id="fills-f2a02e6b-c442-80ce-8008-f65e49d9b427">
+                      <rect rx="0" ry="0" x="-2324.7824239398756" y="-1538.2339421823856" transform="matrix(1.000000, 0.000000, 0.000000, 1.000000, 0.000000, 0.000000)" width="20" height="20" fill="none" style="fill:none">
+                      </rect>
+                    </g>
+                  </g>
+                  <g id="shape-f2a02e6b-c442-80ce-8008-f65e49d9b428">
+                    <g class="fills" id="fills-f2a02e6b-c442-80ce-8008-f65e49d9b428">
+                      <path d="M-2314.782470703125,-1537.4007568359375C-2317.405517578125,-1537.4007568359375,-2319.782470703125,-1535.2730712890625,-2319.782470703125,-1532.64892578125C-2319.782470703125,-1530.0255126953125,-2317.61376953125,-1526.89306640625,-2314.782470703125,-1522.4007568359375C-2311.951171875,-1526.89306640625,-2309.782470703125,-1530.0255126953125,-2309.782470703125,-1532.64892578125C-2309.782470703125,-1535.2730712890625,-2312.158203125,-1537.4007568359375,-2314.782470703125,-1537.4007568359375ZM-2314.782470703125,-1530.73388671875C-2315.703369140625,-1530.73388671875,-2316.44921875,-1531.4798583984375,-2316.44921875,-1532.4007568359375C-2316.44921875,-1533.3214111328125,-2315.703369140625,-1534.0670166015625,-2314.782470703125,-1534.0670166015625C-2313.861572265625,-1534.0670166015625,-2313.11572265625,-1533.3214111328125,-2313.11572265625,-1532.4007568359375C-2313.11572265625,-1531.4798583984375,-2313.861572265625,-1530.73388671875,-2314.782470703125,-1530.73388671875ZM-2308.11572265625,-1525.73388671875L-2310.728515625,-1525.73388671875C-2311.049072265625,-1525.19970703125,-2311.392822265625,-1524.64306640625,-2311.7548828125,-1524.0670166015625L-2309.145751953125,-1524.0670166015625L-2308.728759765625,-1523.23388671875L-2312.282470703125,-1523.23388671875L-2312.5693359375,-1522.7803955078125L-2312.809814453125,-1522.4007568359375L-2312.344970703125,-1522.4007568359375L-2311.6298828125,-1520.73388671875L-2317.86962890625,-1520.73388671875L-2317.15478515625,-1522.4007568359375L-2316.755859375,-1522.4007568359375L-2316.99658203125,-1522.7803955078125L-2317.2822265625,-1523.23388671875L-2318.98388671875,-1523.23388671875L-2319.826416015625,-1524.0670166015625L-2317.81005859375,-1524.0670166015625C-2318.172119140625,-1524.64306640625,-2318.5166015625,-1525.19970703125,-2318.836181640625,-1525.73388671875L-2321.44873046875,-1525.73388671875L-2324.782470703125,-1519.0670166015625L-2304.782470703125,-1519.0670166015625L-2308.11572265625,-1525.73388671875ZM-2318.77734375,-1520.73388671875L-2322.0859375,-1520.73388671875L-2320.61572265625,-1523.673828125L-2319.35205078125,-1522.4007568359375L-2318.0615234375,-1522.4007568359375L-2318.77734375,-1520.73388671875ZM-2311.4375,-1522.4007568359375L-2308.31201171875,-1522.4007568359375L-2307.478759765625,-1520.73388671875L-2310.72216796875,-1520.73388671875L-2311.4375,-1522.4007568359375Z" style="fill:#333942;fill-opacity:1">
+                      </path>
+                    </g>
+                  </g>
+                </g>
+              </svg>
+            </button>
           </label>
           <svg class="stroke-(--color-gray-500) stroke-8 absolute top-0 left-[13.5px]" width="5" height="80" xmlns="http://www.w3.org/2000/svg">
             <g>

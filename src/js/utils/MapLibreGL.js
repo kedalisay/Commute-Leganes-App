@@ -38,6 +38,42 @@ const keepMarkerOnMapCentered = (map, marker) => {
   return stopMarkerCentering;
 }
 
+const chooseLocationOnMap = ({
+  map,
+  isFromLocation,
+  fromMarker,
+  setFromMarker,
+  toMarker,
+  setToMarker,
+  stopMarkerCentering,
+  setDrawerToLocationActions,
+  openDrawer,
+}) => {
+  const coords = map.getCenter().toArray()
+  const marker = addMarkerToMap(map, coords, isFromLocation)
+
+  if (isFromLocation) {
+    removeMarkerFromMap(fromMarker)
+    setFromMarker(marker)
+  } else {
+    removeMarkerFromMap(toMarker)
+    setToMarker(marker)
+  }
+
+  if (stopMarkerCentering?.current) {
+    stopMarkerCentering.current()
+    removeMarkerFromMap(fromMarker)
+    removeMarkerFromMap(toMarker)
+  }
+  if (stopMarkerCentering) {
+    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
+  } else {
+    keepMarkerOnMapCentered(map, marker)
+  }
+  setDrawerToLocationActions()
+  openDrawer()
+}
+
 const addRouteLayers = (map, routeId, layers) => {
   console.log(layers)
   const sourceIds = {
@@ -286,6 +322,7 @@ export {
   removeMarkerFromMap, 
   centerMarkerOnMap, 
   keepMarkerOnMapCentered,
+  chooseLocationOnMap,
   addRouteLayers,
   removeRouteLayers,
   setRouteLayerVisibility,
