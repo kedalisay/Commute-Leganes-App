@@ -1075,6 +1075,20 @@ const App = () => {
     }
   }, [drawerMode])
 
+  useEffect(() => {
+    const mapContainer = document.getElementById('map')
+    if (!mapContainer) return
+
+    const isViewOpen = drawerMode !== 'default'
+    mapContainer.toggleAttribute('inert', isViewOpen)
+
+    if (isViewOpen) {
+      mapContainer.setAttribute('aria-hidden', 'true')
+    } else {
+      mapContainer.removeAttribute('aria-hidden')
+    }
+  }, [drawerMode])
+
   return !isLoading ? html`
     <main class="relative ${drawerMode !== 'default' ? 'z-1' : ''}">
       <h1 class="sr-only">Commute Leganes</h1>
