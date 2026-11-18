@@ -75,7 +75,6 @@ const chooseLocationOnMap = ({
 }
 
 const addRouteLayers = (map, routeId, layers) => {
-  console.log(layers)
   const sourceIds = {
     pathToHopOn: `${routeId}_path_to_hop_on_source`,
     commutePath: `${routeId}_commute_path_source`,

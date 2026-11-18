@@ -572,8 +572,6 @@ const App = () => {
       return null
     }
 
-    console.log(terminal)
-
     const hopOnCoordinates = terminalIsHopOn
       ? [terminalCoordinates]
       : route.geometry.coordinates
@@ -635,8 +633,6 @@ const App = () => {
         fare.amount += extraFare
       }
     }
-
-    console.log(`Route ${routeId} - ${routeName}: Walking distance: ${walkingDistance.toPrecision(2)} km, Commute distance: ${commuteDistance.toPrecision(2)} km`)
 
     return {
       id: routeId,
@@ -845,8 +841,6 @@ const App = () => {
     const firstHopOnPoint = inBetweenPoints.shift()
     const lastDropoffPoint = inBetweenPoints.pop()
 
-    console.log('In between points:', inBetweenPoints)
-
     const finalWalkingPath = getNearestReachableVertex(
       [lastDropoffPoint],
       toPoint,
@@ -951,9 +945,6 @@ const App = () => {
       return []
     }
 
-    console.log('fromRoute:', fromRoute) 
-    console.log('toRoute:', toRoute)
-
     const destinationRoutes = toRoute.flatMap((route) => {
       const terminalPoints = getTerminalPoints(route, terminals)
       return terminalPoints.map((terminal) => ({ route, terminal, terminalIsHopOn: true }))
@@ -1018,8 +1009,6 @@ const App = () => {
       }
     }).filter(Boolean)
 
-    console.log('Transfer Routes: ', transferRoutes)
-
     return [...directRoutes, ...transferRoutes]
       .sort((a, b) => a.total_duration - b.total_duration)
   }
@@ -1051,7 +1040,6 @@ const App = () => {
     }
 
     const routes = routeResults.map((route) => {
-      console.log('Route: ', route)
       const mapLayerState = addRouteLayers(MAP, route.id, route.layers)
 
       return {
