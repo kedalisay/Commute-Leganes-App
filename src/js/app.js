@@ -1100,7 +1100,7 @@ const App = () => {
     fromLocationInput.style.outline = 'none'
     toLocationInput.style.outline = 'none'
 
-    if (drawerMode === 'default') return
+    if (drawerMode === 'default' || drawerMode === 'settings' || drawerMode === 'routes-public') return
 
     if (isFromLocationFocused) {
       fromLocationInput.style.outline = '3px solid #0b38a8'
