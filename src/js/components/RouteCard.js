@@ -2,7 +2,7 @@ import html from '../html.js'
 import RouteVisualization from './RouteVisualization.js'
 
 const RouteCard = ({route, selected, onClick}) => {
-  const inputId = `route-${route.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+  const inputId = `${Math.random().toPrecision(2) * 100}-${route.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` // TODO: Use a better way to generate unique IDs
   const fare = route.fare !== undefined && route.fare !== null
     ? route.fare
     : route.total_fare
