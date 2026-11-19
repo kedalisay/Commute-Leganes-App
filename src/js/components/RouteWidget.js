@@ -89,8 +89,8 @@ const RouteWidget = ({ map, edges, drawerMode, language, setDrawerToDefault, set
       if (locationHasMatchingName(location.name, fromValue)) {
         filteredLocations.push(location);
       } else {
-        if (location.aliases) {
-        for (const alias in location.aliases) {
+        if (Array.isArray(location.aliases) && location.aliases.length > 0) {
+        for (const alias of location.aliases) {
           if (locationHasMatchingName(alias, fromValue)) {
             filteredLocations.push({ ...location, name: alias });
           }
@@ -144,9 +144,9 @@ const RouteWidget = ({ map, edges, drawerMode, language, setDrawerToDefault, set
       if (locationHasMatchingName(location.name, toValue)) {
         filteredLocations.push(location);
       } else {
-        if (location.aliases) {
-          for (const alias in location.aliases) {
-            if (locationHasMatchingName(alias, toValue) && !filteredLocations.some((loc) => loc.name === alias)) {
+        if (Array.isArray(location.aliases) && location.aliases.length > 0) {
+          for (const alias of location.aliases) {
+            if (locationHasMatchingName(alias, toValue)) {
               filteredLocations.push({ ...location, name: alias });
             }
           }
