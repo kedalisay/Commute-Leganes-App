@@ -1,6 +1,7 @@
 export const translations = {
   English: {
     appName: 'Commute Leganes',
+    betaFeedback: 'For feedback or issues, go to Settings.',
     loading: 'Loading Commute Leganes...',
     findingRoutes: 'Finding the best routes.',
     preparingMap: 'Preparing the map and routes.',
@@ -38,6 +39,7 @@ export const translations = {
     swapLocations: 'Swap from and to',
   },
   Hiligaynon: {
+    betaFeedback: 'Para sa feedback ukon isyu, magdiretso sa Settings.',
     loading: 'Gina-preparar ang Commute Leganes...',
     findingRoutes: 'Ginapangita ang pinakamaayo nga ruta.',
     preparingMap: 'Ginaandam ang mapa kag mga ruta.',
@@ -68,6 +70,7 @@ export const translations = {
     showPublicRoutes: 'Show public routes'
   },
   Tagalog: {
+    betaFeedback: 'Para sa feedback o isyu, pumunta sa Settings.',
     loading: 'Inihahanda ang Commute Leganes...',
     preparingMap: 'Ginahanda ang mapa at mga ruta.',
     findingRoutes: 'Hinahanap ang pinakamainam na ruta.',

@@ -1248,6 +1248,19 @@ const App = () => {
           />`
         : null
       }
+      ${drawerMode === 'default' || drawerMode === 'routes-public'
+        ? html`
+          <section
+            role="status"
+            aria-label="${getTranslation(draftSettings.language, 'publicBeta')}"
+            class="absolute top-30 left-4 z-1 max-w-[calc(95%-64px)] rounded-lg border border-(--border-default) bg-(--bg-surface) px-3 py-1 text-xs text-(--text-primary)"
+          >
+            <span class="font-bold text-(--color-blue-700)">Public Beta v0.1.0: </span>
+            ${getTranslation(draftSettings.language, 'betaFeedback')}
+          </section>
+        `
+        : null
+      }
       <${Settings}
         drawerMode=${drawerMode}
         hideSettings=${hideSettings}
