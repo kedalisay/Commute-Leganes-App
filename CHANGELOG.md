@@ -7,20 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## History
 
+- [[0.2.0]-beta.1](#020-beta1)
 - [[0.1.0]-beta.1](#010-beta1)
 - [[0.1.0]-alpha.1](#010-alpha1)
 
 ## Unreleased
 
+### [0.2.0]-beta.1
+
+#### Added
+
+- E-trike commute routes
+- Desktop optimization
+
+## Released
+
 ### [0.1.0]-beta.1
 
 #### Added
 
-- Route between two points within Leganes with consideration of commute routes 
-- Additional commute routes 
+- Routing between two points within Leganes with consideration of commute routes 
+- Additional tricycle commute routes 
 - Settings view functionality
-
-## Released
+  - Dark mode
+  - Minimal Hiligaynon and Filipino translations
+- Settings subviews
+  - Terms of Service
+  - Privacy Policy
+  - Report Issue
+  - Give Feedback
+  - Contact Us
 
 ### [0.1.0]-alpha.1 
 
