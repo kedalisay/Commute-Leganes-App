@@ -24,7 +24,7 @@ const RouteCard = ({route, selected, onClick}) => {
             ? html`<data class="text-right" value="${transfers}">${transfers} transfer${transfers !== 1 ? 's' : ''}</data>`
             : null}
           ${distance !== null && distance !== undefined
-            ? html`<data class="text-right" value="${distance}">${distance} kilometer${distance !== 1 ? 's' : ''}</data>`
+            ? html`<data class="text-right" value="${distance}">${distance} kilometer${Number(distance) !== 1 ? 's' : ''}</data>`
             : null}
         </div>
       </div>
