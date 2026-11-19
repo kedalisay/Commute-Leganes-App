@@ -1226,6 +1226,7 @@ const App = () => {
             locations=${locations} 
             drawerMode=${drawerMode}
             setDrawerToLocationActions=${setDrawerToLocationActions}
+            openDrawer=${openDrawer}
             closeDrawer=${closeDrawer} 
             deviceLocation=${deviceLocation}
             setDeviceLocation=${setDeviceLocation}

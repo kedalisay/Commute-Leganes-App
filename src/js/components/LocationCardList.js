@@ -8,7 +8,7 @@ import { getGeolocation } from '../utils/Geolocation.js'
 import { addMarkerToMap, removeMarkerFromMap, chooseLocationOnMap } from '../utils/MapLibreGL.js'
 import { getTranslation } from '../i18n.js'
 
-const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation, language }) => {  
+const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, openDrawer, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation, language }) => {  
   const useCurrentLocation = async () => {
     const coords = await getGeolocation()
     if (!coords) {
@@ -54,7 +54,7 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
       setToMarker,
       stopMarkerCentering,
       setDrawerToLocationActions,
-      openDrawer: null,
+      openDrawer: openDrawer,
     })
   }
 

@@ -193,7 +193,7 @@ const RouteWidget = ({ map, edges, drawerMode, language, setDrawerToDefault, set
       setToMarker,
       stopMarkerCentering,
       setDrawerToLocationActions,
-      openDrawer,
+      openDrawer: openDrawer,
     })
   }
 
@@ -209,7 +209,7 @@ const RouteWidget = ({ map, edges, drawerMode, language, setDrawerToDefault, set
       setToMarker,
       stopMarkerCentering,
       setDrawerToLocationActions,
-      openDrawer,
+      openDrawer: openDrawer,
     })
   }
 
