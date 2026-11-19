@@ -301,10 +301,10 @@ const findRoutes = (fromLocation, toLocation) => {
   const toRoute = getRouteForBarangay(toBarangay, publicRoutes)
   if (fromRoute.length === 0 && toRoute.length === 0) return []
 
-  const destinationRoutes = toRoute.flatMap((route) => getTerminalPoints(route, terminals).map((terminal) => ({
+  const originRoutes = fromRoute.flatMap((route) => getTerminalPoints(route, terminals).map((terminal) => ({
     route, terminal, terminalIsHopOn: true,
   })))
-  const originRoutes = fromRoute.flatMap((route) => getTerminalPoints(route, terminals).map((terminal) => ({
+  const destinationRoutes = toRoute.flatMap((route) => getTerminalPoints(route, terminals).map((terminal) => ({
     route, terminal, terminalIsHopOn: false,
   })))
   const routeCandidates = [...destinationRoutes, ...originRoutes]
