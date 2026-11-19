@@ -1148,16 +1148,16 @@ const App = () => {
 
     if (!fromLocationInput || !toLocationInput) return
 
-    fromLocationInput.style.outline = 'none'
-    toLocationInput.style.outline = 'none'
+    fromLocationInput.classList.remove('focused')
+    toLocationInput.classList.remove('focused')
 
     if (drawerMode === 'default' || drawerMode === 'settings' || drawerMode === 'routes-public') return
 
     if (isFromLocationFocused) {
-      fromLocationInput.style.outline = '3px solid #0b38a8'
+      fromLocationInput.classList.add('focused')
       return
     }
-    toLocationInput.style.outline = '3px solid #0b38a8'
+    toLocationInput.classList.add('focused')
   }, [isFromLocationFocused, drawerMode])
 
   return !isLoading ? html`

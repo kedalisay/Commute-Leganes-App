@@ -205,6 +205,11 @@
   color-scheme: light;
 }
 
+.focused {
+  outline: 3px solid var(--focus-indicator, var(--border-focus));
+  outline-offset: 3px;
+}
+
 html, 
 body {
   height: 100dvh;
