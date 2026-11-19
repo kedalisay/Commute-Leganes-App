@@ -6,6 +6,7 @@ const Loading = ({ language = 'English' }) => html`
     class="fixed inset-0 z-10 flex min-h-screen items-center justify-center bg-(--bg-canvas) p-8"
   >
     <div class="flex flex-col items-center gap-4 text-center">
+      <img src="/assets/images/commute_leganes_logo_1x1_final.png" alt="" class="h-40 w-40" />
       <div
         aria-hidden="true"
         class="h-10 w-10 animate-spin rounded-full border-4 border-(--border-default) border-t-(--brand-primary)"
