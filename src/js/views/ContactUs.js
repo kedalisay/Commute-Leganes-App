@@ -25,7 +25,7 @@ const ContactUs = ({ viewMode, setToSettingsView }) => html`
         Follow us on social media for updates and announcements:
       </p>
       <ul class="list-disc space-y-2 pl-5 text-(--text-primary)">
-        <li><a href="https://www.facebook.com/BetterLeganes" target="_blank" rel="noopener noreferrer" class="text-(--color-blue-700) underline">Facebook</a></li>
+        <li><a href="https://www.facebook.com/profile.php?id=61596325847365" target="_blank" rel="noopener noreferrer" class="text-(--color-blue-700) underline">Facebook</a></li>
       </ul>
     </div>
   </section>
