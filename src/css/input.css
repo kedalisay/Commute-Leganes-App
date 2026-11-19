@@ -205,6 +205,12 @@
   color-scheme: light;
 }
 
+@keyframes route-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .focused {
   outline: 3px solid var(--focus-indicator, var(--border-focus));
   outline-offset: 3px;
@@ -270,6 +276,25 @@ input[type="text"]:focus-visible,
 #routes-form input[type="checkbox"]:checked + label {
   color: var(--text-primary);
   border-color: var(--border-focus);
+}
+
+.route-loading-dots {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: route-loading-spin 1.1s linear infinite;
+}
+
+.route-loading-dots span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.32rem;
+  height: 0.32rem;
+  border-radius: 9999px;
+  background: var(--brand-primary);
+  transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-0.95rem);
+  opacity: var(--opacity);
 }
 
 .list-public-route > li::before {

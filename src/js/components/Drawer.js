@@ -9,6 +9,8 @@ const Drawer = ({
   setDrawerToDefault,
   closeDrawer,
   label = 'Drawer',
+  isLoading = false,
+  loadingContent = null,
 }) => {
   // a drawer component that slides up from the bottom of the screen
   // it has a handle that can be used to drag the drawer up and down
@@ -135,7 +137,7 @@ const Drawer = ({
           onPointerUp=${onPointerUp}
           onPointerCancel=${onPointerUp}
         ></button>
-        ${children}
+        ${isLoading ? loadingContent : children}
       </div>
     </div>
   `

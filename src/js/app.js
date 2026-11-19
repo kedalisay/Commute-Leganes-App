@@ -15,6 +15,7 @@ import RouteWidget from './components/RouteWidget.js'
 import ActionButtons from './components/ActionButtons.js'
 import LocationCardList from './components/LocationCardList.js'
 import RouteCardList from './components/RouteCardList.js'
+import RouteLoading from './components/RouteLoading.js'
 
 import { removeMarkerFromMap, addRouteLayers, removeRouteLayers, setRouteLayerVisibility } from './utils/MapLibreGL.js';
 import { getCoordinates, areValidCoordinates } from './utils/Geolocation.js';
@@ -390,8 +391,11 @@ const App = () => {
   // Routes state management
   const [routes, setRoutes] = useState([])
   const [selectedRouteId, setSelectedRouteId] = useState(null)
+  const [isFindingRoutes, setIsFindingRoutes] = useState(false)
   const routesRef = useRef([])
   const selectedRouteIdRef = useRef(null)
+  const routeWorkerRef = useRef(null)
+  const routeRequestIdRef = useRef(0)
 
   const selectRoute = (routeId) => {
     if (!routeId) return
@@ -1013,51 +1017,93 @@ const App = () => {
       .sort((a, b) => a.total_duration - b.total_duration)
   }
 
+  useEffect(() => {
+    const worker = new Worker('/dist/route-worker.js', { type: 'module' })
+    routeWorkerRef.current = worker
+
+    worker.onmessage = (event) => {
+      const { id, routes: routeResults, error } = event.data
+      if (id !== routeRequestIdRef.current) return
+
+      setIsFindingRoutes(false)
+
+      if (error) {
+        console.error('Unable to build route chain:', error)
+        setRoutes([])
+        setSelectedRouteId(null)
+        setDrawerToRoutes()
+        openDrawer()
+        return
+      }
+
+      if (routeResults.length === 0) {
+        setRoutes([])
+        setSelectedRouteId(null)
+        setDrawerToRoutes()
+        openDrawer()
+        return
+      }
+
+      const nextRoutes = routeResults.map((route) => {
+        const mapLayerState = addRouteLayers(MAP, route.id, route.layers)
+        return { ...route, ...mapLayerState }
+      })
+      const firstRoute = nextRoutes[0]
+
+      nextRoutes.forEach((route) => {
+        setRouteLayerVisibility(MAP, route.layerIds, route.id === firstRoute.id)
+      })
+
+      setRoutes(nextRoutes)
+      setSelectedRouteId(firstRoute.id)
+      setDrawerToRoutes()
+      openDrawer()
+    }
+
+    worker.onerror = (event) => {
+      console.error('Route worker failed:', event.message)
+      setIsFindingRoutes(false)
+      setRoutes([])
+      setDrawerToRoutes()
+      openDrawer()
+    }
+
+    return () => {
+      worker.terminate()
+      routeWorkerRef.current = null
+    }
+  }, [])
+
   const findRoute = () => {
     removeRouteLayers(MAP, 'route')
     setSelectedRouteId(null)
 
     if (!fromMarker || !toMarker || fromLocation === '' || toLocation === '') {
       setRoutes([])
+      setIsFindingRoutes(false)
       return
     }
 
-    const routeResults = findRoutes(
-      fromLocation,
-      toLocation,
-      PATH_VERTICES,
-      PATHFINDER,
-      STATIC_BARANGAYS.features,
-      PUBLIC_ROUTES.features,
-      STATIC_TERMINALS.features
-    )
+    setRoutes([])
+    setIsFindingRoutes(true)
+    setDrawerToRoutes()
+    openDrawer()
 
-    if (routeResults.length === 0) {
-      setRoutes([])
+    const requestId = routeRequestIdRef.current + 1
+    routeRequestIdRef.current = requestId
+
+    if (!routeWorkerRef.current) {
+      setIsFindingRoutes(false)
       setDrawerToRoutes()
       openDrawer()
       return
     }
 
-    const routes = routeResults.map((route) => {
-      const mapLayerState = addRouteLayers(MAP, route.id, route.layers)
-
-      return {
-        ...route,
-        ...mapLayerState,
-      }
+    routeWorkerRef.current.postMessage({
+      id: requestId,
+      fromLocation,
+      toLocation,
     })
-
-    const firstRoute = routes[0]
-
-    routes.forEach((route) => {
-      setRouteLayerVisibility(MAP, route.layerIds, route.id === firstRoute.id)
-    })
-
-    setRoutes(routes)
-    setSelectedRouteId(firstRoute.id)
-    setDrawerToRoutes()
-    openDrawer()
   }
 
   useEffect(findRoute, [fromLocation, toLocation])
@@ -1108,6 +1154,10 @@ const App = () => {
   // Update document title based on drawer mode
   useEffect(() => {
     const t = (key) => getTranslation(draftSettings.language, key)
+    if (isFindingRoutes) {
+      document.title = `${t('findingRoutes')} - ${t('appName')}`
+      return
+    }
     switch (drawerMode) {
       case 'settings':
         document.title = `${t('settings')} - ${t('appName')}`
@@ -1124,7 +1174,7 @@ const App = () => {
       default:
         document.title = t('appName')
     }
-  }, [drawerMode, draftSettings.language])
+  }, [drawerMode, draftSettings.language, isFindingRoutes])
 
   // Manage map accessibility based on drawer mode
   useEffect(() => {
@@ -1213,6 +1263,8 @@ const App = () => {
         drawerMode=${drawerMode}
         setDrawerToDefault=${setDrawerToDefault}
         closeDrawer=${closeDrawer}
+        isLoading=${isFindingRoutes}
+        loadingContent=${html`<${RouteLoading} title=${getTranslation(draftSettings.language, 'findingRoutes')} />`}
       >
         ${drawerMode === 'settings' ? html`<${ActionButtons} buttons=${settingsActions} direction="row" />` : null}
         ${drawerMode === 'locations' 
