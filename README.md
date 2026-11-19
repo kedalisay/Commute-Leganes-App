@@ -10,7 +10,7 @@ There is no online information on all the existing commute routes within Leganes
 
 All data is collected manually by asking tricycle drivers and commuting the routes themselves.
 
-See the [public routes](data/public_routes.json) and [locations](data/locations.json) files for the last updated date.
+See the [public routes](data/leganes_public_routes.json) and [locations](data/leganes_locations.json) files for the last updated date.
 
 ## Features
 
