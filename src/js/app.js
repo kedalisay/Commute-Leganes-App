@@ -1160,8 +1160,9 @@ const App = () => {
     toLocationInput.classList.add('focused')
   }, [isFromLocationFocused, drawerMode])
 
-  return !isLoading ? html`
+  return html`
     <main class="relative ${drawerMode === 'settings' ? 'z-1' : ''}">
+      <${Loading} isLoading=${isLoading} language=${draftSettings.language} />
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
         map=${MAP}
@@ -1242,7 +1243,7 @@ const App = () => {
         ${drawerMode === 'routes' || drawerMode === 'routes-public' ? html`<${RouteCardList} map=${MAP} routes=${routes} selectedRouteId=${selectedRouteId} onRouteSelect=${selectRoute} language=${draftSettings.language} />` : null}
       </${Drawer}>
     </main>
-    ` : html`<main class="relative z-1 h-dvh overflow-hidden"> <${Loading} language=${draftSettings.language} /> </main>`
+  `
 }
 
 export default App
