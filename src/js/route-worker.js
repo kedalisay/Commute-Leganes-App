@@ -97,14 +97,14 @@ const getRouteFare = (route, distance) => {
   return { amount: fare.amount, mode: fare.mode }
 }
 
-const buildRoute = (index, routeId, routeName, fromPoint, toPoint, route, terminal, terminalIsHopOn) => {
+const buildRoute = (routeId, routeName, fromPoint, toPoint, route, terminal, terminalIsHopOn) => {
   const terminalCoordinates = terminal?.geometry?.coordinates
   if (!Array.isArray(terminalCoordinates)) return null
 
-  const hopOnCoordinates = terminalIsHopOn ? [terminalCoordinates] : route.geometry.coordinates
+  const hopOnCoordinates = terminalIsHopOn ?  [terminalCoordinates] : route.geometry.coordinates
   const hopOffCoordinates = terminalIsHopOn ? route.geometry.coordinates : [terminalCoordinates]
-  const hopOn = getNearestReachableVertex(hopOnCoordinates, fromPoint)
-  const dropoff = getNearestReachableVertex(hopOffCoordinates, toPoint, 'from')
+  const hopOn = getNearestReachableVertex(hopOnCoordinates, fromPoint, 'from')
+  const dropoff = getNearestReachableVertex(hopOffCoordinates, toPoint)
   if (!hopOn || !dropoff) return null
 
   const commutePath = getRoutePath(hopOn.vertex, dropoff.vertex, route.geometry?.coordinates)
@@ -295,17 +295,17 @@ const findRoutes = (fromLocation, toLocation) => {
   if (!closestFromVertex.vertex || !closestToVertex.vertex) return []
   const fromVertexCoords = getVertexCoordinates(closestFromVertex)
   const toVertexCoords = getVertexCoordinates(closestToVertex)
-  const fromRoute = getRouteForBarangay(fromBarangay, publicRoutes)
-  const toRoute = getRouteForBarangay(toBarangay, publicRoutes)
-  if (fromRoute.length === 0 && toRoute.length === 0) return []
+  const routeFromBarangay = getRouteForBarangay(fromBarangay, publicRoutes)
+  const routeToBarangay = getRouteForBarangay(toBarangay, publicRoutes)
+  if (routeFromBarangay.length === 0 && routeToBarangay.length === 0) return []
 
-  const originRoutes = fromRoute.flatMap((route) => getTerminalPoints(route, terminals).map((terminal) => ({
-    route, terminal, terminalIsHopOn: true,
-  })))
-  const destinationRoutes = toRoute.flatMap((route) => getTerminalPoints(route, terminals).map((terminal) => ({
+  const originRoutes = routeFromBarangay.flatMap((route) => getTerminalPoints(route, terminals).map((terminal) => ({
     route, terminal, terminalIsHopOn: false,
   })))
-  const routeCandidates = [...destinationRoutes, ...originRoutes]
+  const destinationRoutes = routeToBarangay.flatMap((route) => getTerminalPoints(route, terminals).map((terminal) => ({
+    route, terminal, terminalIsHopOn: true,
+  })))
+  const routeCandidates = [...originRoutes, ...destinationRoutes]
   if (routeCandidates.length === 0) return []
 
   const closestTerminals = routeCandidates.flatMap(({ route, terminal, terminalIsHopOn }) => {
@@ -314,7 +314,6 @@ const findRoutes = (fromLocation, toLocation) => {
   })
 
   const directRoutes = closestTerminals.map(({ route, terminal, terminalIsHopOn }, index) => buildRoute(
-    index,
     `route-${index + 1}`,
     `Route ${index + 1} from ${fromBarangay} to ${toBarangay}`,
     { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } },
@@ -324,7 +323,7 @@ const findRoutes = (fromLocation, toLocation) => {
     terminalIsHopOn,
   )).filter(Boolean).sort((a, b) => a.total_duration - b.total_duration)
 
-  const transferCandidates = getRouteSequence(fromRoute, toRoute.length > 0 ? toRoute : publicRoutes)
+  const transferCandidates = getRouteSequence(routeFromBarangay, routeToBarangay.length > 0 ? routeToBarangay : publicRoutes)
   const transferRoutes = transferCandidates.map(({ routes, transfer }, index) => {
     const route = buildRouteChain(
       routes,
