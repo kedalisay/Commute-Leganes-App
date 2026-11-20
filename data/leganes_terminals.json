@@ -1,5 +1,10 @@
 {
   "type": "FeatureCollection",
+   "metadata": {
+    "name": "Leganes Terminals",
+    "description": "A collection of local terminals and loading/unloading points in Leganes, Iloilo.",
+    "last-updated": "2026-11-20T13:36:00Z"
+  },
   "features": [
     {
       "type": "Feature",
