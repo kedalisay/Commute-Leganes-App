@@ -16,9 +16,26 @@ const About = ({ viewMode, setToSettingsView }) => html`
     <div class="flex flex-col gap-3">
       <h3 class="mt-4 text-lg font-bold font-display">What you can do</h3>
       <ul class="list-disc space-y-2 pl-5 text-(--text-primary)">
-        <li>Choose starting and destination locations.</li>
-        <li>Compare walking and public-transport route options.</li>
-        <li>View known public routes and their route points.</li>
+        <li>
+          Choose starting and destination locations.
+          <ul class="list-disc space-y-2 pl-5 text-(--text-primary)">
+            <li>Preselect a location from the list of available options.</li>
+            <li>Manually enter a location if it's not in the list.</li>
+            <li>Choose a location from the map.</li>
+          </ul>
+        </li>
+        <li>Compare walking and public-transport route options.
+          <ul class="list-disc space-y-2 pl-5 text-(--text-primary)">
+            <li>Route options are displayed for each mode of transport.</li>
+            <li>Each are sorted by the shortest time and distance.</li>
+          </ul>
+        </li>
+        <li>View known public routes and their route points.
+          <ul class="list-disc space-y-2 pl-5 text-(--text-primary)">
+            <li>Tricycle colors represent different routes per barangay and are the most common way to travel in the area.</li>
+            <li>Jeepney routes either come from the province or from Iloilo City.</li>
+          </ul>
+        </li>
       </ul>
     </div>
 
