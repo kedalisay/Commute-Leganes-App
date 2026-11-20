@@ -25,6 +25,18 @@ const terminals = terminalsData.features.map((feature) => ({
   name: feature.properties['terminal-name'],
   geometry: feature.geometry,
 }))
+const closestVertexCache = new Map()
+const routeVerticesCache = new Map()
+const transferCache = new Map()
+const routePathCache = new Map()
+
+const getCachedClosestVertex = (coordinates) => {
+  const key = `${coordinates[0]},${coordinates[1]}`
+  if (!closestVertexCache.has(key)) {
+    closestVertexCache.set(key, getClosestVertex(coordinates, pathEdges))
+  }
+  return closestVertexCache.get(key)
+}
 
 const pathToGeoJSONSafe = (path) => {
   if (!path || !Array.isArray(path.path) || path.path.length === 0) return null
@@ -150,21 +162,41 @@ const buildRoute = (routeId, routeName, fromPoint, toPoint, route, terminal, ter
 
 const getRouteTransfer = (fromRoute, toRoute) => {
   let closestTransfer = null
-  for (const fromCoordinate of fromRoute.geometry.coordinates) {
-    const fromVertex = getClosestVertex(fromCoordinate, pathEdges).vertex
-    if (!fromVertex) continue
-    for (const toCoordinate of toRoute.geometry.coordinates) {
-      const toVertex = getClosestVertex(toCoordinate, pathEdges).vertex
-      if (!toVertex) continue
+  const cacheKey = `${publicRoutes.indexOf(fromRoute)}:${publicRoutes.indexOf(toRoute)}`
+  if (transferCache.has(cacheKey)) return transferCache.get(cacheKey)
+
+  const getRouteVertices = (route) => {
+    if (routeVerticesCache.has(route)) return routeVerticesCache.get(route)
+    const vertices = route.geometry.coordinates
+      .map((coordinate) => getCachedClosestVertex(coordinate).vertex)
+      .filter(Boolean)
+      .filter((vertex, index, candidates) => (
+        candidates.findIndex((candidate) => candidate[0] === vertex[0] && candidate[1] === vertex[1]) === index
+      ))
+    routeVerticesCache.set(route, vertices)
+    return vertices
+  }
+
+  const fromVertices = getRouteVertices(fromRoute)
+  const toVertices = getRouteVertices(toRoute)
+
+  for (const fromVertex of fromVertices) {
+    for (const toVertex of toVertices) {
       if (Math.hypot(fromVertex[0] - toVertex[0], fromVertex[1] - toVertex[1]) > 0.01) continue
-      const path = pathfinder.findPath(
-        { type: 'Point', geometry: { type: 'Point', coordinates: fromVertex } },
-        { type: 'Point', geometry: { type: 'Point', coordinates: toVertex } },
-      )
+      const transferKey = `${fromVertex[0]},${fromVertex[1]}:${toVertex[0]},${toVertex[1]}`
+      let path = routePathCache.get(transferKey)
+      if (!routePathCache.has(transferKey)) {
+        path = pathfinder.findPath(
+          { type: 'Point', geometry: { type: 'Point', coordinates: fromVertex } },
+          { type: 'Point', geometry: { type: 'Point', coordinates: toVertex } },
+        )
+        routePathCache.set(transferKey, path)
+      }
       if (!path || (closestTransfer && path.weight >= closestTransfer.path.weight)) continue
       closestTransfer = { fromVertex, toVertex, path }
     }
   }
+  transferCache.set(cacheKey, closestTransfer)
   return closestTransfer
 }
 

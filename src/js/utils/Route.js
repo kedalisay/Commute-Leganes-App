@@ -1,19 +1,49 @@
-const getClosestVertex = (coordinates, pathEdges) => {
-  return pathEdges.reduce(
-    (closest, vertex) => {
-      const coords = Array.isArray(coordinates[0]) ? coordinates[0][0] : coordinates
+const closestVertexIndexes = new WeakMap()
 
+const getClosestVertexIndex = (pathEdges) => {
+  if (closestVertexIndexes.has(pathEdges)) return closestVertexIndexes.get(pathEdges)
+
+  const gridSize = 0.005
+  const grid = new Map()
+  for (const vertex of pathEdges) {
+    const key = `${Math.floor(vertex[0] / gridSize)},${Math.floor(vertex[1] / gridSize)}`
+    if (!grid.has(key)) grid.set(key, [])
+    grid.get(key).push(vertex)
+  }
+
+  const index = { grid, gridSize, cache: new Map() }
+  closestVertexIndexes.set(pathEdges, index)
+  return index
+}
+
+const getClosestVertex = (coordinates, pathEdges) => {
+  const coords = Array.isArray(coordinates[0]) ? coordinates[0][0] : coordinates
+  const cacheKey = `${coords[0]},${coords[1]}`
+  const index = getClosestVertexIndex(pathEdges)
+  if (index.cache.has(cacheKey)) return index.cache.get(cacheKey)
+
+  const lonIndex = Math.floor(coords[0] / index.gridSize)
+  const latIndex = Math.floor(coords[1] / index.gridSize)
+  const candidates = []
+  for (let lonOffset = -2; lonOffset <= 2; lonOffset += 1) {
+    for (let latOffset = -2; latOffset <= 2; latOffset += 1) {
+      const bucket = index.grid.get(`${lonIndex + lonOffset},${latIndex + latOffset}`)
+      if (bucket) candidates.push(...bucket)
+    }
+  }
+  const searchCandidates = candidates.length > 0 ? candidates : pathEdges
+  const closest = searchCandidates.reduce(
+    (result, vertex) => {
       const distance = Math.sqrt(
         Math.pow(vertex[0] - coords[0], 2) +
         Math.pow(vertex[1] - coords[1], 2)
       )
-
-      return distance < closest.distance
-        ? { vertex, distance }
-        : closest
+      return distance < result.distance ? { vertex, distance } : result
     },
-    { vertex: null, distance: Infinity }
+    { vertex: null, distance: Infinity },
   )
+  index.cache.set(cacheKey, closest)
+  return closest
 }
 
 const getVertexCoordinates = (closestVertex) => {
