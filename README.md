@@ -21,9 +21,11 @@ There is no online information on all the existing commute routes within Leganes
 
 ## Data
 
-All data is collected manually by asking tricycle drivers and commuting the routes themselves.
+All data is collected manually by asking tricycle drivers and commuting the routes themselves. See the [public routes](data/leganes_public_routes.json), [terminals](data/leganes_terminals.json), and [locations](data/leganes_locations.json) files for the last updated date.
 
-See the [public routes](data/leganes_public_routes.json) and [locations](data/leganes_locations.json) files for the last updated date.
+[Barangay boundaries](/data/bgysubmuns-municity-603026000.0.01.json) are from James Faeldon's [philippine-json-maps](https://github.com/faeldon/philippines-json-maps).
+
+The [road network](/data/leganes_road_network.json) was exported from [OpenStreetMap](https://www.openstreetmap.org/export), converted to GeoJSON, and manually filtered via [geojson.io](https://geojson.io).
 
 ## Changes
 
