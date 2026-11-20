@@ -20,8 +20,8 @@ const RouteWidget = ({ map, edges, drawerMode, language, setDrawerToDefault, set
       return distance < closest.distance ? { vertex, distance } : closest
     }, { vertex: null, distance: Infinity })
 
-    if (!closestVertex.vertex || closestVertex.distance > 1) {
-      console.error('Coordinates are out of bounds of the road network:', coords)
+    if (!closestVertex.vertex) {
+      console.error('No matching vertex found for coordinates:', coords)
       return false
     }
 
