@@ -43,16 +43,16 @@ const PublicRouteCard = ({route, onClick}) => {
 
   return html`
     <input class="sr-only relative" type="checkbox" name="public-route" id=${inputId} value=${route.name} />
-    <label for=${inputId} class="flex flex-col gap-2 p-4 bg-white border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
+    <label for=${inputId} class="flex flex-col gap-2 p-4 bg-(--bg-surface) border-[3px] border-(--border-default) rounded-3xl text-(--text-secondary) w-full cursor-pointer" onClick=${onClick}>
       <div class="flex flex-row flex-nowrap gap-2 w-full">
         <div class="basis-2/3 sm:basis-5/6 flex flex-col gap-1 items-start">
           <h3 class="text-xl font-bold font-display text-left inline-block">${route.name}</h3>
           <data value="${route.total_distance}"> 
-            <${Distance} classNames="mr-2" width="30" height="30" foregroundFill="var(--color-gray-700)" />
+            <${Distance} classNames="mr-2" width="30" height="30" foregroundFill="var(--text-secondary)" />
             ${route.total_distance} kilometer${route.total_distance !== 1 ? 's' : ''}
           </data>
           <data value="${route.direction}">
-            <${TwoDirections} width="30" height="30" foregroundFill="var(--color-gray-700)" />
+            <${TwoDirections} width="30" height="30" foregroundFill="var(--text-secondary)" />
             ${route.direction[0].toUpperCase() + route.direction.slice(1)}
           </data>
           <ol class="list-public-route list-inside mt-4">

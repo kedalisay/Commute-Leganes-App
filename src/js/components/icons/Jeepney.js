@@ -2,7 +2,7 @@ import html from "../../html";
 
 const Jeepney = ({width, height, backgroundFill, foregroundFill = '#ffffff'}) => {
   return html`
-  <svg width="${width}" xmlns="http://www.w3.org/2000/svg" height="${height}" id="screenshot-25ef516c-9ebd-808d-8008-cbeb77a4e28a" viewBox="1075 641 ${width} ${height}" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
+  <svg width="${width}" xmlns="http://www.w3.org/2000/svg" height="${height}" id="screenshot-25ef516c-9ebd-808d-8008-cbeb77a4e28a" viewBox="1075 641 40 40" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
   <g id="shape-25ef516c-9ebd-808d-8008-cbeb77a4e28a" rx="0" ry="0">
     <g id="shape-25ef516c-9ebd-808d-8008-cbeb77a4e28b">
       <g class="fills" id="fills-25ef516c-9ebd-808d-8008-cbeb77a4e28b">

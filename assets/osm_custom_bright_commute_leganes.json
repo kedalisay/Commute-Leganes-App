@@ -16,7 +16,7 @@
     {
       "id": "background",
       "type": "background",
-      "paint": {"background-color": "#f8f4f0"}
+      "paint": {"background-color": "#F8F8F8"}
     },
     {
       "id": "landcover-glacier",
@@ -428,7 +428,7 @@
       "source": "openmaptiles",
       "source-layer": "building",
       "paint": {
-        "fill-color": "#f2eae2",
+        "fill-color": "#EAEAEA",
         "fill-opacity": ["interpolate", ["linear"], ["zoom"], 13, 0, 16, 1],
         "fill-outline-color": "#dfdbd7",
         "fill-translate": [

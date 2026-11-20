@@ -188,11 +188,49 @@
   --typography-data-grid:  var(--font-weight-medium) var(--font-size-sm)/var(--line-height-snug) var(--font-family-body);
 }
 
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg-canvas: var(--color-gray-950);
+  --bg-surface: var(--color-gray-850);
+  --bg-subtle: var(--color-gray-700);
+  --text-primary: var(--color-gray-100);
+  --text-secondary: var(--color-gray-400);
+  --brand-primary: var(--color-blue-400);
+  --brand-secondary: var(--color-red-400);
+  --border-default: var(--color-gray-700);
+  --border-focus: var(--color-blue-400);
+}
+
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+@keyframes route-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.focused {
+  outline: 3px solid var(--focus-indicator, var(--border-focus));
+  outline-offset: 3px;
+}
+
+html, 
+body {
+  height: 100dvh;
+}
+
 body {
   max-width: 768px;
   margin: 0 auto;
   background-color: var(--bg-canvas);
   overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+main {
+  height: 100%;
 }
 
 #map {
@@ -200,7 +238,15 @@ body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
+}
+
+#fromLocationInput {
+  outline-offset: 3px;
+}
+
+#toLocationInput {
+  outline-offset: 3px;
 }
 
 #settings fieldset > input[type="radio"]:checked + label {
@@ -230,6 +276,25 @@ input[type="text"]:focus-visible,
 #routes-form input[type="checkbox"]:checked + label {
   color: var(--text-primary);
   border-color: var(--border-focus);
+}
+
+.route-loading-dots {
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  animation: route-loading-spin 1.1s linear infinite;
+}
+
+.route-loading-dots span {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.32rem;
+  height: 0.32rem;
+  border-radius: 9999px;
+  background: var(--brand-primary);
+  transform: translate(-50%, -50%) rotate(var(--angle)) translateY(-0.95rem);
+  opacity: var(--opacity);
 }
 
 .list-public-route > li::before {

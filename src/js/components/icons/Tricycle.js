@@ -2,7 +2,7 @@ import html from "../../html";
 
 const Tricycle = ({width, height, backgroundFill, foregroundFill = '#ffffff'}) => {
   return html`
-  <svg width="${width}" xmlns="http://www.w3.org/2000/svg" height="${height}" id="screenshot-3a1341ad-8328-80f0-8008-c1ccb206151a" viewBox="994.116 640.075 ${width} ${height}" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
+  <svg width="${width}" xmlns="http://www.w3.org/2000/svg" height="${height}" id="screenshot-3a1341ad-8328-80f0-8008-c1ccb206151a" viewBox="994.116 640.075 40 40" style="-webkit-print-color-adjust::exact" xmlns:xlink="http://www.w3.org/1999/xlink" fill="none" version="1.1">
     <g id="shape-3a1341ad-8328-80f0-8008-c1ccb206151a" rx="0" ry="0">
       <g id="shape-3a1341ad-8328-80f0-8008-c1ccb206151b">
         <g class="fills" id="fills-3a1341ad-8328-80f0-8008-c1ccb206151b">

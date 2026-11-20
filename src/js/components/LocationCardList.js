@@ -5,9 +5,10 @@ import ChooseOnMapButton from './ChooseOnMapButton.js'
 import LocationCard from './LocationCard.js'
 
 import { getGeolocation } from '../utils/Geolocation.js'
-import { addMarkerToMap, removeMarkerFromMap, keepMarkerOnMapCentered } from '../utils/MapLibreGL.js'
+import { addMarkerToMap, removeMarkerFromMap, chooseLocationOnMap } from '../utils/MapLibreGL.js'
+import { getTranslation } from '../i18n.js'
 
-const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation }) => {  
+const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarker, stopMarkerCentering, locations, setDrawerToLocationActions, openDrawer, closeDrawer, deviceLocation, setDeviceLocation, isFromLocationFocused, setFromLocation, isToLocationFocused, setToLocation, language }) => {  
   const useCurrentLocation = async () => {
     const coords = await getGeolocation()
     if (!coords) {
@@ -17,19 +18,19 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
     }
 
     if (deviceLocation === null 
-      || coords['lat'] !== deviceLocation['lat'] 
-      || coords['lng'] !== deviceLocation['lng']) {
+      || coords[1] !== deviceLocation[1] 
+      || coords[0] !== deviceLocation[0]) {
       setDeviceLocation(coords)
     }
 
     if (isFromLocationFocused) {
-      setFromLocation(coords)
+      setFromLocation({ name: `${coords[1]}, ${coords[0]}`, coords: coords })
       if (fromMarker) {
         removeMarkerFromMap(fromMarker)
       }
       setFromMarker(addMarkerToMap(map, coords, isFromLocationFocused))
     } else if (isToLocationFocused) {
-      setToLocation(coords)
+      setToLocation({ name: `${coords[1]}, ${coords[0]}`, coords: coords })
       if (toMarker) {
         removeMarkerFromMap(toMarker)
       }
@@ -37,60 +38,57 @@ const LocationCardList = ({ map, fromMarker, setFromMarker, toMarker, setToMarke
     }
 
     map.flyTo({
-      center: [coords['lng'], coords['lat']],
+      center: [coords[0], coords[1]],
     })
     
     closeDrawer()
   }
 
   const chooseOnMap = () => {
-    const coords = map.getCenter()
-    const marker = addMarkerToMap(map, coords, isFromLocationFocused)
-    setDrawerToLocationActions()
+    chooseLocationOnMap({
+      map,
+      isFromLocation: isFromLocationFocused,
+      fromMarker,
+      setFromMarker,
+      toMarker,
+      setToMarker,
+      stopMarkerCentering,
+      setDrawerToLocationActions,
+      openDrawer: openDrawer,
+    })
+  }
+
+  const handleLocationClick = (location) => {
+    const marker = addMarkerToMap(map, location.coords, isFromLocationFocused)
+    map.flyTo({
+      center: location.coords,
+    })
 
     if (isFromLocationFocused) {
+      setFromLocation(location)
       if (fromMarker) removeMarkerFromMap(fromMarker)
       setFromMarker(marker)
-      stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
+      closeDrawer()
       return
     } 
 
+    setToLocation(location)
     if (toMarker) removeMarkerFromMap(toMarker)
     setToMarker(marker)
-    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
+    closeDrawer()
   }
 
   return html`
     <section aria-labelledby="locations-heading" class="pb-8 overflow-y-auto max-h-full">
-      <h2 id="locations-heading" class="sr-only">Choose a location</h2>
+      <h2 id="locations-heading" class="sr-only">${getTranslation(language, 'chooseLocation')}</h2>
       <form id="locations-form">
         <fieldset class="flex flex-col gap-1 w-full">
-        <${UseCurrentLocationButton} onClick=${() => useCurrentLocation()} />
-        <${ChooseOnMapButton} onClick=${chooseOnMap}/>
+        <${UseCurrentLocationButton} language=${language} onClick=${() => useCurrentLocation()} />
+        <${ChooseOnMapButton} language=${language} onClick=${chooseOnMap}/>
         ${locations.map((location) => 
-          html`<${LocationCard} location=${location} onClick=${
-            () => {
-              const coords = { lat: location.coordinates[1], lng: location.coordinates[0] }
-              const coordsString = `${coords['lat']}, ${coords['lng']}`
-              const marker = addMarkerToMap(map, coords, isFromLocationFocused)
-              map.flyTo({
-                center: location.coordinates,
-              })
-
-              if (isFromLocationFocused) {
-                setFromLocation(coordsString)
-                if (fromMarker) removeMarkerFromMap(fromMarker)
-                setFromMarker(marker)
-                closeDrawer()
-                return
-              } 
-
-              setToLocation(coordsString)
-              if (toMarker) removeMarkerFromMap(toMarker)
-              setToMarker(marker)
-              closeDrawer()
-              }
-            } 
+          html`<${LocationCard} 
+          location=${location} 
+          onClick=${() => handleLocationClick(location)} 
           />`)}
         </fieldset>
       </form>
