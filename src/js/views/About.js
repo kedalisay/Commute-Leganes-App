@@ -2,12 +2,12 @@ import html from '../html.js'
 
 import BackButton from '../components/BackButton.js'
 
-const About = ({ viewMode, setToSettingsView }) => html`
+const About = ({ viewMode, setToSettingsView, theme }) => html`
   <section aria-hidden=${viewMode !== 'about' ? true : false} inert=${viewMode !== 'about' ? true : false} class="z-3 absolute top-0 ${ viewMode !== 'about' ? 'left-[100vw]' : 'left-0'} bg-(--bg-canvas) flex flex-col w-full h-full max-h-dvh overflow-y-auto p-4 transition-all duration-300 ease-in-out">
     <${BackButton} onClick=${setToSettingsView} label="Close about" />
     <div>
       <h2 class="mt-15 text-2xl font-bold font-display">About Commute Leganes</h2>
-      <img src="/assets/images/commute_leganes_full_logo_620x200_final.png" alt="" class="my-4 w-80" />
+      <img src="/assets/images/commute_leganes_full_logo_2788x900${theme === 'dark' ? '_dark' : ''}.png" alt="" class="my-4 w-80" />
       <p class="mt-2 text-(--text-secondary)">
         A community-focused commute guide for getting around Leganes, Iloilo.
       </p>

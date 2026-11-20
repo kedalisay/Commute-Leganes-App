@@ -130,7 +130,7 @@ const Settings = ({
         <small>Copyright © 2026. All rights reserved.</small>
       </div>
     </section>
-    <${About} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
+    <${About} viewMode=${viewMode} setToSettingsView=${setToSettingsView} theme=${theme} />
     <${TermsOfService} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
     <${PrivacyPolicy} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />
     <${ReportIssue} viewMode=${viewMode} setToSettingsView=${setToSettingsView} />

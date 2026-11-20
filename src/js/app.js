@@ -621,7 +621,7 @@ const App = () => {
     const fares = Array.isArray(route.properties['route-fare'])
       ? route.properties['route-fare']
       : []
-    let fare = fares.find((candidate) => candidate.type !== 'per succeeding kilometer') || fares[0]
+    const fare = fares.find((candidate) => candidate.type !== 'per succeeding kilometer') || fares[0]
     if (!fare) return null
 
     const walkingDistance = hopOn.path.weight + dropoff.path.weight
@@ -631,7 +631,7 @@ const App = () => {
     if (fare.mode === 'jeepney' && commuteDistance > 4
       && fare.type === 'first 4 kilometers'
       && succeedingFare) {
-      fare = { ...fare, amount: fare.amount + Math.ceil(commuteDistance - 4) * succeedingFare.amount }
+      fare.amount += Math.ceil(commuteDistance - 4) * succeedingFare.amount
     }
 
     return {
@@ -1208,7 +1208,7 @@ const App = () => {
 
   return html`
     <main class="relative ${drawerMode === 'settings' ? 'z-1' : ''}">
-      <${Loading} isLoading=${isLoading} language=${draftSettings.language} />
+      <${Loading} isLoading=${isLoading} language=${draftSettings.language} theme=${draftSettings.theme}/>
       <h1 class="sr-only">Commute Leganes</h1>
       <${RouteWidget} 
         map=${MAP}
