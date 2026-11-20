@@ -131,7 +131,7 @@ const buildRoute = (index, routeId, routeName, fromPoint, toPoint, route, termin
     public: false,
     total_distance: (walkingDistance + commuteDistance).toPrecision(2),
     total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60),
-    total_transfers: 1,
+    total_transfers: 0,
     fare: fare.amount,
     mode: fare.mode,
     layers: {
@@ -256,7 +256,7 @@ const buildRouteChain = (routeSequence, fromPoint, toPoint, getTransfer) => {
     public: false,
     total_distance: (walkingDistance + commuteDistance).toPrecision(2),
     total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60),
-    total_transfers: routeSequence.length,
+    total_transfers: routeSequence.length - 1,
     fare,
     mode: modes.join(', '),
     segments,
@@ -312,8 +312,6 @@ const findRoutes = (fromLocation, toLocation) => {
     const closestVertex = getClosestVertex(terminal.geometry.coordinates, pathEdges)
     return closestVertex.vertex ? [{ route, terminal, terminalIsHopOn, closestVertex }] : []
   })
-
-  console.log(closestTerminals)
 
   const directRoutes = closestTerminals.map(({ route, terminal, terminalIsHopOn }, index) => buildRoute(
     index,
