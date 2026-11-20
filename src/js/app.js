@@ -572,10 +572,6 @@ const App = () => {
     const terminalCoordinates = terminal?.geometry?.coordinates
     if (!Array.isArray(terminalCoordinates)) return null
 
-    if (Array.isArray(route.properties['route-fare']) && route.properties['route-fare'][index] && route.properties['route-fare'][index].mode === 'jeepney' && route.properties['route-fare'][index].type === 'per succeeding kilometer') {
-      return null
-    }
-
     const hopOnCoordinates = terminalIsHopOn
       ? [terminalCoordinates]
       : route.geometry.coordinates
@@ -625,17 +621,17 @@ const App = () => {
     const fares = Array.isArray(route.properties['route-fare'])
       ? route.properties['route-fare']
       : []
-    const fare = fares[index] || fares[0]
+    let fare = fares.find((candidate) => candidate.type !== 'per succeeding kilometer') || fares[0]
     if (!fare) return null
 
     const walkingDistance = hopOn.path.weight + dropoff.path.weight
     const commuteDistance = commutePath.weight
+    const succeedingFare = fares.find((candidate) => candidate.type === 'per succeeding kilometer')
 
-    if (fare.mode === 'jeepney' && commuteDistance > 4) {
-      if (fare.type === 'first 4 kilometers' && fares[index + 1]?.type === 'per succeeding kilometer') {
-        const extraFare = Math.ceil(commuteDistance - 4) * fares[index + 1]['amount']
-        fare.amount += extraFare
-      }
+    if (fare.mode === 'jeepney' && commuteDistance > 4
+      && fare.type === 'first 4 kilometers'
+      && succeedingFare) {
+      fare = { ...fare, amount: fare.amount + Math.ceil(commuteDistance - 4) * succeedingFare.amount }
     }
 
     return {
