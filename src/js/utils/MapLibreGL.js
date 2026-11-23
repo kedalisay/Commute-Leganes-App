@@ -63,9 +63,13 @@ const chooseLocationOnMap = ({
   if (stopMarkerCentering?.current) {
     stopMarkerCentering.current()
     stopMarkerCentering.current = null
-  } else {
-    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
   } 
+
+  if (stopMarkerCentering) {
+    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
+  } else {
+    keepMarkerOnMapCentered(map, marker)
+  }
 
   setDrawerToLocationActions()
   openDrawer()
