@@ -1,5 +1,5 @@
 import { Map, getVersion, setWorkerUrl } from 'maplibre-gl';
-import PathFinder, { pathToGeoJSON }  from "geojson-path-finder";
+import PathFinder  from "geojson-path-finder";
 
 import { useEffect, useState, useRef } from 'https://esm.sh/preact/hooks'
 
