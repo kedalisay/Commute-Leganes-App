@@ -4,8 +4,8 @@
   "description": "Helping you find your way around Leganes, Iloilo.",
   "main": "main.js",
   "scripts": {
-    "tailwind": "npx tailwindcss -i src/css/input.css -o dist/tailwind.css --watch",
-    "esbuild": "npx esbuild src/js/main.js --outfile=dist/output.js --format=esm --bundle --watch",
+    "tailwind":"npx tailwindcss -i src/css/input.css -o dist/tailwind.css --watch",
+    "dev": "node dev.mjs",
     "build:tailwind": "npx @tailwindcss/cli -i src/css/input.css -o dist/tailwind.css --minify",
     "build:esbuild": "node build.mjs",
     "build": "npm-run-all --parallel build:*"
