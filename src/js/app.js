@@ -17,7 +17,7 @@ import LocationCardList from './components/LocationCardList.js'
 import RouteCardList from './components/RouteCardList.js'
 import RouteLoading from './components/RouteLoading.js'
 
-import { removeMarkerFromMap, addRouteLayers, removeRouteLayers, setRouteLayerVisibility } from './utils/MapLibreGL.js';
+import { addMapIcons, removeMarkerFromMap, addRouteLayers, removeRouteLayers, setRouteLayerVisibility } from './utils/MapLibreGL.js';
 import { getLanguageCode, getTranslation } from './i18n.js';
 
 setWorkerUrl(new URL(`/src/js/maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
@@ -63,6 +63,10 @@ const BARANGAY_COLORS = {
 
 const PUBLIC_ROUTES = {}
 PUBLIC_ROUTES.geojson = null
+
+MAP.on('style.load', () => {
+  addMapIcons(MAP)
+})
 
 const hydrateAppMapLayers = (map) => {
   if (PUBLIC_ROUTES.geojson && !map.getSource('public-routes')) {
@@ -585,6 +589,7 @@ const App = () => {
       CURRENT_MAP_THEME = theme
       MAP.setStyle(styleUrl)
       MAP.once('style.load', () => {
+        void addGateIcon(MAP)
         hydrateAppMapLayers(MAP)
         routesRef.current.forEach((route) => {
           if (!route.layers) return

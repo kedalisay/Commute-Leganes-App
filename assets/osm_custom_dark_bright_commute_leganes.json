@@ -2525,10 +2525,16 @@
       "layout": {
         "icon-image": [
           "match",
-          ["get", "subclass"],
-          ["florist", "furniture"],
-          ["get", "subclass"],
-          ["get", "class"]
+          ["get", "class"],
+          ["basin", "office"],
+          "",
+          [
+            "match",
+            ["get", "subclass"],
+            ["florist", "furniture"],
+            ["get", "subclass"],
+            ["get", "class"]
+          ]
         ],
         "text-anchor": "top",
         "text-field": [
@@ -2564,10 +2570,16 @@
       "layout": {
         "icon-image": [
           "match",
-          ["get", "subclass"],
-          ["florist", "furniture"],
-          ["get", "subclass"],
-          ["get", "class"]
+          ["get", "class"],
+          ["basin", "office"],
+          "",
+          [
+            "match",
+            ["get", "subclass"],
+            ["florist", "furniture"],
+            ["get", "subclass"],
+            ["get", "class"]
+          ]
         ],
         "text-anchor": "top",
         "text-field": [
@@ -2603,10 +2615,16 @@
       "layout": {
         "icon-image": [
           "match",
-          ["get", "subclass"],
-          ["florist", "furniture"],
-          ["get", "subclass"],
-          ["get", "class"]
+          ["get", "class"],
+          ["basin", "office"],
+          "",
+          [
+            "match",
+            ["get", "subclass"],
+            ["florist", "furniture"],
+            ["get", "subclass"],
+            ["get", "class"]
+          ]
         ],
         "text-anchor": "top",
         "text-field": [
@@ -2761,6 +2779,7 @@
       "minzoom": 8,
       "filter": [
         "all",
+        ["has", "ref_length"],
         ["<=", ["get", "ref_length"], 6],
         [
           "match",
@@ -2797,6 +2816,7 @@
       "minzoom": 7,
       "filter": [
         "all",
+        ["has", "ref_length"],
         ["<=", ["get", "ref_length"], 6],
         [
           "match",
@@ -2805,6 +2825,7 @@
           true,
           false
         ],
+        ["has", "network"],
         ["match", ["get", "network"], ["us-interstate"], true, false]
       ],
       "layout": {
@@ -2832,6 +2853,7 @@
       "minzoom": 9,
       "filter": [
         "all",
+        ["has", "ref_length"],
         ["<=", ["get", "ref_length"], 6],
         [
           "match",
@@ -2840,6 +2862,7 @@
           true,
           false
         ],
+        ["has", "network"],
         ["match", ["get", "network"], ["us-highway", "us-state"], true, false]
       ],
       "layout": {
