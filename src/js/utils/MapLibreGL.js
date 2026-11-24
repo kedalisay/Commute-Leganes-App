@@ -326,7 +326,7 @@ const addMapIcons = (map) => {
         const gateIcon = new Image(10, 10)
         gateIcon.onload = () => resolve(gateIcon)
         gateIcon.onerror = () => reject(new Error('Unable to load Barrier_gate.svg'))
-        gateIcon.src = '/assets/icons/Barrier_gate.svg'
+        gateIcon.src = 'assets/icons/Barrier_gate.svg'
       })
       if (!map.hasImage('gate')) map.addImage('gate', gateIcon)
     } catch (error) {
@@ -342,7 +342,7 @@ const addMapIcons = (map) => {
         const atmIcon = new Image(15, 15)
         atmIcon.onload = () => resolve(atmIcon)
         atmIcon.onerror = () => reject(new Error('Unable to load Atm-14.svg'))
-        atmIcon.src = '/assets/icons/Atm-14.svg'
+        atmIcon.src = 'assets/icons/Atm-14.svg'
       })
       if (!map.hasImage('atm')) map.addImage('atm', atmIcon)
     } catch (error) {
@@ -358,7 +358,7 @@ const addMapIcons = (map) => {
         const swimmingPoolIcon = new Image(15, 15)
         swimmingPoolIcon.onload = () => resolve(swimmingPoolIcon)
         swimmingPoolIcon.onerror = () => reject(new Error('Unable to load Swimming-16.svg'))
-        swimmingPoolIcon.src = '/assets/icons/Swimming-16.svg'
+        swimmingPoolIcon.src = 'assets/icons/Swimming-16.svg'
       })
       if (!map.hasImage('swimming_pool')) map.addImage('swimming_pool', swimmingPoolIcon)
     } catch (error) {
@@ -374,7 +374,7 @@ const addMapIcons = (map) => {
         const athleticsIcon = new Image(15, 15)
         athleticsIcon.onload = () => resolve(athleticsIcon)
         athleticsIcon.onerror = () => reject(new Error('Unable to load Fitness.svg'))
-        athleticsIcon.src = '/assets/icons/Fitness.svg'
+        athleticsIcon.src = 'assets/icons/Fitness.svg'
       })
       if (!map.hasImage('athletics')) map.addImage('athletics', athleticsIcon)
     } catch (error) {

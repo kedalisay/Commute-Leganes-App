@@ -1,9 +1,9 @@
 import PathFinder, { pathToGeoJSON } from 'geojson-path-finder'
 
-import roadNetwork from '../../data/leganes_road_network.json'
-import publicRoutesData from '../../data/leganes_public_routes.json'
-import barangaysData from '../../data/bgysubmuns-municity-603026000.0.01.json'
-import terminalsData from '../../data/leganes_terminals.json'
+import roadNetwork from '../../dist/data/leganes_road_network.json'
+import publicRoutesData from '../../dist/data/leganes_public_routes.json'
+import barangaysData from '../../dist/data/bgysubmuns-municity-603026000.0.01.json'
+import terminalsData from '../../dist/data/leganes_terminals.json'
 
 import { getBarangay } from './utils/Barangay.js'
 import { getCoordinates, areValidCoordinates } from './utils/Geolocation.js'

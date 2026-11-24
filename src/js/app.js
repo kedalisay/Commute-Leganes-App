@@ -3,7 +3,7 @@ import PathFinder  from "geojson-path-finder";
 
 import { useEffect, useState, useRef } from 'https://esm.sh/preact/hooks'
 
-import leganes_road_network_geojson from '../../data/leganes_road_network.json'
+import leganes_road_network_geojson from '../../dist/data/leganes_road_network.json'
 
 import html from './html.js'
 
@@ -28,8 +28,8 @@ let CURRENT_MAP_THEME = INITIAL_THEME
 const MAP = new Map({
   container: 'map',
   style: INITIAL_THEME === 'dark'
-    ? '/assets/osm_custom_dark_bright_commute_leganes.json'
-    : '/assets/osm_custom_bright_commute_leganes.json',
+    ? 'assets/osm_custom_dark_bright_commute_leganes.json'
+    : 'assets/osm_custom_bright_commute_leganes.json',
 });
 
 const PATHFINDER = new PathFinder(leganes_road_network_geojson, { tolerance: 1e-5 });
@@ -138,11 +138,11 @@ const hydrateAppMapLayers = (map) => {
 const MAP_DATA_READY = new Promise((resolve, reject) => {
   MAP.on('load', async () => {
     try {
-      const publicRoutesData = await (await fetch('/data/leganes_public_routes.json')).json()
+      const publicRoutesData = await (await fetch('data/leganes_public_routes.json')).json()
       PUBLIC_ROUTES.geojson = publicRoutesData
       PUBLIC_ROUTES.features = publicRoutesData.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
 
-      const barangaysData = await (await fetch('/data/bgysubmuns-municity-603026000.0.01.json')).json()
+      const barangaysData = await (await fetch('data/bgysubmuns-municity-603026000.0.01.json')).json()
       STATIC_BARANGAYS.features = barangaysData.features.map((feature) => {
         const barangayName = feature.properties.adm4_en
         const barangayGeometry = feature.geometry
@@ -157,7 +157,7 @@ const MAP_DATA_READY = new Promise((resolve, reject) => {
         }
       })
 
-      const terminalsData = await (await fetch('/data/leganes_terminals.json')).json()
+      const terminalsData = await (await fetch('data/leganes_terminals.json')).json()
       STATIC_TERMINALS.geojson = terminalsData
       STATIC_TERMINALS.features = terminalsData.features.map((feature) => {
         const terminalName = feature.properties['terminal-name']
@@ -169,7 +169,7 @@ const MAP_DATA_READY = new Promise((resolve, reject) => {
         }
       })
 
-      const locationsData = await (await fetch('/data/leganes_locations.json')).json()
+      const locationsData = await (await fetch('data/leganes_locations.json')).json()
       STATIC_LOCATIONS.features = locationsData.features.map((feature) => {
         const locationName = feature.properties['location-name']
         const locationCoordinates = feature.geometry.coordinates
