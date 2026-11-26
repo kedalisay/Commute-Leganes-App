@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## History
 
 - [[0.2.0]-beta.1](#020-beta1)
+- [[0.1.1]-beta.1](#011-beta1)
 - [[0.1.0]-beta.1](#010-beta1)
 - [[0.1.0]-alpha.1](#010-alpha1)
 
@@ -21,6 +22,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Desktop optimization
 
 ## Released
+
+### [0.1.1]-beta.1
+
+#### Refactored
+
+- Build for both production and development environments
+
+#### Fixed
+
+- Overflow scrolling on mobile
+- Width overflowing viewport on mobile
+- Choose on map location icon not centered
 
 ### [0.1.0]-beta.1
 

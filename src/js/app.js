@@ -1,9 +1,9 @@
 import { Map, getVersion, setWorkerUrl } from 'maplibre-gl';
-import PathFinder, { pathToGeoJSON }  from "geojson-path-finder";
+import PathFinder  from "geojson-path-finder";
 
 import { useEffect, useState, useRef } from 'https://esm.sh/preact/hooks'
 
-import leganes_road_network_geojson from '../../data/leganes_road_network.json'
+import leganes_road_network_geojson from '../../dist/data/leganes_road_network.json'
 
 import html from './html.js'
 
@@ -17,10 +17,7 @@ import LocationCardList from './components/LocationCardList.js'
 import RouteCardList from './components/RouteCardList.js'
 import RouteLoading from './components/RouteLoading.js'
 
-import { removeMarkerFromMap, addRouteLayers, removeRouteLayers, setRouteLayerVisibility } from './utils/MapLibreGL.js';
-import { getCoordinates, areValidCoordinates } from './utils/Geolocation.js';
-import { getBarangay } from './utils/Barangay.js';
-import { getRouteForBarangay, getClosestVertex, getVertexCoordinates, getTerminalPoints, getReachableVertices } from './utils/Route.js';
+import { addMapIcons, removeMarkerFromMap, addRouteLayers, removeRouteLayers, setRouteLayerVisibility } from './utils/MapLibreGL.js';
 import { getLanguageCode, getTranslation } from './i18n.js';
 
 setWorkerUrl(new URL(`/src/js/maplibre-gl-worker.mjs?v=${getVersion()}`, import.meta.url).toString());
@@ -31,8 +28,8 @@ let CURRENT_MAP_THEME = INITIAL_THEME
 const MAP = new Map({
   container: 'map',
   style: INITIAL_THEME === 'dark'
-    ? '/assets/osm_custom_dark_bright_commute_leganes.json'
-    : '/assets/osm_custom_bright_commute_leganes.json',
+    ? 'assets/osm_custom_dark_bright_commute_leganes.json'
+    : 'assets/osm_custom_bright_commute_leganes.json',
 });
 
 const PATHFINDER = new PathFinder(leganes_road_network_geojson, { tolerance: 1e-5 });
@@ -66,6 +63,10 @@ const BARANGAY_COLORS = {
 
 const PUBLIC_ROUTES = {}
 PUBLIC_ROUTES.geojson = null
+
+MAP.on('style.load', () => {
+  addMapIcons(MAP)
+})
 
 const hydrateAppMapLayers = (map) => {
   if (PUBLIC_ROUTES.geojson && !map.getSource('public-routes')) {
@@ -137,11 +138,11 @@ const hydrateAppMapLayers = (map) => {
 const MAP_DATA_READY = new Promise((resolve, reject) => {
   MAP.on('load', async () => {
     try {
-      const publicRoutesData = await (await fetch('/data/leganes_public_routes.json')).json()
+      const publicRoutesData = await (await fetch('data/leganes_public_routes.json')).json()
       PUBLIC_ROUTES.geojson = publicRoutesData
       PUBLIC_ROUTES.features = publicRoutesData.features.sort((a, b) => a.properties['route-name'].localeCompare(b.properties['route-name'])).filter((feature) => feature.properties['public'] === true)
 
-      const barangaysData = await (await fetch('/data/bgysubmuns-municity-603026000.0.01.json')).json()
+      const barangaysData = await (await fetch('data/bgysubmuns-municity-603026000.0.01.json')).json()
       STATIC_BARANGAYS.features = barangaysData.features.map((feature) => {
         const barangayName = feature.properties.adm4_en
         const barangayGeometry = feature.geometry
@@ -156,7 +157,7 @@ const MAP_DATA_READY = new Promise((resolve, reject) => {
         }
       })
 
-      const terminalsData = await (await fetch('/data/leganes_terminals.json')).json()
+      const terminalsData = await (await fetch('data/leganes_terminals.json')).json()
       STATIC_TERMINALS.geojson = terminalsData
       STATIC_TERMINALS.features = terminalsData.features.map((feature) => {
         const terminalName = feature.properties['terminal-name']
@@ -168,7 +169,7 @@ const MAP_DATA_READY = new Promise((resolve, reject) => {
         }
       })
 
-      const locationsData = await (await fetch('/data/leganes_locations.json')).json()
+      const locationsData = await (await fetch('data/leganes_locations.json')).json()
       STATIC_LOCATIONS.features = locationsData.features.map((feature) => {
         const locationName = feature.properties['location-name']
         const locationCoordinates = feature.geometry.coordinates
@@ -473,546 +474,6 @@ const App = () => {
     closeDrawer()
   }
 
-  const pathToGeoJSONSafe = (path) => {
-    if (!path || !Array.isArray(path.path) || path.path.length === 0) {
-      return null
-    }
-
-    if (path.path.length === 1) {
-      return {
-        type: 'Feature',
-        properties: {
-          weight: path.weight,
-          edgeDatas: path.edgeDatas,
-        },
-        geometry: {
-          type: 'LineString',
-          coordinates: [path.path[0], path.path[0]],
-        },
-      }
-    }
-
-    return pathToGeoJSON(path)
-  }
-
-  const getCoordinateDistance = (from, to) => {
-    const latitude = (to[1] - from[1]) * Math.PI / 180
-    const longitude = (to[0] - from[0]) * Math.PI / 180
-    const fromLatitude = from[1] * Math.PI / 180
-    const toLatitude = to[1] * Math.PI / 180
-    const haversine = Math.sin(latitude / 2) ** 2
-      + Math.sin(longitude / 2) ** 2 * Math.cos(fromLatitude) * Math.cos(toLatitude)
-
-    return 6371 * 2 * Math.atan2(Math.sqrt(haversine), Math.sqrt(1 - haversine))
-  }
-
-  const getRoutePath = (fromVertex, toVertex, routeCoordinates) => {
-    if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) {
-      return null
-    }
-
-    const getClosestRouteIndex = (vertex) => routeCoordinates.reduce(
-      (closestIndex, coordinate, index) => (
-        Math.hypot(
-          coordinate[0] - vertex[0],
-          coordinate[1] - vertex[1]
-        ) < Math.hypot(
-          routeCoordinates[closestIndex][0] - vertex[0],
-          routeCoordinates[closestIndex][1] - vertex[1]
-        )
-          ? index
-          : closestIndex
-      ),
-      0
-    )
-
-    const fromIndex = getClosestRouteIndex(fromVertex)
-    const toIndex = getClosestRouteIndex(toVertex)
-    const routePath = routeCoordinates
-      .slice(Math.min(fromIndex, toIndex), Math.max(fromIndex, toIndex) + 1)
-
-    if (fromIndex > toIndex) routePath.reverse()
-
-    routePath.unshift(fromVertex)
-    routePath.push(toVertex)
-
-    return {
-      path: routePath,
-      weight: routePath.reduce(
-        (total, coordinate, index) => index === 0
-          ? total
-          : total + getCoordinateDistance(routePath[index - 1], coordinate),
-        0
-      ),
-      edgeDatas: [],
-    }
-  }
-
-  const getNearestReachableVertex = (coordinates, targetPoint, pathEdges, pathfinder, direction = 'to') => {
-    const targetCoordinates = targetPoint.geometry.coordinates
-
-    return getReachableVertices(
-      coordinates,
-      targetPoint,
-      pathEdges,
-      pathfinder,
-      direction
-    ).sort((a, b) => (
-      Math.hypot(
-        a.vertex[0] - targetCoordinates[0],
-        a.vertex[1] - targetCoordinates[1]
-      ) - Math.hypot(
-        b.vertex[0] - targetCoordinates[0],
-        b.vertex[1] - targetCoordinates[1]
-      )
-    ))[0] || null
-  }
-
-  const buildRoute = (index, routeId, routeName, fromPoint, toPoint, route, terminal, terminalIsHopOn, pathfinder, pathEdges) => {
-    const terminalCoordinates = terminal?.geometry?.coordinates
-    if (!Array.isArray(terminalCoordinates)) return null
-
-    const hopOnCoordinates = terminalIsHopOn
-      ? [terminalCoordinates]
-      : route.geometry.coordinates
-    const hopOffCoordinates = terminalIsHopOn
-      ? route.geometry.coordinates
-      : [terminalCoordinates]
-
-    const hopOn = getNearestReachableVertex(
-      hopOnCoordinates,
-      fromPoint,
-      pathEdges,
-      pathfinder
-    )
-
-    const dropoff = getNearestReachableVertex(
-      hopOffCoordinates,
-      toPoint,
-      pathEdges,
-      pathfinder,
-      'from'
-    )
-
-    const routeCoordinates = route.geometry?.coordinates
-    if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) return null
-
-    if (!hopOn || !dropoff) return null
-
-    const fromHopOnPoint = {
-      type: 'Point',
-      geometry: { type: 'Point', coordinates: hopOn.vertex },
-    }
-    const toDropoffPoint = {
-      type: 'Point',
-      geometry: { type: 'Point', coordinates: dropoff.vertex },
-    }
-    const commutePath = getRoutePath(
-      hopOn.vertex,
-      dropoff.vertex,
-      routeCoordinates
-    )
-
-    const geojsonPathToHopOn = pathToGeoJSONSafe(hopOn.path)
-    const geojsonPathToDropoff = pathToGeoJSONSafe(dropoff.path)
-    const geojsonCommutePath = pathToGeoJSONSafe(commutePath)
-    if (!geojsonPathToHopOn || !geojsonPathToDropoff || !geojsonCommutePath) return null
-
-    const fares = Array.isArray(route.properties['route-fare'])
-      ? route.properties['route-fare']
-      : []
-    const fare = fares.find((candidate) => candidate.type !== 'per succeeding kilometer') || fares[0]
-    if (!fare) return null
-
-    const walkingDistance = hopOn.path.weight + dropoff.path.weight
-    const commuteDistance = commutePath.weight
-    const succeedingFare = fares.find((candidate) => candidate.type === 'per succeeding kilometer')
-
-    if (fare.mode === 'jeepney' && commuteDistance > 4
-      && fare.type === 'first 4 kilometers'
-      && succeedingFare) {
-      fare.amount += Math.ceil(commuteDistance - 4) * succeedingFare.amount
-    }
-
-    return {
-      id: routeId,
-      name: routeName,
-      public: false,
-      total_distance: (walkingDistance + commuteDistance).toPrecision(2),
-      total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60), // calculate duration minutes based on distance and average speed (e.g., 5 km/h for walking, 40 km/h for commuting)
-      total_transfers: 1,
-      fare: fare.amount,
-      mode: fare.mode,
-      layers: {
-        pathToHopOn: geojsonPathToHopOn,
-        startPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: fromPoint.geometry,
-        },
-        endPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: toPoint.geometry,
-        },
-        hopOnPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: fromHopOnPoint.geometry,
-        },
-        hopOffPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: toDropoffPoint.geometry,
-        },
-        terminalPoint: {
-          type: 'Feature',
-          properties: terminal.properties || {},
-          geometry: terminal.geometry,
-        },
-        commutePath: geojsonCommutePath,
-        pathToDropoff: geojsonPathToDropoff,
-        publicRoute: route,
-      }
-    }
-  }
-
-  const getRouteTransfer = (fromRoute, toRoute, pathEdges, pathfinder) => {
-    let closestTransfer = null
-
-    for (const fromCoordinate of fromRoute.geometry.coordinates) {
-      const fromVertex = getClosestVertex(fromCoordinate, pathEdges).vertex
-      if (!fromVertex) continue
-
-      for (const toCoordinate of toRoute.geometry.coordinates) {
-        const toVertex = getClosestVertex(toCoordinate, pathEdges).vertex
-        if (!toVertex) continue
-
-        const distance = Math.hypot(
-          fromVertex[0] - toVertex[0],
-          fromVertex[1] - toVertex[1]
-        )
-        if (distance > 0.01) continue
-
-        const path = pathfinder.findPath(
-          { type: 'Point', geometry: { type: 'Point', coordinates: fromVertex } },
-          { type: 'Point', geometry: { type: 'Point', coordinates: toVertex } }
-        )
-        if (!path || (closestTransfer && path.weight >= closestTransfer.path.weight)) continue
-
-        closestTransfer = {
-          fromVertex,
-          toVertex,
-          path,
-        }
-      }
-    }
-
-    return closestTransfer
-  }
-
-  const getRouteSequence = (fromRoutes, toRoutes, publicRoutes, pathEdges, pathfinder) => {
-    const sequences = []
-    const seen = new Set()
-
-    for (const fromRoute of fromRoutes) {
-      for (const toRoute of toRoutes) {
-        if (fromRoute === toRoute) continue
-
-        const transfer = getRouteTransfer(fromRoute, toRoute, pathEdges, pathfinder)
-        if (!transfer) continue
-
-        const key = `${publicRoutes.indexOf(fromRoute)}:${publicRoutes.indexOf(toRoute)}`
-        if (seen.has(key)) continue
-        seen.add(key)
-        sequences.push({ routes: [fromRoute, toRoute], transfer })
-      }
-    }
-
-    return sequences
-  }
-
-  const getRouteFare = (route, distance) => {
-    const fares = Array.isArray(route.properties['route-fare'])
-      ? route.properties['route-fare']
-      : []
-    const fare = fares.find((candidate) => candidate.type !== 'per succeeding kilometer') || fares[0]
-    if (!fare) return { amount: 0, mode: route.properties['mode-of-transport'] }
-
-    if (
-      fare.mode === 'jeepney' &&
-      fare.type === 'first 4 kilometers' &&
-      distance > 4
-    ) {
-      const succeedingFare = fares.find((candidate) => candidate.type === 'per succeeding kilometer')
-      return {
-        amount: fare.amount + (
-          succeedingFare
-            ? Math.ceil(distance - 4) * succeedingFare.amount
-            : 0
-        ),
-        mode: fare.mode,
-      }
-    }
-
-    return { amount: fare.amount, mode: fare.mode }
-  }
-
-  const toFeatureCollection = (features, weight) => ({
-    type: 'FeatureCollection',
-    properties: { weight },
-    features,
-  })
-
-  const buildRouteChain = (routeSequence, fromPoint, toPoint, pathfinder, pathEdges, getTransfer) => {
-    const transfers = routeSequence.slice(0, -1).map((route, index) => (
-      getTransfer(route, routeSequence[index + 1])
-    ))
-    if (transfers.some((transfer) => !transfer)) return null
-
-    const pathToHopOnFeatures = []
-    const commuteFeatures = []
-    let walkingDistance = 0
-    let commuteDistance = 0
-    let fare = 0
-    const modes = []
-    const segments = []
-    const inBetweenPoints = []
-
-    for (let index = 0; index < routeSequence.length; index += 1) {
-      const route = routeSequence[index]
-      const routeCoordinates = route.geometry?.coordinates
-      if (!Array.isArray(routeCoordinates) || routeCoordinates.length < 2) return null
-
-      const hopOn = index === 0
-        ? getNearestReachableVertex(routeCoordinates, fromPoint, pathEdges, pathfinder)
-        : {
-            vertex: transfers[index - 1].toVertex,
-            path: transfers[index - 1].path,
-          }
-      const dropoff = index === routeSequence.length - 1
-        ? getNearestReachableVertex(routeCoordinates, toPoint, pathEdges, pathfinder, 'from')
-        : {
-            vertex: transfers[index].fromVertex,
-            path: null,
-          }
-
-      if (!hopOn || !dropoff) return null
-
-      if (hopOn.path) {
-        const walkingFeature = pathToGeoJSONSafe(hopOn.path)
-        if (!walkingFeature) return null
-        pathToHopOnFeatures.push(walkingFeature)
-        walkingDistance += hopOn.path.weight
-        segments.push({
-          mode: 'walk',
-          label: 'Walk',
-          weight: hopOn.path.weight,
-          color: '#0b38a8',
-        })
-      }
-
-      const commutePath = getRoutePath(hopOn.vertex, dropoff.vertex, routeCoordinates)
-      const commuteFeature = pathToGeoJSONSafe(commutePath)
-      if (!commutePath || !commuteFeature) return null
-
-      commuteFeature.properties = {
-        ...commuteFeature.properties,
-        stroke: route.properties.stroke,
-        strokeWidth: route.properties['stroke-width'],
-        strokeOpacity: route.properties['stroke-opacity'],
-      }
-      commuteFeatures.push(commuteFeature)
-      commuteDistance += commutePath.weight
-      const routeFare = getRouteFare(route, commutePath.weight)
-      fare += routeFare.amount
-      modes.push(routeFare.mode)
-      segments.push({
-        mode: routeFare.mode,
-        label: routeFare.mode,
-        weight: commutePath.weight,
-        color: route.properties.stroke,
-      })
-
-      inBetweenPoints.push(hopOn.vertex)
-      inBetweenPoints.push(dropoff.vertex)
-    }
-
-    const firstHopOnPoint = inBetweenPoints.shift()
-    const lastDropoffPoint = inBetweenPoints.pop()
-
-    const finalWalkingPath = getNearestReachableVertex(
-      [lastDropoffPoint],
-      toPoint,
-      pathEdges,
-      pathfinder,
-      'from'
-    )
-    if (!finalWalkingPath) return null
-
-    const finalWalkingFeature = pathToGeoJSONSafe(finalWalkingPath.path)
-    if (!finalWalkingFeature) return null
-    walkingDistance += finalWalkingPath.path.weight
-    segments.push({
-      mode: 'walk',
-      label: 'Walk',
-      weight: finalWalkingPath.path.weight,
-      color: '#0b38a8',
-    })
-
-    return {
-      id: '',
-      name: '',
-      public: false,
-      total_distance: (walkingDistance + commuteDistance).toPrecision(2),
-      total_duration: Math.round(walkingDistance / 5 * 60) + Math.round(commuteDistance / 40 * 60),
-      total_transfers: routeSequence.length,
-      fare,
-      mode: modes.join(', '),
-      segments,
-      layers: {
-        pathToHopOn: toFeatureCollection(pathToHopOnFeatures, walkingDistance),
-        startPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: fromPoint.geometry,
-        },
-        endPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: toPoint.geometry,
-        },
-        hopOnPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'Point', coordinates: firstHopOnPoint },
-        },
-        hopOffPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'Point', coordinates: lastDropoffPoint },
-        },
-        inBetweenPoints: {
-          type: 'FeatureCollection',
-          properties: {},
-          features: inBetweenPoints.map((point) => ({
-            type: 'Feature',
-            properties: {},
-            geometry: { type: 'Point', coordinates: point },
-          })),
-        },
-        terminalPoint: {
-          type: 'Feature',
-          properties: {},
-          geometry: { type: 'Point', coordinates: lastDropoffPoint },
-        },
-        commutePath: toFeatureCollection(commuteFeatures, commuteDistance),
-        pathToDropoff: finalWalkingFeature,
-        publicRoute: routeSequence[0],
-      },
-    }
-  }
-
-  const findRoutes = (fromLocation, toLocation, pathEdges, pathfinder, barangays, publicRoutes, terminals) => {
-    const fromCoords = getCoordinates(fromLocation)
-    const toCoords = getCoordinates(toLocation)
-
-    if (!areValidCoordinates(fromCoords) || !areValidCoordinates(toCoords)) {
-      return []
-    }
-
-    const fromBarangay = getBarangay(fromCoords, barangays)
-    const toBarangay = getBarangay(toCoords, barangays)
-
-    if (!fromBarangay || !toBarangay) {
-      return []
-    }
-
-    const closestFromVertex = getClosestVertex(fromCoords, pathEdges)
-    const closestToVertex = getClosestVertex(toCoords, pathEdges)
-
-    if (!closestFromVertex.vertex || !closestToVertex.vertex) {
-      return []
-    }
-
-    const fromVertexCoords = getVertexCoordinates(closestFromVertex)
-    const toVertexCoords = getVertexCoordinates(closestToVertex)
-
-    const fromRoute = getRouteForBarangay(fromBarangay, publicRoutes)
-    const toRoute = getRouteForBarangay(toBarangay, publicRoutes)
-
-    if (fromRoute.length === 0 && toRoute.length === 0) {
-      return []
-    }
-
-    const destinationRoutes = toRoute.flatMap((route) => {
-      const terminalPoints = getTerminalPoints(route, terminals)
-      return terminalPoints.map((terminal) => ({ route, terminal, terminalIsHopOn: true }))
-    })
-    const originRoutes = fromRoute.flatMap((route) => {
-      const terminalPoints = getTerminalPoints(route, terminals)
-      return terminalPoints.map((terminal) => ({ route, terminal, terminalIsHopOn: false }))
-    })
-    const routeCandidates = [
-      ...destinationRoutes,
-      ...originRoutes,
-    ]
-
-    if (routeCandidates.length === 0) {
-      return []
-    }
-
-    const closestTerminals = routeCandidates.flatMap(({ route, terminal, terminalIsHopOn }) => {
-      const closestVertex = getClosestVertex(terminal.geometry.coordinates, pathEdges)
-      return closestVertex.vertex
-        ? [{ route, terminal, terminalIsHopOn, closestVertex }]
-        : []
-    })
-
-    const directRoutes = closestTerminals.map(({ route, terminal, terminalIsHopOn }, index) =>
-      buildRoute(
-        index,
-        `route-${index + 1}`,
-        `Route ${index + 1} from ${fromBarangay} to ${toBarangay}`,
-        { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } },
-        { type: 'Point', geometry: { type: 'Point', coordinates: toVertexCoords } },
-        route,
-        terminal,
-        terminalIsHopOn,
-        pathfinder,
-        pathEdges
-      )
-    ).filter(Boolean).sort((a, b) => a.total_duration - b.total_duration)
-
-    const transferCandidates = getRouteSequence(
-      fromRoute,
-      toRoute.length > 0 ? toRoute : publicRoutes,
-      publicRoutes,
-      pathEdges,
-      pathfinder
-    )
-    const transferRoutes = transferCandidates.map(({ routes, transfer }, index) => {
-      const route = buildRouteChain(
-        routes,
-        { type: 'Point', geometry: { type: 'Point', coordinates: fromVertexCoords } },
-        { type: 'Point', geometry: { type: 'Point', coordinates: toVertexCoords } },
-        pathfinder,
-        pathEdges,
-        () => transfer
-      )
-      if (!route) return null
-
-      return {
-        ...route,
-        id: `route-transfer-${index + 1}`,
-        name: `Route ${index + 1} from ${fromBarangay} to ${toBarangay}`,
-      }
-    }).filter(Boolean)
-
-    return [...directRoutes, ...transferRoutes]
-      .sort((a, b) => a.total_duration - b.total_duration)
-  }
-
   useEffect(() => {
     const worker = new Worker('/dist/route-worker.js', { type: 'module' })
     routeWorkerRef.current = worker
@@ -1128,6 +589,7 @@ const App = () => {
       CURRENT_MAP_THEME = theme
       MAP.setStyle(styleUrl)
       MAP.once('style.load', () => {
+        void addGateIcon(MAP)
         hydrateAppMapLayers(MAP)
         routesRef.current.forEach((route) => {
           if (!route.layers) return
@@ -1247,7 +709,7 @@ const App = () => {
       ${drawerMode === 'default' || drawerMode === 'routes-public'
         ? html`
           <section class="absolute top-30 left-4 z-1 max-w-[calc(95%-64px)] rounded-lg border border-(--border-default) bg-(--bg-surface) px-3 py-1 text-xs text-(--text-primary)">
-            <span class="font-bold text-(--color-blue-${ draftSettings.theme === 'dark' ? '400' : '700'})">Public Beta v0.1.0: </span>
+            <span class="font-bold text-(--color-blue-${ draftSettings.theme === 'dark' ? '400' : '700'})">Public Beta v0.1.1: </span>
             ${getTranslation(draftSettings.language, 'betaFeedback')}
           </section>
         `

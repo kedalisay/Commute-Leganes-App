@@ -63,9 +63,13 @@ const chooseLocationOnMap = ({
   if (stopMarkerCentering?.current) {
     stopMarkerCentering.current()
     stopMarkerCentering.current = null
-  } else {
-    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
   } 
+
+  if (stopMarkerCentering) {
+    stopMarkerCentering.current = keepMarkerOnMapCentered(map, marker)
+  } else {
+    keepMarkerOnMapCentered(map, marker)
+  }
 
   setDrawerToLocationActions()
   openDrawer()
@@ -313,6 +317,77 @@ const setRouteLayerVisibility = (map, layerIds, visible) => {
   })
 }
 
+const addMapIcons = (map) => {
+  const addGateIcon = async (map) => {
+    if (map.hasImage('gate')) return
+
+    try {
+      const gateIcon = await new Promise((resolve, reject) => {
+        const gateIcon = new Image(10, 10)
+        gateIcon.onload = () => resolve(gateIcon)
+        gateIcon.onerror = () => reject(new Error('Unable to load Barrier_gate.svg'))
+        gateIcon.src = 'assets/icons/Barrier_gate.svg'
+      })
+      if (!map.hasImage('gate')) map.addImage('gate', gateIcon)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const addAtmIcon = async (map) => {
+    if (map.hasImage('atm')) return
+
+    try {
+      const atmIcon = await new Promise((resolve, reject) => {
+        const atmIcon = new Image(15, 15)
+        atmIcon.onload = () => resolve(atmIcon)
+        atmIcon.onerror = () => reject(new Error('Unable to load Atm-14.svg'))
+        atmIcon.src = 'assets/icons/Atm-14.svg'
+      })
+      if (!map.hasImage('atm')) map.addImage('atm', atmIcon)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const addSwimmingPoolIcon = async (map) => {
+    if (map.hasImage('swimming_pool')) return
+
+    try {
+      const swimmingPoolIcon = await new Promise((resolve, reject) => {
+        const swimmingPoolIcon = new Image(15, 15)
+        swimmingPoolIcon.onload = () => resolve(swimmingPoolIcon)
+        swimmingPoolIcon.onerror = () => reject(new Error('Unable to load Swimming-16.svg'))
+        swimmingPoolIcon.src = 'assets/icons/Swimming-16.svg'
+      })
+      if (!map.hasImage('swimming_pool')) map.addImage('swimming_pool', swimmingPoolIcon)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const addAthleticsIcon = async (map) => {
+    if (map.hasImage('athletics')) return
+
+    try {
+      const athleticsIcon = await new Promise((resolve, reject) => {
+        const athleticsIcon = new Image(15, 15)
+        athleticsIcon.onload = () => resolve(athleticsIcon)
+        athleticsIcon.onerror = () => reject(new Error('Unable to load Fitness.svg'))
+        athleticsIcon.src = 'assets/icons/Fitness.svg'
+      })
+      if (!map.hasImage('athletics')) map.addImage('athletics', athleticsIcon)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  void addGateIcon(map)
+  void addAtmIcon(map)
+  void addSwimmingPoolIcon(map)
+  void addAthleticsIcon(map)
+}
+
 export { 
   addMarkerToMap, 
   removeMarkerFromMap, 
@@ -322,4 +397,5 @@ export {
   addRouteLayers,
   removeRouteLayers,
   setRouteLayerVisibility,
+  addMapIcons,
 }

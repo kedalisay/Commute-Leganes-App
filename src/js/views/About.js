@@ -7,7 +7,7 @@ const About = ({ viewMode, setToSettingsView, theme }) => html`
     <${BackButton} onClick=${setToSettingsView} label="Close about" />
     <div>
       <h2 class="mt-15 text-2xl font-bold font-display">About Commute Leganes</h2>
-      <img src="/assets/images/commute_leganes_full_logo_2788x900${theme === 'dark' ? '_dark' : ''}.png" alt="" class="my-4 w-80" />
+      <img src="assets/images/commute_leganes_full_logo_2788x900${theme === 'dark' ? '_dark' : ''}.png" alt="" class="my-4 w-80" />
       <p class="mt-2 text-(--text-secondary)">
         A community-focused commute guide for getting around Leganes, Iloilo.
       </p>

@@ -126,7 +126,7 @@ const Settings = ({
         <${NavButton} label=${t('contactUs')} onClick=${setToContactUsView} variant="secondary" />
       </section>
       <div class="mt-auto flex flex-col gap-1 text-center text-xs text-(--text-secondary)">
-        <small>Commute Leganes Version 0.1.0-beta</small>
+        <small>Commute Leganes Version 0.1.1-beta</small>
         <small>Copyright © 2026. All rights reserved.</small>
       </div>
     </section>

@@ -33,7 +33,7 @@ const RouteCardList = ({ map, routes, selectedRouteId, onRouteSelect, language =
   }
 
   return html`
-    <section aria-labelledby="routes-heading" class="pb-8 overflow-y-auto max-h-full h-full">
+    <section aria-labelledby="routes-heading" class="pb-8 overflow-x-hidden overflow-y-auto max-h-full h-full">
       <h2 id="routes-heading" class="sr-only">${getTranslation(language, 'chooseRoute')}</h2>
       <form id="routes-form" class="h-full">
         <fieldset class="flex flex-col gap-3 w-full ${routes.length > 0 ? 'justify-start' : 'justify-center'} items-center h-full">
