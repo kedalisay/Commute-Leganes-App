@@ -90,18 +90,27 @@ const Drawer = ({
   }
 
   const onHandleKeyDown = (e) => {
-    if (e.key === 'Escape' || e.key === 'ArrowDown') {
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      const minHeight = 200
+      const newHeight = Math.max(drawerRef.current.offsetHeight - 40, minHeight)
+      drawerRef.current.style.height = `${newHeight}px`
+      return
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      const maxHeight = window.innerHeight * 0.875
+      const newHeight = Math.min(drawerRef.current.offsetHeight + 40, maxHeight)
+      drawerRef.current.style.height = `${newHeight}px`
+      return
+    }
+
+    if (e.key === 'Escape') {
       e.preventDefault()
       closeDrawer()
       return
     }
-
-    if (e.key !== 'ArrowUp') return
-
-    e.preventDefault()
-    const maxHeight = window.innerHeight * 0.875
-    const newHeight = Math.min(drawerRef.current.offsetHeight + 40, maxHeight)
-    drawerRef.current.style.height = `${newHeight}px`
   }
 
   const backdropClass = isOpen && (drawerMode === 'locations')
